@@ -1,0 +1,457 @@
+%%
+%% 章：パッケージと自前の命令
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{パッケージと自前の命令}
+\TeX{}には自前の命令（マクロ）を定義する機能が備わっている。
+\LaTeX{}はこの機能を用いて\TeX{}を拡張したものである。
+この機能を使えば、\LaTeX{}を更に拡張することができる。\\
+
+自前の命令は文書ファイルに直接書き込むこともできるが、パッケージ化して別ファイルに保存しておくこともできる。
+\LaTeXe{}には様々な出来合いのパッケージが付属している。\\
+
+本章では既存のパッケージの利用の仕方と、自分でパッケージを作成する方法を解説する。
+%%
+%% 節：パッケージ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{パッケージ}
+パッケージとは\LaTeX{}の機能を簡単に拡張するための仕組みである。
+例えば、ルビ（フリガナ）を振りたいとする。
+\LaTeX{}にはルビを振る命令は存在しないので、何らかの方法で\LaTeX{}を拡張しなければならない。
+このような場合に利用するのがパッケージである。\\
+
+ルビを振る命令はさまざまなパッケージで定義されているが、ここでは okumacro というパッケージを使うことにする。
+そのためには、文書ファイルのプリアンブルに次のように記述する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{okumacro}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+こうしておけば、ルビを振る命令 \verb`\ruby` を使うことができるようになる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'\documentclass{jsarticle}'                                                            \\
+  \    & \verb'\usepackage{okumacro}'                                                                \\
+  \    & \verb'\begin{document}'                                                                     \\
+  \    & \verb'\ruby{奥}{おく}\ruby{村}{むら}\ruby{晴}{はる}\ruby{彦}{ひこ}氏作のパッケージである。' \\
+  \    & \verb'\end{document}'                                                                       \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & \ruby{奥}{おく}\ruby{村}{むら}\ruby{晴}{はる}\ruby{彦}{ひこ}氏作のパッケージである。        \\
+\end{longtable}\vspc{-1.20zw}
+\verb`\usepackeag{okumacro}` と記述すると\LaTeX{}は okumacro.sty というファイルを読み込んで、その中で定義された命令を取り込む。
+すなわち、パッケージ okumacro の実体は okumacro.sty という名前のファイルである。
+もし、このファイルがコンピュータ上に存在しないと、次のようなエラーメッセージが出力される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+! LaTeX Error.File `okumacro.sty' not found.
+
+Type X to quit or <RETURN> to proceed.
+or enter new name.(Default extension: sty)
+
+Enter file name:
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+このようなエラーが出力されるのは okumacro の綴りを間違えているか、あるいは実際に okumacro.sty というファイルがインストールされていない可能性が考えられる。\enlargethispage{+0.60zw}
+もし本当にインストールされていない場合は、インターネットで okumacro.sty をダウンロードして、どこかに格納すればよい。
+格納する場所は、現在の\LaTeX{}文書ファイル（ソースファイル）と同じフォルダの中が一番簡単である（\pLaTeX{}関連のファイルを格納する一般的な場所については、\TeX~Live のディレクトリ構造を理解している必要があるため後述する）。
+%%
+%% 節：簡単な命令の作り方
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{節}
+\LaTeX{}にて用紙の左右中央に、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{center} 記 \end{center}
+\end{mdframed}\vspc{-0.70zw}
+と出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center} 記 \end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述する。
+この入力を簡単にするために、\verb`\記` という自前の命令を定義してみることにする。
+このような命令は別ファイルに記述するのが一般的だが、ここではとりあえず文書ファイルの中で、その命令を使いたい場所より前（例えばプリアンブル）に次のように \verb`\記` の定義を記述しておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\記}{\begin{center} 記 \end{center}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この \verb`\newcommand` という命令は、新しい（new）命令（command）を定義するための命令である。
+上のように記述しておけば、それ以降 \verb`\記` と記述すれば \verb`\begin{center} 記 \end{center}` と記述するのと全く同じ意味となる。\\
+
+\LaTeX{}の命令のことを一般にコマンド（command）あるいは\ruby{制御綴}{せいぎょつづり}（control sequence）というが、このような自前の命令のことを特にマクロ（macro）ということがある。\\
+
+もう１つ例を挙げておく。
+小さい文字で弊社と何度も書く必要があるなら、次のように \verb`\弊社` という命令を定義しておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\弊社}{{\small 弊社}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+右側の括弧は二重にしなければならない。単に、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\弊社}{\small 弊社}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+としてしまっては、\verb`\small 弊社` と記述したことと同じになり \verb`\small` を閉じる括弧がないため、これ以降、文書の最後まで小さい文字になってしまう。
+また、この命令を使う際に、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\弊社では、…
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いてしまっては、\verb`\弊社では` という命令が未定義であるというエラーとなるため、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb`\弊社`\textvisiblespace\verb`では`
+\item \verb`\弊社{}では`
+\item \verb`{\弊社}では`
+\end{itemize}\vspc{-0.50zw}
+のいずれかの書き方をする必要がある。
+%%
+%% 節：パッケージを作成する
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{パッケージを作成する}
+マクロがいくつか作成できたら、自分用のパッケージに登録しておこう。\\
+
+エディタを起動して、例えば mymacros.sty という名前のファイルを作成する。
+ファイル名は任意だが、拡張子は sty にしておく。
+このファイルに自分が定義した命令を並べて書き込んでおく。
+例えば、次のようにする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\弊社}{{\small 弊社}}
+\newcommand{\記}{\begin{center} 記 \end{center}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この mymacros.sty は、とりあえずはカレントディレクトリ（文書ファイルの存在するフォルダ）に置いておけばよい。
+個々の文書ファイルでは、次のようにプリアンブルの \verb`\usepackage` 命令でこのパッケージを読み込んで使用する。\enlargethispage{+0.50zw}
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{mymacros}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+このような命令が充実すればするほど、タイピングの量やレイアウトを考える必要が減り、文書の論理構造に集中できるようになる。\\
+
+文書ファイルに、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center} 記 \end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述することは、ワープロソフトと同様に、文書のレイアウトを指定していることになる。
+これに対して、\verb`\記` と記述すれば、そこから文書の「記」という要素が始まるという文書の構造を示したこととなる。\\
+
+尚、読み込むパッケージが複数存在する場合は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{multicol}
+\usepackage{mymacros}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように記述しても、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{multicol,mymacros}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように並べて記述しても構わない。
+%%
+%% 節：命令の名前の付け方
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{命令の名前の付け方}
+命令の名前は \verb`\FooBar` のような英字でも、\verb`\命令` のような漢字でも、両者の混合でも構わない\footnote{実際には、その命令の機能を類推することができる名前を付けるべきである。}。
+大文字と小文字は区別されるので、\verb`\foo` と \verb`\FOO` は全く別の命令となる。\\
+
+但し、\verb`\foo_bar` や \verb`\a4` のような記号・数字を含む命令は通常定義することはできない。
+例外として、句読点・括弧などの記号類や数字 1 文字だけからなる命令は定義することができる。
+例えば、\verb`\3` という命令は定義することができる。
+しかし、\verb`\33` や \verb`\3K` や \verb`\K3` は定義することはできない。\\
+
+\verb`\foo` や \verb`\命令` のようなアルファベットや漢字の命令では、直後の半角空白は区切りの役割をするだけだが、\verb`\3` のような数字・記号 1 文字の命令では、直後の半角空白は空白として出力される。\\
+
+同じ名前の命令が既に存在する場合は \verb`\newcommand` は使えない。
+既に存在する命令の定義を変更するには \verb`\newcommand` の代わりに \verb`\renewcommand` を用いる。
+\verb`\renewcommand` を用いれば、自分で定義した命令でも、\LaTeX{}で定義されている命令でも定義を変更することができる。
+%%
+%% 節：自前の環境
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{自前の環境}
+\verb`\begin{quote} ... \end{quote}` のような、\verb`\begin` で始まり \verb`\end` で終わる命令を環境（environment）ということは前述した。
+環境も自前で定義することができる。
+環境を定義するための命令は \verb`\newenvironment` である。
+これは、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newenvironment{なになに}{かくかく}{しかじか}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+の形で用いる。これで、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb'\begin{なになに} → {かくかく'
+\item[] \verb'\end{なになに}   → しかじか}'
+\end{itemize}\vspc{-0.50zw}
+という意味となる。
+もう少し実用的な例として、先に定義した \verb`\記` という命令を環境に拡張してみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newenvironment{記}
+  {\begin{center} 記 \end{center}\begin{description}}
+  {\end{description}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+このように宣言しておくと、その後では、\enlargethispage{+0.90zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb'\begin{記} = {\begin{center} 記 \end{center}\begin{description}'
+\item[] \verb'  \end{記} = \end{description}}'
+\end{itemize}\vspc{-0.50zw}
+という等式が成り立つ。これで、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{記}
+\item[日時] 2013年02月02日 午後 2 時
+\item[場所] 第 2 会議室
+\end{記}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+などと記述することができる。\\
+
+尚、既に存在する命令と同じ名前の環境を定義することはできない。
+すなわち、先の例において \verb`\newcommand{\記}{...}` のように命令を定義してあると \verb`\newenvironment{記}{...}{...}` という定義は行うことができない。
+既に存在する定義を上書きしたい場合は \verb`\newenvironnment` の代わりに \verb`\renewenvironment` という命令を用いる。
+%%
+%% 節：引数をとるマクロ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{引数をとるマクロ}
+ゴシック体で \textgt{ほげほげ} と出力するためには、\verb`\textgt{ほげほげ}` と記述する。
+このような命令の直後の \verb`{}` で囲んだ部分を、その命令の引数（argument）という。\\
+
+引数を付けて使う命令のことを「引数をとる命令」という。
+引数をとる命令も \verb`\newcommand` や \verb`\renewcommnad` で定義することができる。
+例えば、{\textgt{\small 小さいゴシック体}}で出力する命令 \verb`\sg` を定義してみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\sg}[1]{\textgt{\small #1}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+使うときは \verb`\sg{ほげほげ}` のようにする。\\
+
+もう１つの例として、\framebox[1cm]{\textgt{\small ア}} のように、小さいゴシック体を幅 1\,cm の長方形で囲む命令 \verb`\f{...}` を定義してみる。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcomand{\f}[1]{\framebox[1cm]{\textgt{\small #1}}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+ここで用いた \verb`\framebox[1cm]{何々}` は、幅 1\,cm の枠で囲んで「何々」を出力する命令である。
+これで、
+\vspc{-2.25zw}\begin{center}
+\item[] \verb`大化の改新は \f{ア} 年である。` →\hspace{0.80zw} 大化の改新は \framebox[1cm]{\textgt{\small ア}} 年である。
+\end{center}\vspc{-0.50zw}
+となる。
+このように、引数をとる命令（マクロ）は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\命令の名前}[引数の個数]{定義内容}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+の形式で定義する。
+命令の定義内の \verb`#1` が引数で置き換えられる。
+引数がいくつも存在する場合は、\verb`#1` が第 1 引数、\verb`#2` が第 2 引数、$\cdots$ に置き換えられる。
+引数は 9 個まで使うことができる。
+%%
+%% 節：マクロの引数の制約
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{マクロの引数の制約}
+\verb`\newcommand` でも \verb`\newenvironment` でも同じことができる場合、どちらを用いたらよいだろうか？
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\sg}[1]{\textgt{\small #1}}
+これは\sg{ほげほげ}です。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とするのと、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newenvironment{sg}{\small}{}
+これは\begin{sg}ほげほげ\end{sg}です。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とするのは、同じことのように見える。
+しかし、マクロの引数の中では \verb`\verb` など一部の命令が使えないという制約が存在する。
+先程の \verb`\sg` 命令（マクロ）において、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\sg{冷汗 \verb|(^_^;)|}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+としようとするとエラーが発生する。一方、環境の方では、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{sg}冷汗 \verb|(^_^;)|\end{sg}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+としてもエラーは発生せず、正しく処理される。\\
+
+\verb`\section` など既存の命令の引数にも \verb`\verb` は使うことができない。
+目的がタイプライタ体で出力するだけなら、代わりに \verb`\texttt{...}` を使うことができる。\\
+
+\verb`\texttt{...}` でうまく出力することができない特殊文字は \verb`\symbol{文字コード}` という命令で出力することができる。
+例えば、\verb`\`（バックスラッシュ）は文字コードが \texttt{5C}（16進）なので、\verb`\texttt{\symbol{"5C}}` とすることでタイプライタ体のバックスラッシュを出力することができる。\\
+
+\LaTeXe{}では lrbox 環境を併用することで \verb`\verb` を命令の引数の中で使うことができる。
+但し、文字の大きさは状況に応じて変化しないため、次の例のように \verb`\section` 中で使うなら \verb`\Large` にしておく必要がある。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newsavebox{\mybox}    % mybox という箱を作る
+\begin{lrbox}{\mybox}  % mybox という箱の中に \Large\verb|\TeX| を入れる
+  \Large\verb|\TeX|
+\end{lrbox}
+\section{\usebox{\mybox} コマンドについて}
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：ちょっと便利なマクロ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ちょっと便利なマクロ}
+いくつかの便利な小物マクロを紹介しておく。
+これらの命令は\LaTeX{}ではなく裸の\TeX{}や plain \TeX{}の知識に基づいている。
+本節で紹介する命令やその改良版は、\TeX\ Live に含まれる okumacro というパッケージに含まれている。
+%%
+%% 項：丸囲み文字
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{丸囲み文字}
+丸囲み文字\ajMaru{1}\ajMaru{2}\ajMaru{3}$\cdots$は、JIS X 0208 ベースの符号化（シフト JIS、EUC-JP、ISO-2022-JP）では機種依存文字となり Windows と Mac 間などで文字化けを起こす。
+これらは utf パッケージ、もしくは otf パッケージを用いれば、\verb`\ajMaru` という命令で出力することができる。
+また、pifont パッケージでも利用可能である。\\
+
+自前で丸印と数字を合成して \ajMaru{1} \ajMaru{2} $\cdots$ を出力するためには、次のような命令を定義しておき \verb`\MARU{1} \MARU{2}` $\cdots$ とする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\MARU}[1]
+           {{\ooalign{\hfil#1\/\hfil\crcr\raise.167ex\hbox{\mathhexbox20D}}}}
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：時候の挨拶
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{時候の挨拶}
+次の命令 \verb`\挨拶` は「拝啓\hspc{+1.00zw}陽春の候、ますますご清栄のこととお喜び申し上げます」のような挨拶をその月に合わせて出力する。
+\verb`\month` には\LaTeX{}で処理した月（1～12）が格納される。
+\verb`\ifcase` は数値 0、1、2、$\cdots$ によって条件分岐する命令である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\def\挨拶{\noindent 拝啓\hspc{+1zw}\ifcase\month\or
+  厳寒\or 春寒\or 早春\or 陽春\or 新緑\or 向暑\or
+  猛暑\or 残暑\or 初秋\or 中秋\or 晩秋\or 初冬\fi
+  の候、ますますご清栄のこととお喜び申し上げます。}
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：曜日
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{曜日}
+\verb`今日は\曜`\textvisiblespace\verb`曜日です` と記述すると「今日は金曜日です」のように、\LaTeX{}で処理した日の曜日を出力する。\enlargethispage{+0.15zw}
+この命令の定義には Zeller の公式\footnote{『C 言語による最新アルゴリズム辞典』（技術評論社、1991 年）、『Java によるアルゴリズム辞典』（技術評論社、2003 年）参照} というものを用いている。\\
+
+\verb`\@tempcnta`、\verb`\@tempcntb` は \LaTeX{}内部でよく用いられる一時的な（temporary な）利用のためのカウンタ（整数値の変数）である。
+このように \verb`@`（\ruby{at}{アット}マーク）を含む名前は、パッケージファイル中では自由に使うことができるが、\LaTeX{}文書ファイル中で使うには \verb`\makeatletter` と \verb`\makeatother` で囲んでおかなければならない。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\makeatletter
+\newcommand{\曜}{{\@tempcnta=\year \@tempcntb=\month
+  \ifnum \@tempcntb < 3
+    \advance \@tempcnta by -1
+    \advance \@tempcntb by 12
+  \fi
+  \multiply \@tempcntb by  13
+  \advance  \@tempcntb by   8
+  \divide   \@tempcntb by   5
+  \advance  \@tempcntb by  \@tempcnta
+  \devide   \@tempcnta by   4
+  \advance  \@tempcntb by  \@tempcnta
+  \divide   \@tempcnta by  25
+  \advance  \@tempcntb by -\@tempcnta
+  \divide   \@tempcnta by   4
+  \advance  \@tempcntb by  \@tempcnta
+  \advance  \@tempcntb by  \day
+  \@tempcnta = \@tempcntb
+  \divide   \@tempcbtb by   7
+  \multiply \@tempcntb by   7
+  \advance  \@tempcnta by -\@tempcntb
+  \ifcase \@tempcnta 日\or 月\or 火\or 水\or 木\or 金\or 土\or
+\fi}}
+\makeatother
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\verb`\advance`、\verb`\multiply`、\verb`\divide` は和・積・商の値を求める命令である。
+\verb`\ifnum` は数値の比較を行う命令である。
+%%
+%% 項：均等割り
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{均等割り}
+均等割りの命令は次のようにして定義することができる。
+但し、使用できるは和文だけである。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\kintou}[2]{%
+  \leavemode
+  \hbox to #1{%
+    \kanjiskip=0pt plus 1fill minus 1fill \xkanjiskip=\kanjiskip #2
+  }
+}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\verb`\leavemode` は\TeX{}の「垂直モード vertical mode を抜ける」ための命令で、\verb`\hbox`（水平ボックス：horizontal box）を段落の最初でも使えるようにするオマジナイである。
+\verb`\leavemode \hbox to 5zw {ほげ}` で「ほげ」という文字を 5\,zw の箱の中に書き込むという意味になるが、均等割りにするために和文文字間のアキ \verb`\kanjiskip`、和文・欧文文字間のアキ \verb`\xkanjiskip` を標準で 0 ポイント、それにプラスマイナス 1 [fill]（いくらでも伸びる値）に設定している。\\
+
+この命令は次のように用いる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb`5文字の幅に4文字を\kintou{5zw}{均等割り}する` \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & 5文字の幅に4文字を\kintou{5zw}{均等割り}する \\
+\end{longtable}\vspc{-1.20zw}
+この命令を使うと、3 文字分の幅に 4 文字を無理やり詰め込むこともできる。
+%%
+%% 項：圏点
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{圏点}
+\ruby{圏点}{けんてん}を打つマクロである。
+\verb`\kenten{強調}` とすると \kenten{強調} となる。
+\verb`\.強\.調`（\.強\.調）として打つ圏点より大きくなる。\\
+
+以下の定義では、垂直モード（段落が始まっていない状態）なら（\verb`\ifvmode`）段落を開始し（\verb`\leavevmode`）、そうでなければ \verb`\kanjiskip` だけのアキを入れる。
+「・」といくらでも縮むグルー \verb`\hss` とを入れた幅ゼロ（\verb`\z@` は 0pt と同義）の箱を箱レジスタ 1 に代入し、その高さ（\verb`\ht`）を 0.63zw にして、\verb`\@kenten` に制御を移す。
+\verb`\@kenten` は tall recursion という方法を用いて各文字をループし、実際に圏点を振る。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\makeatletter
+\def\kenten#1{%
+  \ifvmode\leavevmode\else\hskip\kanjiskip\fi
+  \setbox1 = \hbox to \z@{・\hss}% 「・」は全角の中黒
+  \ht1 = .63zw
+  \@kenten#1\end}
+\def\@kenten#1{%
+  \ifx#1\end \let\next = \relax \else
+    \raise.63zw\copy1\nobreak #1\hskip\kanjiskip\relax
+    \let\next = \@kenten
+  \fi\next}
+\makeatother
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 項：倍角ダッシュ
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{倍角ダッシュ}
+半角のマイナスを ``\verb`--`'' のように 2 つ連続して入力すると {--} のような欧文のエヌダッシュが出力される。
+また、``\verb`---`'' のように３つ連続で入力すると、--- のような欧文のエムダッシュが出力される。\\
+
+和文の ―\kern-.5zw―\kern-.5zw― のような倍角ダッシュ（2 倍ダーシ）は JIS コード 213D の ― を 2 つ並べても出力することができるが、フォントによっては隙間が空いてしまうことがある。
+次のようにすれば隙間を無くすことができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\def\――{―\kern-.5zw―\kern-.5zw―}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで \verb`海\――山` とすると「海\――山」となる。
+同様のマクロが okumacro パッケージで定義されている。

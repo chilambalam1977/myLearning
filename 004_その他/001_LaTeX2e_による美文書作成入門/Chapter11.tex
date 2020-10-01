@@ -1,0 +1,302 @@
+%%
+%% 章：文献の参照と文献データベース
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{文献の参照と文献データベース}
+本などで読んだことについて書く際は、原文を引用する・しないに関わらず、出典を明記するのが読者へのサービスであると同時に著者への礼儀である。
+これを怠ると、法的にも道義的にも責任を問われかねない。
+文献の参照・引用の仕方を学ぶことは、非常に大切なことで、大学で習うレポート・論文の書き方の大きな部分を占めている。\\
+
+ここでは、文献の参照法から B{\scriptsize IB}\hspc{-1.50pt}\TeX{}、pB{\scriptsize IB}\hspc{-1.50pt}\TeX{}などを用いた文献データベースの構築法までを解説する。
+%%
+%% 節：文献の参照
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{文献の参照}
+文献の参照法にはいろいろな流儀が存在するが、基本的には書籍であれば著者名・書名・出版者（出版社名）・出版年を挙げる。
+横書きの文書での文献の参照の仕方は、木下是雄『理科系の作文技術』\footnote{木下是雄『理科系の作文技術』中公新書 624（中央公論社、1981）}の 9.4 節に簡潔にまとめられている。
+また、欧文文献の参照については \ruby{van}{バン} \ruby{Leunen}{ルーネン} の \emph{A Handbook for Scholars}\footnote{Mary-Claire van Leunen, \emph{A Handbook for Scholars}. Alfred A. Knopf, 1978; Oxford University Press, 1992.} に非常に詳しく書かれている。
+\LaTeX{}による参考文献の扱い方は、主にこの書籍に依っている。因みに、van Leunen は数学にも詳しい英語学者で\TeX{}の作者である Knuth 教授の講義録『クヌース先生のドキュメント纂法』\footnote{Donald E. Knuth, Tracy Larrabee, and Paul M. Roberts. \emph{Mathmatical Writing.} MAA Notes No.14 The Mathmatical Association of America, 1989; 有澤誠訳『クヌース先生のドキュメント纂法』（共立出版、1989）}にもゲスト講師として登場している。\\
+
+Van Leunen が推奨する方式では、参考文献リストは文書の最後に、通し番号を付けて並べる。
+そして、本文中では、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  Van Leunen の \emph{A Handbook for Scholars} [3] によれば……\\
+  Van Leunen [3] によれば……\\
+  ……である [3$-$5, 7].
+\end{mdframed}\vspc{-0.70zw}
+などのように、参照すべき文献の番号を [ ] で囲んで付加する（最後の例は文献番号 3, 4, 5, 7 の文献を参照すべきことを表している）。
+この [3] などは括弧書きに過ぎず、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  [3] によれば……
+\end{mdframed}\vspc{-0.70zw}
+のように名詞として用いるのは正しくない（実際にはあまりまもられていないが）。\\
+
+文書の最後に付加する文献リストは、本文で出現する順に並べることもよくあるが、Van Leunen の流儀では、第 1 著者の姓のアルファベット順に並べる。
+第 1 著者の姓が同じ場合は、名のアルファベット順に並べる。
+第 1 著者が同じなら、第 2 著者の姓、名、……、と比較していき、著者が全く同じなら文書のタイトルのアルファベット順に並べる。
+アルファベット順とは、アポストロフィを無視し、ハイフンをスペースと見なし、スペース, A, B, $\ldots$, Z の順に並べることである。
+文書のタイトルの最初の冠詞（a, the）は無視する。\\
+
+また、有名な \emph{The Chicago Manual of Style}\footnote{\emph{The Chicago Manual of Style}, 16th edition, University of Chicago Press, 2010. オンライン版も存在する。} の流儀では、本文中には (Knuth 1991) のように著者名と出版年を並べる。
+同じ年のものがいくつも存在する場合は、1983a, 1983b のなどとする。\enlargethispage{+0.10zw}
+この流儀の利点は、文献の加除があっても参照番号を振り直す必要が（殆ど）ないことだったが、現在では\LaTeX{}などのシステムが自動的に参照番号を振ってくれるので、有り難みが薄れた。
+番号だけより情報量が多く、文献が推測しやすいという利点はあるが、参照文献が多いと逆にうるさく感じる。
+変形として [Knu 91] のような短い形もよく用いられる。\\
+
+分野によっては、参考文献は脚注に記載する。
+この場合、同じ文献を続けて参照する際は \emph{ibid.}（「同所」の意味のラテン語）と記述する。
+日本では \ruby{SIST}{シスト}（科学技術情報流通技術基準、https://jipsti.jst.go.jp/sist/）で参考文献の書き方が提案されている\footnote{JST の SIST 事業は 2011 年度末に終了した。}。
+実際には、論文を投稿する学会誌ごとに文献の参照の仕方が決まっているので、それに従わなければならない。\\
+
+さて、\LaTeX{}では、参考文献は次の 3 通りの扱い方がある。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item 文献リストも参照番号付けも人間が行う方法
+\item 文献リストは人間が作成し、参照番号をコンピュータに付けさせる方法
+\item 文献データベースに基づいて全てをコンピュータ化する方法
+\end{itemize}\vspc{-0.50zw}
+各方法を以下の節で順に解説する。
+%%
+%% 節：全て人間が行う方法
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{全て人間が行う方法}
+\LaTeX{}で文献リストを出力するには thebibliography 環境というものを用いる。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \vspc{-6.50zw}\begin{thebibliography}{9}%\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+    \vspc{-3.50zw}
+  \item
+    木下是雄『理科系の作文技術』
+    中公新書 624（中央公論社, 1981）
+  \item
+    Mary-Claire van Leunen.
+    \emph{A Handbook for Scholars.}
+    Alfred A. Knopf, 1978.
+  \end{thebibliography}\vspc{-0.50zw}
+\end{mdframed}\vspc{-0.70zw}
+のような文献リストを出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{thebibliography}{9}
+\item
+  木下是雄『理科系の作文技術』
+  中公新書 624（中央公論社, 1981）
+\item
+  Mary-Claire van Leunen.
+  \emph{A Handbook for Scholars.}
+  Alfred A. Knopf, 1978.
+\end{thebibliography}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように入力する。\\
+
+上の例で \verb'\vbegin{thebibliography}{9}' の ``9'' は参考文献に付ける番号が 1 桁以内であることを表す。
+2 桁以内なら ``99''、3 桁以内なら ``999'' などとする。\\
+
+もし、番号を [1], [2], [2a], [3], $\ldots$ のように付けたい場合は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{thebibliography}{9a}
+\item ...
+\item ...
+\item [{[2a]}] ...
+\item ...
+\end{thebibliography}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のようにする。\enlargethispage{+0.80zw}
+通常、この参考文献リストは文書の最後（または各章の最後）に付加する。
+本文中で参照する際は、この方法では、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+Knuth~ [2] によれば……であることが知られている~ [3--5, 7]
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように自分で番号を付加する（行分割を行わない空白 \verb'~' を用いる）。
+%%
+%% 節：半分人間が行う方法
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{半分人間が行う方法}
+参照文献リストは人間が作成し、参照番号はコンピュータに付けさせる方法である。
+まず、先程と同様な文献リストを作成するのだが、ここでは \verb'\item' の代わりに \verb'\bibitem' という命令を用いる。
+\verb'\bibitem' の直後には \verb'{ }' で囲んで適当な参照名を付けておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{thebibliography}{9}
+\bibitem{木是}
+  木下是雄『理科系の作文技術』
+  中公新書 624（中央公論社, 1981）
+\bibitem{leu}
+  Mary-Claire van Leunen.
+  \emph{A Handbook for Scholars.}
+  Alfred A. Knopf, 1978.
+\end{thebibliography}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+上の例では、木下是雄{\small 氏}の本には ``木是'' という参照名を、van Leunen の本には ``leu'' という参照名を付けた。
+これは覚えやすいものなら何でも構わない。
+例えば、``leu-handbook'' や ``木下：作技'' や ``木下81'' のような付け方も考えられる。
+参照名の中に空白やコンマを含めることはできない。
+大文字・小文字は区別されるので、leu と Leu は異なる本のことになってしまう（しかし、後述の B{\scriptsize IB}\hspc{-1.50pt}\TeX{}は参照名の大文字・小文字を無視するので、leu と Leu のような紛らわしい名前は付けない方がよいだろ）。\\
+
+こうして文献リストを作成しておき、本文中で文献を参照する際には番号ではなく参照名を用いる。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  木下~[1] や van Leunen~[2] は……
+\end{mdframed}\vspc{-0.70zw}
+と出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+  木下~\cite{木是} や van Leunen~\cite{leu} は……
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とする（行分割をしない空白 \verb'~' を用いる）。
+こうすれば、参考文献が加除されたり、順序が変わったりすると参照番号も自動的に更新される。\\
+
+但し、このように \verb'\cite' と \verb'bibitem' を用いた相互参照のある文章を処理するには、\LaTeX{}を少なくとも 2 回実行しなければならない。
+最初に\LaTeX{}で処理すると、次のような警告（warning）が出力される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+LaTeX Warning: Citation '木是' on page 1 undefined on input line 8.
+LaTeX Warning: Citation 'leu' on page 1 undefined on input line 8.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+すなわち「参照番号を正しくするために再実行しろ」というわけである。
+そこで、もう一度このファイルを\LaTeX{}で処理すると、今度は警告メッセージが出力されないし、正しく参照番号が出力される。\\
+
+次回からは、文献と番号の対応が変化していなければ、文書ファイルを編集しても\LaTeX{}での処理は 1 回で構わない。\\
+
+尚、例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  ……であると言われている~[1,~2].
+\end{mdframed}\vspc{-0.70zw}
+のように複数の文献を参照するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+  ……であると言われている~\cite{木是,leu}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように半角コンマで区切る。\enlargethispage{+1.00zw}
+また、例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  木下~[1,~161$-$167~ページ] や van Leunen~[2, pp.9$-$44] によると……
+\end{mdframed}\vspc{-0.70zw}
+のようにページ数などの補助情報を付加するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+  木下~\cite[161--167 ページ]{木是} や van Leunen~\cite[2, pp.9-44]{leu} によると……
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように \verb'\cite[補助情報]{参照名}' の要領で記述する。\\
+
+文献リストは通し番号以外に好きな「番号」を付けることができる。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \vspc{-6.50zw}\begin{thebibliography}{木下99}%\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+    \vspc{-3.50zw}
+  \bibitem[leu78]{leu}
+    Mary-Claire van Leunen.
+    \emph{A Handbook for Scholars.}
+    Alfred A. Knopf, 1978.
+  \bibitem[木下81]{kino}
+    木下是雄『理科系の作文技術』
+    中公新書 624（中央公論社, 1981）
+  \end{thebibliography}
+\end{mdframed}\vspc{-0.70zw}
+のように出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{thebibliography}{木下99}
+  \bibitem[leu78]{leu}
+    Mary-Claire van Leunen.
+    \emph{A Handbook for Scholars.}
+    Alfred A. Knopf, 1978.
+  \bibitem[木下81]{kino}
+    木下是雄『理科系の作文技術』
+    中公新書 624（中央公論社, 1981）
+\end{thebibliography}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とする。
+ここで \verb'\begin{thebibliography}{木下99}' の ``木下99'' は最も長い文献の「番号」である（長すぎても構わない）。
+%%
+%% 節：cite と overcite
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{cite と overcite}
+連続した文献を引用すると [1, 2, 3] のようになってしまう。
+これを [1$-$3] のようにするには cite というパッケージを用いる。
+すなわち、文書ファイルのプリアンブルに、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{cite}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いておく。
+約物は標準で欧文用となるので、和文用にするには例えば次のように再定義する。
+\verb'\inhibitglue' は全角文字間の余分なグルー（スペース）を抑制する命令である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{cite}
+\renewcommand{\citeleft}{\inhibitglue [}  % ← 左括弧を全角［に
+\renewcommand{\citeright}{] \inhibitglue} % ← 右括弧を全角］に
+\renewcommand{\citemid}{、} % ← 引用番号と補助情報の区切りを全角コンマに
+\renewcommand{\citepunct}{、\inhibitglue} % ← 引用番号間の区切りを全角コンマに
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+本文中の引用番号を、梅棹${}^{\hspc{-2.00pt}3}$ のように上付きにするには、cite の代わりに overcite パッケージを用いる。
+%%
+%% 節：文献処理の全自動化
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{文献処理の全自動化}
+\LaTeX{}と組み合わせて文献データベースから自動的に文献リストを作成するための B{\scriptsize IB}\hspc{-1.50pt}\TeX{}というツール（Oren Patashnik 作、コマンド名 bibtex）が存在する。
+これを松井正一{\small 氏}が日本語化したのが \raisebox{-1.50pt}{J}\hspc{-0.50pt}B{\scriptsize IB}\hspc{-1.50pt}\TeX{}である。
+現在では p\TeX{}用のものが pB{\scriptsize IB}\hspc{-1.50pt}\TeX{}という名前で配布されている（コマンド名 pbibtex）。
+Unicode 版の upB{\scriptsize IB}\hspc{-1.50pt}\TeX{}（コマンド名 upbibtex）も開発されている。\\
+
+この章の残りでは ((u)pB{\scriptsize IB}\hspc{-1.50pt}\TeX{}) の使い方と文献データベースの作り方を説明する。
+詳しくは順を追って説明するが、処理の流れは、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[\ajMaru{1}] 文書ファイルと文献データベースを用意する。
+\item[\ajMaru{2}] \LaTeX{}を実行する（参照情報を aux ファイルに書き出す）
+\item[\ajMaru{3}] B{\scriptsize IB}\hspc{-1.50pt}\TeX{}を実行する（bbl ファイルを作成する）
+\item[\ajMaru{4}] \LaTeX{}を実行する（bbl ファイルを取り込む）
+\item[\ajMaru{5}] \LaTeX{}を実行する（相互参照を解決する）
+\end{itemize}\vspc{-0.50zw}
+のようになる。
+原稿を手直しする度に、これだけの回数実行しなければならないわけではない。
+これ以降は、文献リストに加除がないなら\LaTeX{}を 1 回だけ実行すれば十分である。
+%%
+%% 節：文献データベース概論
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{文献データベース概論}
+昔は文献カードを作成するのが研究者の仕事の１つであった。
+カード作りの考え方については梅棹忠夫{\small 氏}『知的生産の技術』\footnote{梅棹忠夫『知的生産の技術』岩波新書青版722（岩波書店, 1969 年）}が古典的な名著である。\\
+
+しかし、今やノートパソコンを図書館に持ち込んでノートをとる時代、更に進んで論文はほとんど「e ジャーナル」になってパソコンで読める時代である。
+参考にしたい文献を見つけたら、その場で自分用の文献データベースに登録するようにするとよい。\\
+
+文献専用のデータベース・ソフトもいろいろ作成されているが、テキストエディタでテキストファイルに書き込む程度で十分である。
+単純な検索にはエディタの検索機能が使えるし、Ruby、Python などの軽量言語を用いれば複雑な加工もできる。
+それに、テキストファイルならコンピュータ（環境）に依存しないので安心である。\\
+
+文献データベースファイル（bib ファイル）のファイル名は拡張子を bib にする。
+これは文献（bibliography）の綴りから取った名前である。
+例えば、butsuri.bib、suugaku.bib などというテキストファイルに、文献カードに書くような内容を書き込む。
+具体的には、次のような流儀で @{}Book{} の中に参照名、著者名、書名、出版社名、出版年などを書いておくのが B{\scriptsize IB}\hspc{-1.50pt}\TeX{}の流儀である。
+欄を並べる順番は自由である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+@book{leunen, % ← leunen が参照名
+  author = "Mary-Claire van Leunen",
+  title  = "A Handbook for Scholars",
+  publisher = "Alfred A. Knopf",
+  year   = "1978",
+  memo   = "何でもメモっておける"}
+@book{木下：作技,
+  yomi   = "Koreo Kinoshita", % 読みは名・性の順で統一
+  author = "木下 是雄",
+  title  = "理科系の作文技術",
+  series = "中公新書 624",
+  publisher = "中央公論社",
+  year   = "1981"}
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}

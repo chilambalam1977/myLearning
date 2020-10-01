@@ -1,0 +1,864 @@
+%%
+%% 章：数式の基礎
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{数式の基礎}
+\TeX{}を開発した Knuth 教授は数学者でもあり、数式関係の\TeX{}の機能は抜群である。
+本章では、\LaTeX{}の標準機能による数式の書き方を説明し、次章では amsmath パッケージによる高度な数式の書き方を説明する。
+%%
+%% 節：数式の基本
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{数式の基本}
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  アインシュタインは $E=mc^{2}$ と言った。
+\end{mdframed}\vspc{-0.70zw}
+と出力するには、\LaTeX{}では、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+アインシュタインは $E=mc^{2}$ と言った。
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述する。
+この \verb'$'（ドル記号）で挟まれた部分が数式である。\\
+
+\texttt{E} や \texttt{m} や \texttt{c} のようなアルファベットが、数式中では $E$ や $m$ や $c$ のような数式用フォント（イタリック体）で出力される。
+また、\verb`^`（ハット）に続く文字が「上付き文字」（superscript）になる。\\
+
+数式にはもう 1 種類ある。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  アインシュタインは \[ E=mc^{2} \] と言った。
+\end{mdframed}\vspc{-0.70zw}
+のような別行立ての数式、あるいは別行数式（displayed formula, display math）と呼ばれるものである。
+これは、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+アインシュタインは \[ E=mc^{2} \] と言った。
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように \verb`\[...\]` でサンドイッチする。
+%%
+%% 節：数式用のフォント
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{数式用のフォント}
+\LaTeX{}では標準で Computer Modern フォントが使われる。\enlargethispage{+2.70zw}
+本文を Times 系のフォントにするには、プリアンブルに、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{newtxtext}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書けばよいのだが、本文だけでなく数式も Times 系のフォントにするためには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{newtxtext,newtxmath}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述する。\\
+
+同様に、本文・数式が Palatino フォントにするためには、プリアンブルに、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{newpxtext,newpxmath}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述する。あるいは、少々デザインは異なるが、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{mathpazo}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述しても本文・数式が Palatino フォントになる。
+%%
+%% 節：数式の書き方の詳細
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{数式の書き方の詳細}
+数式モードでは、次のように半角空白を入れても出力は変わらない。
+
+\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$a + (- b) = a - b$` & → & $a+(-b)=a-b$ \\
+  \hspc{+1.00zw}\verb`$a+(-b)=a-b$`        & → & $a+(-b)=a-b$ \\
+\end{tabular}
+
+また、数式用の書体 $xyz$（\verb`$xyz$`）は、本文用イタリック体 \textit{xyz}（\textit{xyz}）とは微妙に異なることがある。
+特に、文字間の間隔が異なるため、本文のイタリック体の代わりに数式モードを用いると次のようにおかしなことになる。
+
+\begin{tabular}{clcl}
+  \hspc{+1.00zw}\textcolor{blue}{（正）} & \hspc{-10.0pt}\verb`\textit{difference}` & → & \textit{differencec} \\
+  \hspc{+1.00zw}\textcolor{blue}{（誤）} & \hspc{-10.0pt}\verb`$difference$`        & → & $difference$         \\
+\end{tabular}
+
+更に、約物（句読点や括弧類）以外の文字と数式の間には、半角の空白 \textvisiblespace\ を入れるのが慣習となっている。
+
+\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`方程式`\textvisiblespace\verb`$f(x)=0$`\textvisiblespace\verb`の解` & ← & 通常は半角空白を入れる。      \\
+  \hspc{+1.00zw}\verb`方程式「$f(x)=0$、$g(x)=0$」の解`                                   & ← & 約物との間には空白を入れない。\\
+\end{tabular}
+%%
+%% 節：上付き文字・下付き文字
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{上付き文字・下付き文字}
+累乗（一般に上付き文字）$x^{2}$ は \verb`$x^2$` と書く。
+しかし、$x^{10}$ と出力するつもりで \verb`x^10` と書くと \verb'$x^10$' となってしまう。
+ここは、\verb`x^{10}` と書かなければならない。
+また、$a_{n}$ のような添字（一般に下付き文字）を付けるには \verb`$a_n$` のように書く。
+これも添字が 2 文字以上なら \verb`$a_{ij}$` のようなグループ化が必要となる。\\
+
+いくつかの複雑な例を挙げておく。
+
+\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$2^{2^{2}}$`                              & → & $2^{2^{2}}$                              \\
+  \hspc{+1.00zw}\verb`$a^{k_{ij}}$`                             & → & $a^{k_{ij}}$                             \\
+  \hspc{+1.00zw}\verb`$\mathrm{^{137m}Ba}$`                     & → & $\mathrm{^{137m}Ba}$                     \\
+  \hspc{+1.00zw}\verb`$\mathrm{^{137}_{\hphantom{0}55}Cs}$`     & → & $\mathrm{^{137}_{\hphantom{0}55}Cs}$     \\
+  \hspc{+1.00zw}\verb`$R^{\rho}{}_{\sigma\mu\nu}$`              & → & $R^{\rho}{}_{\sigma\mu\nu}$              \\
+  \hspc{+1.00zw}\verb`$R^{\rho}_{\hphantom{\rho}\sigma\mu\nu}$` & → & $R^{\rho}_{\hphantom{\rho}\sigma\mu\nu}$ \\
+\end{tabular}
+%%
+%% 節：別行立ての数式
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{別行立ての数式}
+前述したように、\verb`\[...\]` で囲めば別行立ての数式となる。
+無指定では、別行立ての数式は行の中央に配置される。
+左端から一定の距離に配置するには、ドキュメントクラスのオプションに fleqn を指定する。
+すなわち、文書ファイルの最初の行を、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\doculemtclass[fleqn]{...}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のようにする。
+左端からの距離を全角 1 文字分にするには、更に、\enlargethispage{+1.00zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\setlength{\mathindent}{1zw}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように指定する。本稿ではこの指定を行っている。\\
+
+数式番号を付けるには、\verb`\[...\]` の代わりに equation 環境を用いて、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+別行とは……とは、
+\begin{equation}
+  y = ax^{2} + bx + c
+\end{equation}
+のように……
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように記述する。右側に数式番号が
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\vspace{-1.60zw}\begin{equation}
+  y = ax^{2} + bx + c \tag{1}
+\end{equation}
+\end{mdframed}\vspc{-0.70zw}
+のように自動的に出力される。
+章に分かれた本（jsbook ドキュメントクラス等）の場合は、第 3 章の最初の数式なら (3.1) のようになる。\\
+
+数式番号は標準では右側に付加される。
+左側に付けたい場合は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass[leqno]{...}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように leqno オプションを付加する。
+%%
+%% 節：和・積分
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{和・積分}
+和の記号 $\sum$ を出力する命令は \verb`\sum` である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\vspc{-1.30zw}\begin{equation*}
+  \sum_{k=1}^{n}{a_{k}} = a_{1}+a_{2}+a_{3}+\cdots+a_{n}
+\end{equation*}
+\end{mdframed}\vspc{-0.70zw}
+と出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\[ \sum_{k=1}^{n}{a_{k}} = a_{1}+a_{2}+a_{3}+\cdots+a_{n} \]
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述する。
+この \verb`_{k=1}` や \verb`^{n}` は上下の添字を付ける命令と同じだが、$\sum$ のような特殊な記号については、別行立ての数式として使ったときに限り、添字は記号の上下に付加される。\\
+
+同じ \verb`\sum` でも、本文中で、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+和 $\sum_{k=1}^{n}{a_{k}}$ を求めよ。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書くと、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  和 $\sum_{k=1}^{n}{a_{k}}$ を求めよ。
+\end{mdframed}\vspc{-0.70zw}
+のよう上下限の付き方が変わる。
+本文中で $\displaystyle{\sum_{k=1}^{n}{a_{k}}}$ のように別行立て数式のような和記号を使いたい場合には、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+$\displaystyle{\sum_{k=1}^{n}{a_{k}}}$
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように \verb`\displaystyle` という命令を用いる。
+逆に、別行立ての数式で本文中のような記号 $\sum_{k=1}^{n}{a_{k}}$ を出力するには、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\[ \textstyle{\sum_{k=1}^{n}{a_{k}}} \]
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように \verb`\textstyle` という命令を用いる。\\
+
+\verb`\displaystyle`、\verb`\textstyle` を使うと、和記号・積分記号・分数の大きさ、添字の位置などが変わる。
+大きさを変えないで、添字の付き方だけを変えたい場合には \verb`\limits`、\verb`\nolimits` を用いる。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`\[ \textstyle{\sum_{k=1}^{n}} \]`        & → & $\displaystyle{\textstyle{\sum_{k=1}^{n}}}$        \\[+0.90zw]
+  \hspc{+1.00zw}\verb`\[ \textstyle{\sum\limits_{k=1}^{n}} \]` & → & $\displaystyle{\textstyle{\sum\limits_{k=1}^{n}}}$ \\[+0.90zw]
+  \hspc{+1.00zw}\verb`\[ \sum\nolimits_{k=1}^{n} \]`           & → & $\displaystyle{\sum\nolimits_{k=1}^{n}}$           \\[+0.40zw]
+\end{tabular}\vspc{+0.50zw}
+
+積分記号 $\int$ は \verb`\int` という命令で出力する。
+これも和記号と同様に上下限を \verb`_ ^` で指定する。
+例えば、 \verb`\int_{0}^{1}` は、別行立て数式では $\displaystyle{\int_{0}^{1}}$、本文中では $\int_{0}^{1}$ のようになる。
+%%
+%% 節：分数
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{分数}
+分数（fraction）を書く命令は \verb`\frac{`\textcolor{blue}{\texttt{分子}}\verb`}{`\textcolor{blue}{\texttt{分母}}\verb`}` である。
+例えば、\verb`\[ y=\frac{1+x}{1-x} \]` と書けば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\vspc{-1.30zw}\begin{equation*}
+  y=\frac{1+x}{1-x}
+\end{equation*}
+\end{mdframed}\vspc{-0.70zw}
+と出力される。
+本文中で \verb`$y=\frac{1+x}{1-x}$` と書けば $y=\frac{1+x}{1-x}$ のように小さめの字となる。
+しかし、これは \verb`y=(1+x)/(1-x)` と書いて $y=(1+x)/(1-x)$ とする方がよいスタイルであるとされている。\vspc{+0.40zw}
+どうしても $\displaystyle{y=\frac{1+x}{1-x}}$ のように大きい分数を本文中で使いたい場合は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+$\displaystype{y=\frac{1+x}{1-x}}$
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように記述する。
+逆に、別行立ての数式を本文中の数式の形式にするには \verb`\textstyle` を用いる。\\
+
+なお、第 6 章で説明する amsmath パッケージには、大きい分数を出力する \verb`\dfrac`、小さい分数を出力する \verb`\tfrac` が定義されているので、そちらを使う方が便利である。
+%%
+%% 節：字間や高さの微調整
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{字間や高さの微調整}
+数式中の字間は多くの場合\TeX{}が正しく判断してくれる。
+例えば、\verb`$x-y$` と書いた際と \verb`$-y$` と書いた際では $-$ と $y$ の間隔は異なるのが正しいのだが、\TeX{}は正しくこれを判断してくれる。
+しかし、\TeX{}の判断には限界がある。
+例えば、\verb`f(x,y)dxdy` と書くと $f(x,y)dxdy$ となってしまい、意味の上での区切りがわかりにくくなってしまう。
+このような場合、$f(x,y)\,dx\,dy$ のように若干の空きを入れるには \verb`$f(x,y)\,dx\,dy$` のように \verb`\,` を適宜挿入する。
+同様に、\verb`$\sqrt{2}x$` より \verb`$\sqrt{2}\,x$` と書く方がよいだろう。\\
+
+数式中に強制的にスペースを入れる命令は \verb`\,` 以外にもいろいろ存在する。
+まず、\verb`\quad` は本文に 10 ポイントの文字を使っているなら 10 ポイントの空きを入れる命令である。
+\verb`\quad` は数式中でも本文中でも使用可能である。
+この \verb`\quad` の他に、次の命令が用意されている。
+
+\vspc{+0.25zw}\begin{tabular}{ll}
+  \hspc{+1.00zw}\verb`\qqad` & \verb`\quad` の 2 倍。                                     \\
+  \hspc{+1.00zw}\verb`\,`    & \verb`\quad` の $\hphantom{-}3/18$ ほど。                  \\
+  \hspc{+1.00zw}\verb`\>`    & \verb`\quad` の $\hphantom{-}4/18$ ほど（数式モードのみ）。\\
+  \hspc{+1.00zw}\verb`\;`    & \verb`\quad` の $\hphantom{-}5/18$ ほど（数式モードのみ）。\\
+  \hspc{+1.00zw}\verb`\!`    & \verb`\quad` の $          - 3/18$ ほど（数式モードのみ）。\\
+\end{tabular}\vspc{+0.25zw}
+
+上で「ほど」と書いたのは、状況に応じて若干伸び縮みするからである。
+\verb`\>` は足し算の $+$ の両側の空き、\verb`\;` は等号 $=$ の両側の空きに相当する。
+最後の \verb`\!` は負の空き、すなわち後戻りを意味する。
+これ以外に、数式で \verb`\`\textvisiblespace{} を使うと、本文の半角スペース \textvisiblespace{} 相当の空きが挿入される（\verb`\quad` の $1/3$ ～ $1/4$）。
+\verb`\,` などの空白は \verb`$i\,j$` のように使ったときと \verb`$a_{i\,j}$` のように添字の中で使ったときとで、長さが変化する。\\
+
+2 重積分 $\iint$ は、単純に \verb`\int\int` と書くと $\int\int$ のように積分記号の間隔が広くなりすぎてしまう。
+\verb`\!` を 2 ～ 3 個挿めばうまくいく。
+但し、これらは第 6 章で説明する amsmath パッケージで定義されている \verb`\iint` という命令を使った方が簡単である。
+3 重積分 \verb`\iiint` なども同様である。
+newtxmath、newpmath パッケージでも \verb`\iint`、\verb`\iiint` などが定義されている。\\
+
+文字の高さも微調整するとよい場合がある。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+$\sqrt{g} + \sqrt{h}$
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書くと、$\sqrt{g} + \sqrt{h}$ のように根号（ルート）の高さが不揃いになるので、\verb`\mathstruct` という命令を用いて、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+$\sqrt{\mathstrut{g}} + \sqrt{\mathstrut{h}}$
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように書けば、$\sqrt{\mathstrut{g}} + \sqrt{\mathstrut{h}}$ のように多少ましになるが、フォントによってはこれでも不揃いになる。
+更に凝った方法は第 6 章で紹介する。\enlargethispage{+2.00zw}
+%%
+%% 節：式の参照
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{式の参照}
+\LaTeX{}は数式に自動的に番号を振ってくれるが、書き手は数式を番号ではなく適当な名前で管理する方が便利である。\\
+
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\vspc{-1.60zw}\begin{equation*}
+  E = mc^{2} \tag{12}
+\end{equation*}
+\end{mdframed}\vspc{-0.70zw}
+という数式があったとする。
+この数式の番号は (12) だが、追加・削除したり順番を変えたりすると番号は変わってしまう。
+そこで、この数式に例えば eq:Einstein という名前を付けて、この名前で管理すると便利である。
+それには \verb`\label` という命令を用いて、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{equation}
+  E = mc^{2} \label{eq:Einstein}
+\end{equation}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いておく。
+この数式番号を参照したいときには、命令 \verb`\ref` を用いる。
+また、数式のページを参照したいときには、命令 \verb`\pageref` を用いる。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\pageref{eq:Einstein} ページの式 (\ref{eq:Einstein}) によれば...
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすれば ``89 ページの式 (12) によれば\ldots'' のように出力される。
+参照する側とされる側のどちらが先にあっても構わない。
+但し、このような参照機能を用いる際には、文書ファイルを\LaTeX{}で少なくとも 2 回処理することが必要となる。
+例えば、foo.tex という文書ファイルなら、\LaTeX{}は 1 回目の実行で補助ファイル foo.aux に参照表を書き出し、2 回目の実行で foo.aux から参照番号を拾い出す。
+%%
+%% 節：括弧類
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{括弧類}
+括弧類（区切り文字：delimiters）には次のような種類が存在する。
+まず、左右の区別があるものは以下の通りである。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+  入力              & 出力         & 入力                     & 出力                & 入力                     & 出力                \\ \toprule
+  \verb`(x)`        & $(x)$        & \verb`\{ x \}`           & $\{ x \}$           & \verb`\lceil x \rceil`   & $\lceil x \rceil$   \\
+  \verb`[x]`        & $[x]$        & \verb`\lfloor x \rfloor` & $\lfloor x \rfloor$ & \verb`\langle x \rangle` & $\langle x \rangle$ \\
+\end{longtable}\vspc{-0.50zw}
+次は左右の区別のないものである。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力              & 出力         & 入力                     & 出力                & 入力                     & 出力                \\ \toprule
+  \verb`/`          & $/$          & \verb`\uparrow`          & $\uparrow$          & \verb`\updownarrow`      & $\updownarrow$      \\
+  \verb`\backslash` & $\backslash$ & \verb`\Uparrow`          & $\Uparrow$          & \verb`\Updownarrow`      & $\Updownarrow$      \\
+  \verb`|`          & $|$          & \verb`\downarrow`        & $\downarrow$        &                          &                     \\
+  \verb`\|`         & $\|$         & \verb`\Downarrow`        & $\Downarrow$        &                          &                     \\
+\end{longtable}\vspc{-0.50zw}
+これらを少し大きくするには、前に \verb`\big` を付ける。
+但し、左括弧の類は \verb`\bigl`、右括弧の類は \verb`\bigr` とする方がバランスがよくなる。
+また、2 項関係を表す記号を大きくするには \verb`\bigm` を付ける。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\bigl| |x| + |y| \bigr|$`                        & → & $\bigl| |x| + |y| \bigr|$                        \\
+  \hspc{+1.00zw}\verb`$\bigl\lfloor \sqrt{X} \bigr\rfloor$`             & → & $\bigl\lfloor \sqrt{X} \bigr\rfloor$             \\
+  \hspc{+1.00zw}\verb`$\bigl(x - f(x) \big)\big/ \big(x + f(x) \bigr)$` & → & $\bigl(x - f(x) \big)\big/ \big(x + f(x) \bigr)$ \\
+\end{tabular}\vspc{+0.50zw}
+
+\verb`\big` より大きくするには \verb`\Big`、\verb`\bigg`、\verb`\Bigg` を付ける。
+\verb`\Bigl`、\verb`\biggl`、\verb`\Biggl`、\verb`\Bigr`、\verb`\biggr`、\verb`\Biggr`、\verb`\Bigm`、\verb`\biggm`、\verb`\Biggm` についても同様である。\\
+
+次のように \verb`\left`、\verb`\right` を用いれば、区切りの大きさが自動的に選択される。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\left(x \right)$`                           & → & $\left(x     \right)$                       \\[0.50zw]
+  \hspc{+1.00zw}\verb`$\left(x^{2} \right)$`                       & → & $\left(x^{2} \right)$                       \\[0.25zw]
+  \hspc{+1.00zw}\verb`$\displaystyle{\left( \frac{A}{B} \right)}$` & → & $\displaystyle{\left( \frac{A}{B} \right)}$ \\
+\end{tabular}\vspc{+0.50zw}
+
+\verb`\left` と \verb`\right` は必ずペアで用いる。
+片方だけ括弧を付けたい場合には、
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\left( x^{2} \right.$`                      & → & $\left( x^{2} \right. $                      \\
+\end{tabular}\vspc{+0.50zw}
+
+のように、もう片方はピリオド（$ . $）にしておく。
+この場合のピリオドは出力されない。\\
+
+あまり古くないシステム（$\epsilon$-\TeX{}拡張されたもの）では、次のような \verb`\middle` という命令も定義されている。
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\displaystyle{\left( \frac{A}{B}} \middle/ \frac{C}{D} \right)$` & → & $\displaystyle{\left( \frac{A}{B} \middle/ \frac{C}{D} \right)}$
+\end{tabular}\vspc{+0.50zw}
+%%
+%% 節：ギリシア文字
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ギリシア文字}
+数式モードで扱うことができるギリシア文字を挙げておく。\\
+
+小文字は英語名の前に \verb`\` を付けるだけである。
+但し、$o$（omicron）だけは英語のオーと同じなので特に用意されていない。
+\vspc{-1.50zw}\begin{longtable}{@{}lclclclc@{}}
+    入力            & 出力       & 入力           & 出力      & 入力          & 出力     & 入力            & 出力       \\ \toprule
+    \verb`\alpha`   & $\alpha$   & \verb`\eta`    & $\eta$    & \verb`\nu`    & $\nu$    & \verb`\tau`     & $\tau$     \\
+    \verb`\beta`    & $\beta$    & \verb`\theta`  & $\theta$  & \verb`\xi`    & $\xi$    & \verb`\upsilon` & $\upsilon$ \\
+    \verb`\gamma`   & $\gamma$   & \verb`\iota`   & $\iota$   & \verb`o`      & $o$      & \verb`\phi`     & $\phi$     \\
+    \verb`\delta`   & $\delta$   & \verb`\kappa`  & $\kappa$  & \verb`\pi`    & $\pi$    & \verb`\chi`     & $\chi$     \\
+    \verb`\epsilon` & $\epsilon$ & \verb`\lambda` & $\lambda$ & \verb`\rho`   & $\rho$   & \verb`\psi`     & $\psi$     \\
+    \verb`\zeta`    & $\zeta$    & \verb`\mu`     & $\mu$     & \verb`\sigma` & $\sigma$ & \verb`\omega`   & $\omega$   \\
+\end{longtable}\vspc{-0.50zw}
+一部のギリシア文字（小文字）には変体文字が用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+    入力               & 出力          & 入力           & 出力      & 入力             & 出力        \\ \toprule
+    \verb`\varepsilon` & $\varepsilon$ & \verb`\varpi`  & $\varpi$  & \verb`\varsigma` & $\varsigma$ \\
+    \verb`\vartheta`   & $\vartheta$   & \verb`\varrho` & $\varrho$ & \verb`\varphi`   & $\varphi$   \\
+\end{longtable}\vspc{-0.50zw}
+大文字は、次の 11 通り以外は英語のアルファベットの大文字と同じである。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+    入力          & 出力     & 入力           & 出力      & 入力            & 出力       & 入力          & 出力     \\ \toprule
+    \verb`\Gamma` & $\Gamma$ & \verb`\Lambda` & $\Lambda$ & \verb`\Sigma`   & $\Sigma$   & \verb`\Psi`   & $\Psi$   \\
+    \verb`\Delta` & $\Delta$ & \verb`\Xi`     & $\Xi$     & \verb`\Upsilon` & $\Upsilon$ & \verb`\Omega` & $\Omega$ \\
+    \verb`\Theta` & $\Theta$ & \verb`\Pi`     & $\Pi$     & \verb`\Phi`     & $\Phi$     &               &          \\
+\end{longtable}\vspc{-0.50zw}
+数式中のギリシア文字は、慣習に従って小文字だけ斜体となる。
+大文字も斜体にしたい場合は、第 6 章の amsmath パッケージを用いて、例えば \verb`\varDelta` と書けば $\varDelta$ が出力される。\\
+
+小文字を立体にしたい場合は一部の文字については textcomp パッケージで出力することができる（例：\verb`\textmu` で \textmu）。
+もっと広範囲に立体を使いたい場合は \verb`\usepackage{upgreek}` として \verb`\up...` という命令を用いる。
+例えば、$\mu$ の立体は \verb`$\upmu$`（\textmu）である。
+%%
+%% 節：筆記体
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{筆記体}
+大文字の筆記体には数式モードで \verb`mathcal` という命令で記述する。
+標準では次のようなフォントになる。
+\vspc{-0.50zw}\begin{longtable}{@{}lcl@{}}
+  \verb`$\mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$` & → & $\mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$
+\end{longtable}\vspc{-0.50zw}
+物理でハミルトニアンやラグランジュを $\mathscr{H}$ や $\mathscr{L}$ のようにかっこよく書くには、プリアンブルに、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{mathrsfs}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いておき、\verb`$\mathscr{H}$` のように記述する。
+このフォントは RSFS（Ralph Smith's Formal Script）と言う。
+%%
+%% 節：2 項演算子
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{2 項演算子}
+2 項演算子とは足し算、引き算の記号の仲間である。
+各々を単独で用いたり、$\pm a$（\verb`$\pm a$`）のように単項演算子として用いたりすることもできる。\pagebreak
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+    入力          & 出力     & 入力           & 出力      & 入力                    & 出力               & 入力          & 出力         \\ \toprule
+    \verb`+`      & $+$      & \verb`\circ`   & $\circ$   & \verb`\vee`             & $\vee$             & \verb`\oplus`   & $\oplus$   \\
+    \verb`-`      & $-$      & \verb`\bullet` & $\bullet$ & \verb`\wedge`           & $\wedge$           & \verb`\ominus`  & $\ominus$  \\
+    \verb`\pm`    & $\pm$    & \verb`\cdot`   & $\cdot$   & \verb`\setminus`        & $\setminus$        & \verb`\otimes`  & $\otimes$  \\
+    \verb`\mp`    & $\mp$    & \verb`\cap`    & $\cap$    & \verb`\wr`              & $\wr$              & \verb`\oslash`  & $\oslash$  \\
+    \verb`\times` & $\times$ & \verb`\cup`    & $\cup$    & \verb`\diamond`         & $\diamond$         & \verb`\odot`    & $\odot$    \\
+    \verb`\div`   & $\div$   & \verb`\uplus`  & $\uplus$  & \verb`\bigtriangleup`   & $\bigtriangleup$   & \verb`\bigcirc` & $\bigcirc$ \\
+    \verb`*`      & $*$      & \verb`\sqcap`  & $\sqcap$  & \verb`\bigtriangledown` & $\bigtriangledown$ & \verb`\dagger`  & $\dagger$  \\
+    \verb`\ast`   & $\ast$   & \verb`\sqcup`  & $\sqcup$  & \verb`\triangleleft`    & $\triangleleft$    & \verb`\ddagger` & $\ddagger$ \\
+    \verb`\star`  & $\star$  &                &           & \verb`\triangleright`   & $\triangleright$   & \verb`\amalg`   & $\amalg$   \\
+\end{longtable}\vspc{-0.50zw}
+%%
+%% 節：関係演算子
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{関係演算子}
+関係演算子とは等号 $=$、不等号 $<$、$>$ の仲間である。
+まず、左向きと右向きの区別のあるものを挙げる。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+    入力             & 出力      & 入力             & 出力      & 入力               & 出力          & 入力               & 出力          \\ \toprule
+    \verb`<`         & $<$       & \verb`>`         & $>$       & \verb`\supset`     & $\subset$     & \verb`\supset`     & $\supset$     \\
+    \verb`\le, \leq` & $\le$     & \verb`\ge, \geq` & $\ge$     & \verb`\supseteq`   & $\subseteq$   & \verb`\supseteq`   & $\supseteq$   \\
+    \verb`\prec`     & $\prec$   & \verb`\succ`     & $\succ$   & \verb`\sqsubseteq` & $\sqsubseteq$ & \verb`\sqsupseteq` & $\sqsupseteq$ \\
+    \verb`\preceq`   & $\preceq$ & \verb`\succeq`   & $\succeq$ & \verb`\vdash`      & $\vdash$      & \verb`\dashv`      & $\dashv$      \\
+    \verb`\ll`       & $\ll$     & \verb`\gg`       & $\gg$     & \verb`\in`         & $\in$         & \verb`\ni`         & $\ni$         \\
+    \                &           &                  &           & \verb`\notin`      & $\notin$      &                    &               \\
+\end{longtable}\vspc{-0.50zw}
+次は、左向きと右向きの区別がないものである。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+    入力          & 出力     & 入力           & 出力      & 入力           & 出力      & 入力             & 出力        \\ \toprule
+    \verb`=`      & $=$      & \verb`\sim`    & $\sim$    & \verb`\propto` & $\propto$ & \verb`\parallel` & $\parallel$ \\
+    \verb`\equiv` & $\equiv$ & \verb`\simeq`  & $\simeq$  & \verb`\models` & $\models$ & \verb`\bowtie`   & $\bowtie$   \\
+    \verb`\neq`   & $\neq$   & \verb`\asymp`  & $\asymp$  & \verb`\perp`   & $\perp$   & \verb`\smile`    & $\smile$    \\
+    \verb`\doteq` & $\doteq$ & \verb`\approx` & $\approx$ & \verb`\mid`    & $\mid$    & \verb`\frown`    & $\frown$    \\
+    \             &          & \verb`\cong`   & $\cong$   & \verb`:`       & $:$       &                  &             \\
+\end{longtable}\vspc{-0.50zw}
+$\doteqdot$ などの記号は AMSFonts（第 6 章）の \verb`\doteqdot` を用いる。
+斜線を重ねるには \verb'\not' を冠する。
+\vspc{-0.50zw}\begin{longtable}{@{}lc@{}}
+    入力                    & 出力             \\ \toprule
+    \verb`$x \not\equiv y$` & $x \not\equiv y$ \\
+\end{longtable}\vspc{-0.50zw}
+\verb`$\{x | x \leq 1\}$` とすると $\{x | x \leq 1\}$ のようにバランスが悪くなる。
+以下のように記述するのが望ましい。
+\vspc{-0.50zw}\begin{longtable}{@{}lcl@{}}
+  \hspc{+1.00zw}\verb`$\{x \mid x \leq 1\}$` & → & $\{x \mid x \leq 1\}$
+\end{longtable}\vspc{-0.50zw}
+\verb`\mid` を少し大きくしたい場合は \verb`\bigm\mid` ではなく \verb`\big|` とする。
+両側のスペースも入る。\\
+
+一方で、\verb`\middle|` とすれば（$\epsilon$-\TeX{}拡張された新しい\TeX{}やp\TeX{}では）括弧に合わせて大きくなるが、両側に \verb`\;` と同じ幅のスペースが入らない。
+これを解決する方法の１つは、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\newcommand{\relmiddle}[1]{\mathrel{}\middle#1\mathrel{}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と定義しておき、
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\displaystyle{\left\{ x \relmiddle| x \leq \frac{1}{2} \right\}}$` & → & $\displaystyle{\left\{ x \relmiddle| x \leq \frac{1}{2} \right\}}$
+\end{tabular}\vspc{+0.50zw}
+とする。\\
+
+コロンも数式の中では関係演算子扱いとなり、両側に \verb`\;` 相当の空白が入る。
+このような空白を出力したくない場合には、\verb`{:}` のように中括弧で囲む。\\
+
+次のような場合に、適切な空白を入れてくれる \verb`\colon` という命令も用意されている。
+\vspc{-0.00zw}\begin{longtable}{@{}lcl@{}}
+  \verb`$f :     A \to B$` & → & $f :     A \to B$ \\
+  \verb`$f{:}\   A \to B$` & → & $f{:}\   A \to B$ \\
+  \verb`$f\colon A \to B$` & → & $f\colon A \to B$ \\
+\end{longtable}\vspc{-2.00zw}
+%%
+%% 節：矢印
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{矢印}
+矢印は、括弧類で挙げたもの以外に、次のものが用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclc@{}}
+    入力                             & 出力               & 入力                       & 出力                  \\ \toprule
+    \verb`\leftarrow`（\verb`gets`） & $\leftarrow$       & \verb`\longleftarrow`      & $\longleftarrow$      \\
+    \verb`\Leftarrow`                & $\Leftarrow$       & \verb`\Longleftarrow`      & $\Longleftarrow$      \\
+    \verb`\rithgarrow`（\verb`\to`） & $\rightarrow$      & \verb`\longrightarrow`     & $\longrightarrow$     \\
+    \verb`\Rightarrow`               & $\Rightarrow$      & \verb`\Longrightarrow`     & $\Longrightarrow$     \\
+    \verb`\leftrightarrow`           & $\leftrightarrow$  & \verb`\longleftrightarrow` & $\longleftrightarrow$ \\
+    \verb`\Leftrightarrow`           & $\Leftrightarrow$  & \verb`\Longleftrightarrow` & $\Longleftrightarrow$ \\
+    \verb`\mapsto`                   & $\mapsto$          & \verb`\longmapsto`         & $\longmapsto$         \\
+    \verb`\hookleftarrow`            & $\hookleftarrow$   & \verb`\hookrightarrow`     & $\hookrightarrow$     \\
+    \verb`\leftharpoonup`            & $\leftharpoonup$   & \verb`\rightharpoonup`     & $\rightharpoonup$     \\
+    \verb`\leftharpoondown`          & $\leftharpoondown$ & \verb`\rightharpoondown`   & $\rightharpoondown$   \\
+\end{longtable}\vspc{-0.50zw}
+なお、\verb`\iff` も \verb`\Longleftrightarrow` と同じ記号 $\iff$ を出力するが、両側の空きは \verb`\iff` の方が広くなる。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力            & 出力       & 入力            & 出力       & 入力                      & 出力                 \\ \toprule
+  \verb`\nearrow` & $\nearrow$ & \verb`\swarrow` & $\swarrow$ & \verb`\rightleftharpoons` & $\rightleftharpoons$ \\
+  \verb`\searrow` & $\searrow$ & \verb`\nwarrow` & $\nwarrow$ &                           &                      \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：雑記号
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{雑記号}
+上記以外に、以外に次のようなものが用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力            & 出力       & 入力             & 出力        & 入力                        & 出力           \\ \toprule
+  \verb`\aleph`   & $\aleph$   & \verb`\prime`    & $\prime$    & \verb`\neg`（\verb`\lnot`） & $\neg$         \\
+  \verb`\hbar`    & $\hbar$    & \verb`\emptyset` & $\emptyset$ & \verb`\flat`                & $\flat$        \\
+  \verb`\imath`   & $\imath$   & \verb`\nabla`    & $\nabla$    & \verb`\natural`             & $\natural$     \\
+  \verb`\jmath`   & $\jmath$   & \verb`\surd`     & $\surd$     & \verb`\sharp`               & $\sharp$       \\
+  \verb`\ell`     & $\ell$     & \verb`\top`      & $\top$      & \verb`\clubsuit`            & $\clubsuit$    \\
+  \verb`\wp`      & $\wp$      & \verb`\bot`      & $\bot$      & \verb`\diamondsuit`         & $\diamondsuit$ \\
+  \verb`\Re`      & $\Re$      & \verb`\angle`    & $\angle$    & \verb`\heartsuit`           & $\heartsuit$   \\
+  \verb`\Im`      & $\Im$      & \verb`\triangle` & $\triangle$ & \verb`\spadesuit`           & $\spadesuit$   \\
+  \verb`\partial` & $\partial$ & \verb`\forall`   & $\forall$   &                             &                \\
+  \verb`\infty`   & $\infty$   & \verb`\exists`   & $\exists$   &                             &                \\
+\end{longtable}\vspc{-0.50zw}
+%%
+%% 節：latexsym で定義されている文字
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{latexsym で定義されている文字}
+\LaTeX\ 2.09 では標準で使えた次の記号が、\LaTeXe{}ではオプションとなっている。
+これらの記号を使うには、プリアンブルに \verb`\usepackage{latexsym}`と書いておく。
+なお、ほぼ同じ記号が AMSFonts（第 6 章参照）にも用意されている。
+次の 3 つの表において、括弧内は該当する AMSFonts（amssymb パッケージでの名前）である。
+今後は、この AMSFonts を用いた方がいいだろう。\\
+
+まず、2 項演算子から挙げておく。
+\vspc{-0.50zw}\begin{longtable}{@{}lclc@{}}
+  入力                                      & 出力                & 入力                                    & 出力               \\ \toprule
+  \verb`\lhd`（\verb`\vartriangleleft`）    & $\vartriangleleft$  & \verb`\unlhd`（\verb`\trianglelefteq`） & $\trianglelefteq$  \\
+  \verb`\rhd`（\verb`\vartriangleright`）   & $\vartriangleright$ & \verb`\unrhd`（\verb`\trianglerighteq`）& $\trianglerighteq$ \\
+  \multicolumn{4}{l}{\hspc{-8.50zw}関係演算子は以下の通りである。}                                                             \\
+  入力                                      & 出力                & 入力                                    & 出力               \\ \toprule
+  \verb`\sqsubset`（\verb`\sqsubset` ）     & $\sqsubset$         & \verb`\sqsupset`（\verb`\sqsupset`）    & $\sqsupset$        \\
+  \verb`\Join`(\verb'\bowtie')              & $\Join$             &                                         &                    \\
+  \multicolumn{4}{l}{\hspc{-8.50zw}それ以外の記号は以下の通りである。}                                                         \\
+  入力                                      & 出力                & 入力                                    & 出力               \\ \toprule
+  \verb`\leadsto`（\verb`\rightsquigarrow`）& $\rightsquigarrow$  & \verb`\Diamond`（\verb`\lozenge`）      & $\lozenge$         \\
+  \verb`\Box`（\verb`\square`）             & $\square$           & \verb`\mho`（\verb`\mho`）              & $\mho$             \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：mathcomp で定義されている文字
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{mathcomp で定義されている文字}
+textcomp パッケージの記号を数式モードで出力するための mathcomp パッケージによる記号である。
+デフォルトのフォントは Computer Modern Roman だが、例えば \verb`\usepackage[ppl]{mathcomp}` とすれば、Palatino（ppl）フォントになる。
+\vspc{-1.30zw}\begin{longtable}{@{}lclc@{}}
+  入力                       & 出力             & 入力                     & 出力                \\ \toprule
+  \verb`\tcohm`              & $\tcohm$         & \verb`\tcmu`             & $\tcmu$             \\
+  \verb`\tcdegree`           & $\tcdegree$      & \verb`\tccelsius`        & $\tccelsius$        \\
+  \verb`\tcoerthousand`      & $\tcperthousand$ &                          &                     \\
+\end{longtable}\vspc{-0.50zw}
+$45\tcdegree$ を昔は \verb`$45^{\circ}$` と書いていたが、今はテキストモードでは textcomp の \verb`\textdegree`、数式モードでは mathcomp の \verb`\tcdegree` 使うべきである。
+尚、\textcelsius{}は単位記号なので、数字との間に若干のスペース \verb`\,` を入れるのが正しいとされている。
+%%
+%% 節：大きな記号
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{大きな記号}
+和・積分の類である。
+\vspc{-1.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力           & 出力      & 入力             & 出力        & 入力              & 出力         \\ \toprule
+  \verb`\sum`    & $\sum$    & \verb`\bigcap`   & $\bigcap$   & \verb`\bigodot`   & $\bigodot$   \\
+  \verb`\prod`   & $\prod$   & \verb`\bigcup`   & $\bigcup$   & \verb`\bigotimes` & $\bigotimes$ \\
+  \verb`\coprod` & $\coprod$ & \verb`\bigsqcup` & $\bigsqcup$ & \verb`\bigoplus`  & $\bigoplus$  \\
+  \verb`\int`    & $\int$    & \verb`\bigvee`   & $\bigvee$   & \verb`\biguplus`  & $\biguplus$  \\
+  \verb`\oint`   & $\oint$   & \verb`\bigwedge` & $\bigwedge$ &                   &              \\
+\end{longtable}\vspc{-2.50zw}
+%%
+%% 節：log 型関数と mod
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{$\log$ 型関数と $\bmod$}
+$\log$ のような関数はイタリック体ではなく、アップライト体（立体）で書く。
+$\log x$ と出力するつもりで \verb`$log x$` と書くと $\log x$ のような見苦しい出力となってしまう。
+正しくは \verb`\log` という命令を用いて \verb`$\log x$` と書く。\\
+
+この種の関数は多数存在する。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+  入力           & 出力      & 入力        & 出力   & 入力           & 出力      & 入力         & 出力    \\ \toprule
+  \verb`\arccos` & $\arccos$ & \verb`\csc` & $\csc$ & \verb`\ker`    & $\ker$    & \verb`\min`  & $\min$  \\
+  \verb`\arcsin` & $\arcsin$ & \verb`\deg` & $\deg$ & \verb`\lg`     & $\lg$     & \verb`\Pr`   & $\Pr$   \\
+  \verb`\arctan` & $\arctan$ & \verb`\det` & $\det$ & \verb`\lim`    & $\lim$    & \verb`\sec`  & $\sec$  \\
+  \verb`\arg`    & $\arg$    & \verb`\dim` & $\dim$ & \verb`\liminf` & $\liminf$ & \verb`\sin`  & $\sin$  \\
+  \verb`\cos`    & $\cos$    & \verb`\exp` & $\exp$ & \verb`\limsup` & $\limsup$ & \verb`\sinh` & $\sinh$ \\
+  \verb`\cosh`   & $\cosh$   & \verb`\gcd` & $\gcd$ & \verb`\ln`     & $\ln$     & \verb`\sup`  & $\sup$  \\
+  \verb`\cot`    & $\cot$    & \verb`\hom` & $\hom$ & \verb`\log`    & $\log$    & \verb`\tan`  & $\tan$  \\
+  \verb`\coth`   & $\coth$   & \verb`\inf` & $\inf$ & \verb`\max`    & $\max$    & \verb`\tanh` & $\tanh$ \\
+\end{longtable}\vspc{-0.50zw}
+これらの演算子のうち上限・下限をとるものは \verb`^` と \verb`_` で指定する。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\lim_{x \to \infty} f(x)$`                & → & $\lim_{s \to \infty} f(x)$                \\
+  \hspc{+1.00zw}\verb`$\displaystyle{\lim_{x \to \infty} f(x)}$` & → & $\displaystyle{\lim_{x \to \infty} f(x)}$ \\
+\end{tabular}\vspc{+0.50zw}
+
+$\log$ 型関数と似たものに次の 2 種類の $\bmod$ がある。
+\verb`\bmod` は 2 項（binary）演算子の $\bmod$ である。
+\verb`\pmod` は括弧付き（parenthesized）の $\bmod$ である。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$m \bmod n$`           & → & $m \bmod n$           \\
+  \hspc{+1.00zw}\verb`$a \equiv b \pmod{n}$` & → & $a \equiv b \pmod{n}$ \\
+\end{tabular}\vspc{+0.50zw}
+
+第 6 章においてこの類の追加と、これに類似の命令を新たに定義する方法を説明する。
+%%
+%% 節：上下に付けるもの
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{上下に付けるもの}
+数式モードだけで使うことができるアクセント記号である。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+  入力             & 出力        & 入力             & 出力        & 入力           & 出力      & 入力            & 出力       \\ \toprule
+  \verb`\hat{a}`   & $\hat{a}$   & \verb`\acute{a}` & $\acute{a}$ & \verb`\bar{a}` & $\bar{a}$ & \verb`\ddot{a}` & $\ddot{a}$ \\
+  \verb`\check{a}` & $\check{a}$ & \verb`\grave{a}` & $\grave{a}$ & \verb`\vec{a}` & $\vec{a}$ &                 &            \\
+  \verb`\breve{a}` & $\breve{a}$ & \verb`\tilde{a}` & $\tilde{a}$ & \verb`\dot{a}` & $\dot{a}$ &                 &            \\
+\end{longtable}\vspc{-0.50zw}
+$i$、$j$ にアクセント記号を付ける場合は、$\imath$（\verb`\imath`）、$\jmath$（\verb`\jmath`）を用いて、例えば、$\tilde{\imath}$（\verb`$\tilde{\imath}$`）のようにする。\\
+
+次は、伸縮自在の上下の棒の類である。
+\vspc{-0.50zw}\begin{longtable}{@{}lclc@{}}
+  入力                   & 出力              & 入力                                & 出力                           \\ \toprule
+  \verb`\overline{x+y}`  & $\overline{x+y}$  & \verb`\overbrace{x+y}`              & $\overbrace{x+y}$              \\
+  \verb`\underline{x+y}` & $\underline{x+y}$ & \verb`\underbrace{x+y}`             & $\underbrace{x+y}$             \\
+  \verb`\widehat{xyz}`   & $\widehat{xyz}$   & \verb`\overrightarrow{\mathrm{OA}}` & $\overrightarrow{\mathrm{OA}}$ \\
+  \verb`\widetidle{xyz}` & $\widetilde{xyz}$ & \verb`\overleftarrow{\mathrm{OA}}`  & $\overleftarrow{\mathrm{OA}}$  \\
+\end{longtable}\vspc{-0.50zw}
+以上のうち \verb`\widehat`、\verb`\widetilde` はある程度しか伸びない。
+これらは重ねたり、入れ子にしたりすることができる。\\
+
+\verb`\overbrace`、\verb`underbrace` は和記号と同じような添字の付き方をする。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\overbrace{a  + \cdots + z}^{26}$` & → & $\overbrace{a  + \cdots + z}^{26}$ \\
+  \hspc{+1.00zw}\verb`$\underbrace{a + \cdots + z}_{26}$` & → & $\underbrace{a + \cdots + z}_{26}$ \\
+\end{tabular}\vspc{+0.50zw}
+
+記号の上に式を乗せるには、\verb`\stackrel{`\texttt{\textcolor{blue}{上に乗る式}}\verb`}{`\texttt{\textcolor{blue}{記号}}\verb`}` とする。
+出来上がった記号は関係演算子として扱われる。
+
+\vspc{+0.50zw}\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$\stackrel{f}{\to}$`          & → & $\stackrel{f}{\to}$          \\
+  \hspc{+1.00zw}\verb`$\stackrel{\mathrm{def}}{=}$` & → & $\stackrel{\mathrm{def}}{=}$ \\
+\end{tabular}\vspc{+0.50zw}
+
+ここで \verb`\mathrm` は数式モード中の文字の書体をローマン体変える命令である。
+%%
+%% 節：数式の書体
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{数式の書体}
+数式中でも次のように書体を変えることができる。
+\vspc{-0.50zw}\begin{longtable}{@{}lclc@{}}
+  入力                      & 出力                 & 入力                  & 出力             \\ \toprule
+  \verb`x + \mathrm{const}` & $x + \mathrm{const}$ & \verb`H(x)`           & $H(x)$           \\
+  \verb`x\,\mathrm{cm}^{2}` & $x\,\mathrm{cm}^{2}$ & \verb`\mathrm{H}(x)`  & $\mathrm{H}(x)$  \\
+  \verb`x_\mathrm{max}`     & $x_\mathrm{max}$     & \verb`\mathcal{H}(x)` & $\mathcal{H}(x)$ \\
+  \verb`\mathbf{x}`         & $\mathbf{x}$         & \verb`\mathsf{H}(x)`  & $\mathsf{H}(x)$  \\
+  \verb`\mathit{diff}(x)`   & $\mathit{diff}(x)$   & \verb`\mathtt{H}(x)`  & $\mathtt{H}(x)$  \\
+\end{longtable}\vspc{-0.50zw}
+$\mathit{diff}$ のような 1 語となったものは \verb`$\mathit{diff}$` とする。
+単に、\verb`$diff(x)$` とすると $diff(x)$ のような見苦しい出力になってしまう\footnote{これは $d \times i \times f \times f(x)$ と解釈されてしまうためである。}。\\
+
+数式モード中で通常のローマン体の欧文を出力するには \verb`\mathrm` を使う方法と \verb`\textrm` を使う方法がある。
+\verb`\mathrm` では数式用のローマン体フォントになり、\verb`\textrm` では本文用のローマン体フォントになる。
+数式用フォントでは \verb`\mathrm{for all}` と書いても空白は入らない。
+\verb`\mathrm{for\ all}` 又は \verb`\textrm{for all}` とする必要がある。\\
+
+\verb`\textrm` の代わりに \verb`\mbox` を使うこともできる。
+しかし、これらでは添字中でも文字サイズが変わらないので、amsmath パッケージの \verb`\text` を用いた方がいいだろう。\\
+
+数式中で和文を使いたい場合は、\verb`\textmc`（明朝体）、\verb`\textgt`（ゴシック体）を用いるか、amsmath パッケージの \verb`\text` を用いる。\\
+
+数式中の太字（ボールド体）は \verb`\mathbf` で出力することができる。
+例えば、$\bm{\alpha}$（太字の \verb`\alpha`）なら \verb`\bm{\alpha}`、$\bm{\nabla}$（太字の \verb`\nabla`）なら \verb`\bm{\nabla}` のようにして出力する。
+また、同じ太字を何度も使う必要がある場合は、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\bmdefine{\balpha}{\alpha}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように定義すれば \verb`\balpha` で $\bm{\alpha}$ を出力することができるようになる。\\
+
+newtxmath や mathpazo 等の数式フォントを変更するパッケージと併用する場合は、\verb`\usepackage{bm}` はそれらのパッケージの後に記述する。
+%%
+%% 節：ISO/JIS の数式組版規則
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ISO/JIS の数式組版規則}
+昔からの数式の組版規則では、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item 数字はローマン体にする（$\mathit{3.14}$ ではなく $\mathrm{3.14}$）。
+\item 複数文字からなる名前はローマン体にする（$\sin\,x$ ではなく $\sin{x}$）。
+\item 単位記号はローマン体にする（$3\mathit{m}$ ではなく $3\,\mathrm{m}$）。
+\end{itemize}\vspc{-0.50zw}
+というルールになっている。
+また、$\sin{x}$ の $\sin$ と $x$ の間や、$3\,\mathrm{m}$ の $3$ と $\mathrm{m}$ の間には少しだけスペースを入れる。
+但し、$\sin{(a+b)}$ のように括弧が来る場合はスペースを空けない。\\
+
+例として『岩波数学辞典』第 3 版（1985 年）や、全編\TeX{}で組まれた第 4 版（2007 年）では、事象 $E$ の確率 $P(E)$、事象 $\epsilon$ の起こる確率 $\Pr(\epsilon)$ のような書き方をしている。
+例外として、ユニタリ群 $U(n)$ に対して特殊ユニタリ群 $\mathit{SU}(n)$ のように、複数文字でも群や体の名前はイタリック体になっている。
+$\mathit{GF}(n)$、$\mathit{Spin}(n)$ も同様である。\\
+
+しかし、ISO や JIS の流儀では、1 文字でも演算子や定数はローマン体にすることになっている。
+例えば、数学流の微分の書き方 $\mathit{dx}$ に対して、こちらの流儀では $\mathrm{d}x$（\verb`$\mathrm{d}x$`）のように立てて書く。
+また、自然対数の底などの定数も、こちらの流儀では $e$ や $\pi$ ではなく $\mathrm{e}=2.718\cdots$、$\pi=3.14\cdots$ のように立てて書く。
+どちらが正しいというわけではないので、投稿論文の決まりに従えばよい。
+%%
+%% 節：プログラムやアルゴリズムの組版
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{プログラムやアルゴリズムの組版}
+プログラムの組版は verbatim 環境を用いるのが最も簡単である。
+verbatim だけでは左寄せになるので、更に quote で囲むか、あるいは jsverb パッケージの verbatim 環境を用いる。
+後者の場合、\verb`\setlength\verbatimleftmargin{3zw}` などのようにして左マージンを設定することができる。
+なお、タブコードは半角空白 1 個分として扱われるので、予め適当な個数の空白に置換しておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\verb'\begin{quote}'                    \\
+\verb'\setlength{\baselineskip}{12pt}'  \\
+\verb`\verb'\begin{verbatim}`           \\
+\verb'sum1 = sum2 = 0 ;'                \\
+\verb'for (k = 1; k <= 10; k++) {'      \\
+\verb'    sum1 += k ; sum2 += k * k ;'  \\
+\verb'}'                                \\
+\verb'\end{verbatim}'                   \\
+\verb'\end{quote}'
+\end{mdframed}\vspc{-0.70zw}
+行送り（\verb`\baselineskip`）を 12 ポイントにしたのは、和文の本文の行送り（15 ～ 16 ポイント）では行間が空きすぎになってしまうからである。
+%%
+%% 節：array 環境
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{\texttt{array} 環境}
+array 環境は、第 8 章の tabular 環境とほぼ同じものだが、tabular 環境が本文中で使われるのに対して、array 環境は数式中で使われるというところが異なる。
+例えば、数式中で次のように記述すると、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{equation}
+  \begin{array}{lcr}
+    abc & abc & abc \\
+    x   & y   & z   \\
+  \end{array}
+\end{equation}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+以下の出力が得られる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \vspc{-1.25zw}\begin{equation*}
+    \begin{array}{lcr}
+      abc & abc & abc \\
+      x   & y   & z   \\
+    \end{array}
+  \end{equation*}
+\end{mdframed}\vspc{-0.70zw}
+このように、\verb`\begin{array}` に続く中括弧 \verb`{ }` の中に、各列の揃え方を並べる。
+中央揃えは \verb`c`、左揃えは \verb`l`、右揃えは \verb`r` である。
+array 環境の本体では、各列は \verb`&` で区切り、各行は \verb`\\` で区切る。\\
+
+従来の\LaTeX{}では、この array 環境に装飾を施して行列の類を出力していた。
+例えば、\verb`\left(...\right)` で囲めば、括弧付きの行列となる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{equation}
+  A = \left(
+  \begin{array}{@{\,}cccc@{\,}}
+    a_{11} & a_{12} & \cdots & a_{1n} \\
+    a_{21} & a_{22} & \cdots & a_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    a_{m1} & a_{m2} & \cdots & a_{mn} \\
+  \end{array}
+  \right)
+\end{equation}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+上のように書くと、以下の出力が得られる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \vspc{-1.25zw}\begin{equation*}
+    A = \left(
+    \begin{array}{@{\,}cccc@{\,}}
+      a_{11} & a_{12} & \cdots & a_{1n} \\
+      a_{21} & a_{22} & \cdots & a_{2n} \\
+      \vdots & \vdots & \ddots & \vdots \\
+      a_{m1} & a_{m2} & \cdots & a_{mn} \\
+    \end{array}
+    \right)
+  \end{equation*}
+\end{mdframed}\vspc{-0.70zw}
+行指定を \verb`{cccc}` ではなく \verb`{@{\,}cccc@{\,}}` としたのは、括弧と中身の間の空きを調節するためのトリックである。
+\verb`@{}` でいったん余分な空白を除いてから、\verb`\,` でほんの少しの空白を入れ直している。\\
+
+第 6 章で述べる amsmath パッケージを使えば、もっと素直に行列を書くことができる。
+ただ、array 環境は次のように行列の中に罫線を引くときに便利である。
+縦罫線は \verb`|`、横罫線は \verb`\hline` で描くことができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{equation}
+  A = \left(
+  \begin{array}{@{\,}c|ccc@{\,}}
+    a_{11} & 0      & \cdots & 0      \\ \hline
+    0      & a_{22} & \cdots & a_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0      & a_{m2} & \cdots & a_{mn} \\
+    \end{array}
+  \right)
+\end{equation}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで以下の出力が得られる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \vspc{-1.25zw}\begin{equation*}
+    A = \left(
+    \begin{array}{@{\,}c|ccc@{\,}}
+      a_{11} & 0      & \cdots & 0      \\ \hline
+      0      & a_{22} & \cdots & a_{2n} \\
+      \vdots & \vdots & \ddots & \vdots \\
+      0      & a_{m2} & \cdots & a_{mn} \\
+    \end{array}
+    \right)
+  \end{equation*}
+\end{mdframed}

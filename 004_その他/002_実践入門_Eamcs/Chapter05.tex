@@ -1,0 +1,865 @@
+%%
+%% 章：本体の設定
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{本体の設定}
+%%
+%% 節：設定を反映する方法
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{設定を反映する方法}
+本章からは Emacs の真骨頂とも言える設定について本格的に解説していく。
+これまで何度も述べてきたが、Emacs は非常にパワフルでハッカーフレンドリーなツールである。
+その理由は、全て設定の柔軟性に集約されている。\\
+
+Emacs の設定は init.el に Elisp を記述することで行っていくが、ファイルに設定を書き込むだけで即座に設定が反映されるわけではない。
+Emacs への設定反映は、変数の値を変更したり関数を実行したりすることで行われるが、その方法は大きく分けて 2 通り用意されている。\\
+
+1 つ目は init.el を保存して Emacs を再起動する方法である。
+これは確実だが、少しの設定変更で毎回再起動するのはさすがに面倒である。
+そこで、主に 2 つ目の方法を利用することになる。
+それが評価（\emph{eval, evaluation}）である。
+%%
+%% 項：C-x C-e と C-j による評価
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{C-x C-e と C-j による評価}
+必ず覚えておきたい評価方法は \texttt{eval-last-sexp (C-x C-e)} である。
+sexp とは S-expression の略で、日本語では S 式と呼ばれる。
+S 式 \texttt{(function arg)} の閉じ括弧の後ろにカーソルを移動した状態で \texttt{C-x C-e} を実行することで、その S 式を評価することができる。\\
+
+Emacs では \texttt{C-x C-e} を用いることで、いつでもどこでも S 式を評価して Elisp を実行する（戻り値がある場合はエコーエリアに表示される）ことができる。
+これが Emacs における設定の反映方法である。
+これから紹介する設定を直ちに反映させたい場合は、init.el へ記述した後、その S 式の後ろで \texttt{C-x C-e} を実行すればよい。
+再起動することなく設定が Emacs に反映される。\\
+
+また、*scratch* バッファでは \texttt{C-x C-e} の代わりに \texttt{C-j} によって S 式を評価することができ、実行すると戻り値が次の行に出力される。
+%%
+%% 項：その他の評価
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{その他の評価}
+\texttt{eval-last-sexp} 以外にも S 式を評価するコマンドは幾つか用意されているが、そのうち利用頻度の高いコマンドを 2 つ紹介しておく。
+他のコマンドに興味がある者は \texttt{M-x apropos-command RET eval- RET} から調べてみるとよいだろう。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{M-x eval-buffer RET}：カレントバッファの S 式を全て評価する。
+\item \texttt{M-x eval-region RET}：リージョン選択範囲の S 式を全て評価する。
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 節：キーバインドの設定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{キーバインドの設定}
+キーバインドの設定は Emacs の設定の中でも基本中の基本と言える。
+キーボードから全てを操作可能なエディタとして、キーボード操作を自由に設定することができることは非常に意義があることである。\\
+
+Emacs の設定は Elisp によって記述されるため、初級者には自由自在に設定をカスタマイズすることは難しいかもしれない。
+しかし、要点さえ掴むことができればキーバインドの設定はそこまで難しいものではない。\\
+
+キーバインドの設定には、既に登録されているキーバインドを上書きする場合と未定義のキーバインドに新しくコマンドを割り当てる場合の 2 通りが考えられるが、その方法はどちらも同じである。\\
+
+以下で解説するキーマップへ登録するだけで、上書きも新規追加も行われる。
+%%
+%% 項：キーマップ
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{キーマップ}
+キーマップとは Emacs がキーバインドを管理するためのデータ構造である。
+少々ややこしいが、難しく考えることはない。
+Emacs がキーバインドを登録しておく対応表（ルックアップテーブル）がキーマップなのである。
+Emacs はキーボードから入力を受けるとキーマップを検索し、入力に該当するキーバインドが見つかると、そこに登録されているコマンドを実行する。\\
+
+キーマップは大きく分けて 3 つに分類される。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \textgt{グローバルマップ（global-map）}                      \\
+  全てのバッファで有効となるキーバインドを登録するためのキーマップ。
+\item \textgt{カレントバッファローカルマップ（current-local-map）} \\
+  特定のバッファのみで有効となるキーバインドを登録するためのキーマップ。通常はフック（後述）と組み合わせて利用する。
+\item \textgt{各モードのキーマップ}                                \\
+  メジャーモード、そして一部のマイナーモードでそれぞれ独自に利用可能なキーバインドを登録するためのキーマップ。「モード名-mode-map」という名前が付けられることが多い。
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：キーバインドの優先順位
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{キーバインドの優先順位}
+もし重複して同じキーバインドが登録されている場合でも、次のようなルールに従って先に見つかったキーバインドが優先される。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-0.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[\ajMaru{1}] マイナーモードのキーマップを検索する。
+\item[\ajMaru{2}] カレンドバッファローカルマップを検索する。
+\item[\ajMaru{3}] メジャーモードのキーマップを検索する。
+\item[\ajMaru{4}] グローバルマップを検索する。
+\item[\ajMaru{5}] 以上で見つからない場合はエラーメッセージを返す。
+\end{itemize}\vspc{-0.50zw}
+もし登録したキーバインドが意図通りに利用できない場合は、この優先順位を確認するとよいだろう。
+%%
+%% 項：キーバインドの割り当て
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{キーバインドの割り当て}
+実際にキーバインドを割り当ててみる。
+キーバインドをキーマップに登録するには define-key 関数を用いる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{(define-key キーマップ キーバインド 関数のシンボル)}
+\end{itemize}\vspc{-0.50zw}
+例えば、次のように利用する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; C-m に newline-and-indent を割り当てる。初期値は newline となっている。
+(define-key global-map (kbd "C-m") 'newline-and-indent)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この例では、グローバルマップに \texttt{C-m} を入力した際に改行と同時にインデント（字下げ）を行う \texttt{newline-and-indent} コマンドを実行するようにキーバインドをグローバルマップに登録している（この設定の意味は後述する）。\\
+
+第 2 引数にあたるキーバインドには文字列かキーシーケンスを渡す。
+上の例ではキーシーケンス \verb|(kbd "C-m")| を渡しているが、文字列の場合は特殊なエスケープが必要となる。
+例えば、\texttt{C-m} を \texttt{\textbackslash{}C-m} と表記する必要がある。
+文字列による記述は短くて済む反面、間違いやすくミスが起こりやすくなる。\\
+
+kbd 関数はエスケープなしでキーバインドの文字列を渡すと、キーシーケンスを返してくれる便利な関数である。
+そのため、他の記述スタイルに比べ視認性に優れるというメリットがある。
+本稿では一貫して kbd 関数を用いて記述する方法で解説していく。
+%%
+%% 項：キーバインド例
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{キーバインド例}
+ここでは便利なキーバインド設定例を紹介する。
+しかし、キーバインドの好みは人それぞれなので、ここで挙げる例はあくまでも参考として閲覧してもらいたい。
+%%
+%% 款：改行と同時にインデントする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{改行と同時にインデントする}
+先の例にも挙げたが、\texttt{C-m} には通常 newline、すなわち改行コードが割り当てられており、\texttt{C-j} には newline-and-indent という改行コードを入力してインデントも行うコマンドが割り当てられている。
+自然な流れでコーディングを行っている場合は、改行した際にそのままインデントも行ってほしいので、これを \texttt{C-m} に割り当てるのが次の設定である。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; C-m に newline-and-indent を割り当てる。
+;; 先程とは異なり global-set-key 関数を利用している。
+(global-set-key (kbd "C-m") 'newline-and-indent)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+今回は global-set-key という新たな関数が登場した。
+この関数は (define-key global-map \textasciitilde) の短縮表示のようなものである。
+どちらを用いても結果は同じなので、好みに応じて選択するとよい。
+%%
+%% 款：C-h をバックスペースにする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h をバックスペースにする}
+第 3 章にて \texttt{C-h} はヘルプコマンドであると紹介したが、\texttt{C-h} を \texttt{<backspace>} として利用したい者もいるだろう。
+Emacs において \texttt{<backspace>} は内部的に \texttt{<del>} として処理されている。
+そこで、Emacs 内部で \texttt{C-h} を \texttt{<del>} に置き換えることによって \texttt{C-h} を \texttt{<backspace>} として利用することができる。
+その設定は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; C-h をバックスペースに置き換える。
+(define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 款：行の折返し表示を切り替える
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{行の折返し表示を切り替える}
+Emacs には 1 行の文字数が画面幅を超える場合の処理として、画面幅で折り返す／折り返さないという 2 つの選択肢が用意されている。
+この表示の切り替えは \texttt{M-x toggle-truncate-lines} というコマンドによって行うことができるのだが、この切り替えを頻繁に行う場合はキーバインドに登録しておくと便利である。
+頻繁に実行するコマンドは、どんどんキーバインドに登録することで作業効率が飛躍的にアップする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 折り返しトグルコマンドを定義する。
+(define-key global-map (kbd "C-c l") 'toggle-truncate-lines)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\texttt{C-c} から始まるキーバインドは、拡張機能製作の指針としてユーザの為に開けておくというルール（マナーとも言える）が存在する。
+従って、ここでは \texttt{C-c l} にコマンドを割り当てた。
+%%
+%% 款：簡単にウィンドウを切り替える
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{簡単にウィンドウを切り替える}
+昔に比べてモニタサイズが大きくなった昨今、Emacs のウィンドウを分割して作業するというスタイルが標準的になりつつある。
+そんな状況の中、ウィンドウを切り替えるキーバインドが標準の \texttt{C-x o} では多用するのに不便である。
+そこで、\texttt{C-t} を \texttt{C-x o} と同じウィンドウを切り替えるキーバインドに変更してみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; C-t でウィンドウを切り替える（初期値は transpose-chars）。
+(define-key global-map (kbd "C-t") 'other-window)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで \texttt{C-t} で分割されたウィンドウ間を移動できるようになる。
+%%
+%% 節：環境変数の設定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{環境変数の設定}
+ターミナル環境を普段利用しない Windows、Mac ユーザにとっては、環境変数という言葉はあまり耳馴染みがないかもしれない。\enlargethispage{1.00zw}
+環境変数とは OS が提供する非常に大事な機能であり、プログラムは環境変数に設定された値を参照して振る舞いを変化させる。\\
+
+ターミナル環境ではコマンドの名前のみを入力して実行するが、これは環境変数にパス（PATH）というコマンドを検索するディレクトリが設定されているからである。
+パスに登録されていない（パスの通っていない）ディレクトリに配置されているコマンドは、コマンドの存在するディレクトリに移動しない限りコマンド名のみでは実行することができない。\\
+
+このような環境変数だが、ターミナル環境ではシェルから引き継がれるため、Emacs 上で別段設定する必要はないはずである。
+また、Windows の場合もシステムのプロパティにある環境変数の値が自動的に利用される。
+ただ、Mac の Emacs.app は基本的に環境変数を引き継がないため、Emacs の中で設定する必要がある。
+%%
+%% 項：パスの設定
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{パスの設定}
+前述の通り、パスとはコマンドを検索するためのディレクトリのことである。
+Emacs が起動する際、OS の環境変数 PATH を読み取ってパスの値が設定される。
+この値を調べたい場合は \texttt{M-x getenv RET PATH RET} というコマンドを利用する。\\
+
+しかし、Emacs が実際にコマンドを実行する際は、この PATH の値を直接利用するのではなく PATH の値に基づいて Emacs 規定のコマンド検索パスを追加してリスト化した exec-path の値からコマンドを検索する。
+従って、もし Emacs 起動後にパスを追加する必要がある場合には次のようにして exec-path のリストにパスを追加する必要がある。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path "/opt/local/bin")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+PATH 以外の環境変数についても \texttt{M-x getenv RET 環境変数名 RET} から調べることができる。
+尚、環境変数は process-environment 変数に格納されているので、\texttt{C-h v process-environment RET} から全ての値を確認することもできる。
+%%
+%% 項：文字コードの設定
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{文字コードの設定}
+2000 年くらいまで、テキストファイルにおいて文字コードは常に意識しておくべき最重要項目の 1 つであった。\\
+
+今日でもその重要性に変わりはないのだが、近年は OS 標準のソフトウェアが様々な文字コードを扱うことができること、自動判別の制度が上がったことに加えて、UTF-8 が文字コードの業界標準になりつつあるため、2000 年以降に PC を使い始めた者がその重要性に気づかないとしても無理もないだろう。\\
+
+しかし、今後文字コードを意識しなかったために起こるかもしれないミスを未然に防ぐためにも、文字コードは意識しておくべきである。\\
+
+尚、カレントバッファの文字コードは第 3 章で解説した通りモードラインに表示されている。
+%%
+%% 款：現在の文字コード設定を調べる
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{現在の文字コード設定を調べる}
+Emacs の文字コードの設定はかなり詳細に分かれている。
+現在の Emacs の文字コードに関する設定がどの様になっているかを確認するためには、\texttt{M-x describe-current-coding-system RET} を実行する。
+すると、*Help* バッファに次のように表示される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Coding system for saving this buffer:
+  Not set locally, use the default.
+Default coding system (for new files):
+  U -- utf-8-unix (alias: mule-utf-8-unix)
+Coding system for keyboad input:
+  U -- utf-8-unix (alias: mule-utf-8-unix)
+（以下略）
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+上から順に、カレントバッファのファイル保存時の文字コード、新規ファイル作成時の文字コード、キーボード入力のための文字コードといった具合に設定が続く。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Priority order for recognizing coding system when reading files:
+  1, utf-8 (alias: mule-utf-8)
+  2, iso-202207bit
+  3, iso-latin-1 (alias: iso-8859-1 latin-1)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+次に「Priority order for」から続く行はファイル読み込み時の自動判別の優先順位である。
+様々なソフトウェアで起こる（最近は滅多に起こらないが）文字化けは、文字コードの自動判別に失敗することによって起こる現象である。\\
+
+Emacs では限りなくこの可能性をゼロにするため、利用者の環境で開きやすい文字コードを優先的に上位に配置し、文字化けを防いる。\\
+
+最後に「Particular coding system」から続く行を見てみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Particular coding systems specified for certain file names:
+
+OPERATION         TARGET PATTERN     CODING SYSTEM(s)
+---------         --------------     ----------------
+File I/O          "\\.dz\\'"         (no-conversion . no-conversion)
+                  "\\.txz\\'"        (no-conversion . no-conversion)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+最初の値は、File I/O を介した dz 拡張子を持つファイルを扱う場合の文字コードは no-conversion となりバイナリファイルと同じ扱いをする、という意味である。
+文字コードの指定は (decoding-system~.~encoding-system) という形式、もしくは定義済みのコーディングシステムとなっている。\\
+
+尚、Emacs で扱うことができる文字コード（定義済み）の一覧は \texttt{M-x list-coding-system RET}から確認することができる。
+%%
+%% 款：文字コードを指定する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{文字コードを指定する}
+ここでは文字コードの具体的な設定方法を解説する。
+最近の Emacs は特に指定せずともユーザのロケール（言語設定）を読み取って適切に設定してくれるようになっている。
+そのため、次の設定は不要かもしれない。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(set-language-environment "Japanese")
+(prefer-coding-system 'utf-8)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+1 行目の set-language-environment 関数ではユーザのロケールを指定する。
+これによって設定される主な値を表\ref{set-language-environment で設定される値}にまとめる。
+\vspc{-0.75zw}\begin{longtable}{@{}ll@{}}
+  \caption[]{set-language-environment で設定される値\label{set-language-environment で設定される値}} \\[-1.30zw] \toprule
+  \textgt{名前}        & \textgt{個別に設定する際のコマンド}                                         \\ \midrule\midrule
+  標準の文字コード     & set-file-name-coding-system                                                 \\ \midrule
+  文字コードの優先順位 & set-coding-system-priority                                                  \\ \midrule
+  インプットメソッド   & set-input-method                                                            \\ \midrule
+  文字セットの優先順位 & set-charset-priority                                                        \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+set-language-environment で指定する Japanese では環境設定としては曖昧であり、実際にどの変数にどのような値が設定されるのか分からない。
+Japanese と指定してどの変数にどのような値が設定されるのかを確認するためには、\texttt{M-x describe-variable RET language-info-alist RET} を実行する。
+%%
+%% 節：フレームに関する設定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{フレームに関する設定}
+本節ではフレームに関する設定を解説する。
+フレームは Emacs がバッファを描画している画面全体のことなので、ここからの設定は Emacs の見た目に関する設定ということになる。
+%%
+%% 項：モードラインに関する設定
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{モードラインに関する設定}
+まずは簡単に変更可能なところから設定してみることにする。
+モードラインは標準で様々な情報を追加表示することが可能である。
+%%
+%% 款：行番号／カラム番号を表示する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{行番号／カラム番号を表示する}
+標準で用意されている設定の中で、モードラインにカーソル位置の行番号とカラム番号を表示させるというものがある。
+行番号は標準で表示されているはずなので、カラム番号の表示を加えてみることにする。
+そのためには、設定ファイル（init.el）に以下の行を追記して評価する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; モードラインにカラム番号も表示する。
+(column-number-mode t)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+すると、今まで行番号が表示されていた場所の表示が（行番号,カラム番号）という形式の表示に切り替わる。
+この設定は \texttt{M-x column-number-mode RET} でトグル切り替えを行うことができる。\\
+
+行番号を表示させたくない場合は、次のような設定を記述する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; モードラインに行番号を表示させない。
+(line-number-mode 0)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この関数の引数に着目すると、オンの場合に t を、オフの場合に 0 を指定しているが、これは Emacs におけるスイッチオン／オフの慣例的な指定方法である。
+Elisp では真偽値の真は nil 以外の全ての値だが、真を表すための特別なシンボルとして t を用いる。\\
+
+オフは真偽値の偽を与えればよさそうなものだが、トグル切り替えを行う関数に nil を与えると、オンであればオフ、オフであればオンといったトグルを逆転する特別な操作になる。
+明示的にオフにしたい場合は 0 以下の整数値を与える仕組みになっているが、慣例的には 0 を用いることになっている。
+%%
+%% 款：ファイルサイズ、時計、バッテリー残量を表示する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ファイルサイズ、時計、バッテリー残量を表示する}
+ファイルサイズ、時計、バッテリー残量を表示する設定をまとめて以下に記す。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ファイルサイズを表示する。
+(size-indication-mode t)
+;; 時計を表示する（好みに応じてフォーマットを変更可能）。
+(setq display-time-day-and-date t) ; 曜日・月・日を表示
+(setq display-time-24hr-format  t) ; 24 時表示
+(display-time-mode t)
+;; バッテリー残量を表示する。
+(display-battery-mode t)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+標準で用意されているのは以上だけなのだが、拡張機能を追加したり自分で Elisp を記述すれば柔軟に表示を追加／変更することが可能である。
+例えば、リージョンで範囲選択している際にリージョン内の行数と文字数を表示するという設定を紹介しておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; リージョン内の行数と文字数をモードラインに表示する。
+(defun count-lines-and-chars ()
+  (if mark-active
+      (format "(%dlinrs,%dchars) "
+              (count-lines (region-beginning) (region-end))
+              (- (region-end) (region-beginning))) ""))
+(add-to-list 'default-mode-line-format
+             '(:eval (count-lines-and-chars)))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：タイトルバーにファイルのパス名を表示する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{タイトルバーにファイルのパス名を表示する}
+Emacs ではタイトルバーに表示される内容も自由に変更することができる。
+例えば、タイトルバーに編集中のファイルのパスを表示したい場合には、次の行を設定ファイルに追記して評価する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; タイトルバーにファイルのフルパスを表示する。
+(setq frame-title-format "%f")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この設定では frame-title-format という変数に \texttt{\%{}f} というフォーマットテンプレート（表\ref{モードライン用フォーマットテンプレート（％記法）}にモードライン用に定義された％記法の一覧を記す）を設定している。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{モードライン用フォーマットテンプレート（％記法）\label{モードライン用フォーマットテンプレート（％記法）}}             \\[-1.30zw]\toprule
+    \textgt{名前} & 説明                                                                                                           \\ \midrule\midrule
+    \verb|%b|     & カレントバッファ名を表示する。                                                                                 \\ \midrule
+    \verb|%f|     & ファイルのフルパスを表示する。                                                                                 \\ \midrule
+    \verb|%F|     & 選択中のフレーム名を表示する。                                                                                 \\ \midrule
+    \verb|%|*     & バッファが読み出し専用であれば \verb|\%|、変更されていれば *、それ以外は \verb|-| を表示する。                 \\ \midrule
+    \verb|%+|     & バッファが読み出し専用であっても変更されていれば *、変更されていなければ \verb|%|、それ以外は \verb|-| を表示。\\ \midrule
+    \verb|%&|     & バッファが読み出し専用であっても変更されていれば *、それ以外は \verb|-| を表示する。                           \\ \midrule
+    \verb|%s|     & サブプロセスのステータスを表示する。                                                                           \\ \midrule
+    \verb|%l|     & カーソル位置の行番号を表示する。                                                                               \\ \midrule
+    \verb|%c|     & カーソル位置のカラム番号を表示する。                                                                           \\ \midrule
+    \verb|%i|     & バッファのファイルサイズを表示する（バイト単位）。                                                             \\ \midrule
+    \verb|%I|     & ファイルサイズを表示する（k、M、G バイト単位）。                                                               \\ \midrule
+    \verb|%p|     & ウィンドウ上端より上にあるバッファの量の割合（パーセンテージ）を表示する。                                     \\ \midrule
+    \verb|%P|     & ウィンドウ下端より上にあるバッファの量の割合（パーセンテージ）を表示する。                                     \\ \midrule
+    \verb|%n|     & ナローイング中であれば Narrow を表示する。                                                                     \\ \midrule
+    \verb|%t|     & ファイルがテキストであれば T、バイナリであれば B を表示する（但し、OS に依る）。                               \\ \midrule
+    \verb|%z|     & キーボード、端末、ファイルの文字コードを表示する（キーボードと端末はターミナル環境のみ）。                     \\ \midrule
+    \verb|%Z|     & 文字コードと改行コードを表示する。                                                                             \\ \midrule
+    \verb|%e|     & エラーメッセージを表示する。                                                                                   \\ \midrule
+    \verb|%@|     & ファイルがローカルホストであれば \verb|-|、リモートホストであれば \verb|@| を表示する。                        \\ \midrule
+    \verb|%[|     & 再帰編集（\emph{recursive ediiting}）のレベルを \verb|[| の数で表示する。\verb|%]| も同様。                    \\ \midrule
+    \verb|%%|     & \verb|%| 自身を表示する。                                                                                      \\ \midrule
+    \verb|%-|     & 無限に \verb|-| を表示する。                                                                                   \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：ウィンドウ左に行番号を表示する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ウィンドウ左に行番号を表示する}
+常に行番号をウィンドウの左側に表示させておきたい場合は \texttt{M-x linum-mode} を用いることで表示させることができる。
+linum-mode、global-linum-mode の 2 種類がコマンドとして用意されており、linum-mode はバッファローカル、global-linum-mode は全てのバッファに対して反映される。
+起動時に有効化したければ、設定ファイルに次の行を追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 行番号を常に表示する。
+(global-linum-mode t)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：インデントの設定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{インデントの設定}
+インデントを適切に利用することは、読み易く綺麗なコードを書き、長く保守管理可能とするための重要な習慣である。
+共同開発の現場では、インデントに関するルールが定められていることも珍しくない。
+Emacs は標準で十分読み易いインデントを提供してくれるが、ここでは一歩進んで自分でインデントの設定を行えるよう解説しておく。
+%%
+%% 項：タブ文字の表示幅
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{タブ文字の表示幅}
+タブ文字は文字としては 1 文字だが、表示される幅は環境によって異なる。
+Emacs では tab-width の値を参照してタブ文字の表示幅を決定しているため、この値を変更することでタブ文字の表示幅を変更することができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; TAB の表示幅（初期値は 8）
+(setq-default tab-width 4)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+ここでは今までの setq ではなく setq-default という新しい関数を用いて設定を行っている。
+tab-width はバッファローカルな変数であるため、setq を用いるとカレントバッファのみに変更が反映される。
+その為、全てのバッファで設定を変更したい場合は setq-default を用いる必要がある。
+%%
+%% 項：タブ文字の利用
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{タブ文字の利用}
+Emacs 標準のインデント設定では、タブ文字と空白文字の両方を使用する。
+インデントの際、タブ文字を使用したくなければ indent-tabs-mode 変数に nil を設定することで、その後はインデントにタブ文字を一切使用しなくなる。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; インデントにタブ文字を使用しない。
+(setq-default indent-tabs-mode nil)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+indent-tabs-mode もバッファローカル変数であるため、全ての環境で有効化するには setq-default 関数を用いる必要がある。
+もし、特定のモードのみで有効化したい場合は後述するフックを利用して次のように設定を記述する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; php-mode のみタブ文字を利用しない。
+(add-hook 'php-mode-hook
+          (lambda ()
+            (setq indent-tabs-mode nil)))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：C、C++、Java、PHP などのインデント
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{C、C++、Java、PHP などのインデント}
+多くの言語では c-mode で定義されているインデント設定を流用している。
+c-mode ではインデント設定をスタイルとして定義し、複数用意している。
+このスタイルを切り替えるのは \texttt{M-x c-set-style RET スタイル名 RET} で常に可能だが、スタイルを変更しただけではインデントは反映されない。
+バッファ全体のインデントを変更したい場合は、\texttt{C-x h TAB}（バッファ全体をリージョン選択してタブによるインデント）を実行する。\\
+
+デフォルトのインデントスタイルを変更するには c-mode-common-hook に c-set-style のスタイル名を設定する。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(add-hook 'c-mode-common-hook
+          (lambda ()
+             (c-set-style "bsd")))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+スタイルには表\ref{スタイル名}のようなものが用意されている。
+\vspc{-0.50zw}\begin{longtable}{lc}
+  \caption[]{スタイル名\label{スタイル名}}            \\[-1.30zw]\toprule
+  \textgt{スタイル名} & \textgt{インデントのカラム数} \\ \midrule\midrule
+  gnu                 & 2                             \\ \midrule
+  k\&{}r              & 5                             \\ \midrule
+  bsd                 & 8                             \\ \midrule
+  stroustrup          & 4                             \\ \midrule
+  whitesmith          & 4                             \\ \midrule
+  ellemtel            & 3                             \\ \midrule
+  linux               & 8                             \\ \midrule
+  python              & 8                             \\ \midrule
+  java                & 4                             \\ \midrule
+  awk                 & 4                             \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+尚、スタイルは c-style-alist 変数にリストとして定義されており（すなわち、独自のスタイルを追加することも可能）、この変数の値を確認（\texttt{M-x describe-variable RET c-style-alist RET}）することで詳細を知ることができる。\\
+
+この c-mode 標準のインデントは開き括弧のインデント、閉じ括弧のインデント、switch 文のインデント、引数リストのインデントなど様々な項目のインデントを細かく指定することが可能となっている。
+例えば、PHP モードは独自に php というインデントスタイルを定義して利用しており、switch 文の case ではインデントが行われなくなっている。
+これを変更したい場合、次のように指定する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(add-hook 'php-mode-hook
+          (lambda ()
+            (c-set-offset 'case-label '+)))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+case-label は switch 文の case のことをを指している。
+ここで指定した \texttt{'+} は標準のインデントのカラム数（c-basic-offset 変数の値）を利用するという意味のシンボルである。
+その他の言語のインデントについては、第 7 章「各種言語の開発環境」にて詳しく解説する。
+%%
+%% 節：表示・装飾に関する設定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{表示・装飾に関する設定}
+本節では表示・装飾に関する設定を解説する。
+これは主にソースコードの色分け、すなわちシンタックスハイライトに関する部分である。
+シンタックスハイライトはソースコードの見易さは勿論のこと、記述ミスなどの構文チェックにも有用である。
+%%
+%% 項：フェイス
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{フェイス}
+Emacs のシンタックスハイライトはフェイスと呼ばれる仕組みによって実装されている。
+このフェイスは特定のキーワードに対して、文字色、背景色、下線、斜体、太字などの文字修飾を設定し、キーワードにマッチする部分にその装飾を施す。
+フェイスの指定方法は表\ref{フェイス設定関数一覧}のようになっている。
+\vspc{-0.50zw}\begin{longtable}{@{}ll@{}}
+  \caption[]{フェイス設定関数一覧\label{フェイス設定関数一覧}}            \\[-1.30zw]\toprule
+  \textgt{関数}                                    & \textgt{説明}        \\ \midrule\midrule
+  \texttt{(set-face-foreground フェイス名 カラー)} & 文字色を指定する。   \\ \midrule
+  \texttt{(set-face-background フェイス名 カラー)} & 背景色を指定する。   \\ \midrule
+  \texttt{(set-face-background フェイス名 nil)}    & 背景色を無しにする。 \\ \midrule
+  \texttt{(set-face-bold-p フェイス名 t)}          & 太字にする。         \\ \midrule
+  \texttt{(set-face-bold-p フェイス名 nil)}        & 太字をやめる。       \\ \midrule
+  \texttt{(set-face-italic-p フェイス名 t)}        & 斜体にする。         \\ \midrule
+  \texttt{(set-face-italic-p フェイス名 nil)}      & 斜体をやめる。       \\ \midrule
+  \texttt{(set-face-underline-p フェイス名 t)}     & 下線を表示する。     \\ \midrule
+  \texttt{(set-face-underline-p フェイス名 nil)}   & 下線の表示をやめる。 \\ \bottomrule
+\end{longtable}\vspc{-1.00zw}
+現在のカーソル位置のフェイスは、\texttt{M-x describe-face RET} によって確認することができる。
+また、Emacs 上で定義されている全てのフェイス一覧を確認するために list-faces-display というコマンドも用意されている。
+フェイスを設定するには、例えば次のように設定を記述する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; リージョンの背景色を変更する。
+(set-face-background 'region "darkgreen")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+尚、Emacs で指定可能な色の一覧は、\texttt{M-x list-colors-display RET} で確認することができる。
+%%
+%% 項：フォントの設定
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{フォントの設定}
+Emacs~23.1 から内部の文字コード処理が洗練され、1 文字単位でフォントを指定することができるようになった。
+しかし、そのためのインタフェースは用意されていないため設定は難しいと言われているが、ポイントさえ掴めば意外と簡単である。\\
+
+*scratch* バッファで (prin1 (font-family-list)) を評価すると、Emacs で利用可能なフォント一覧が出力される。
+フォント名には和名も利用可能である。
+%%
+%% 款：英語フォントを指定する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{英語フォントを指定する}
+実際にフォントを設定するためには、設定ファイルに次の行を追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Ascii フォントを Menlo に設定する。
+(set-face-attribute 'default nil
+                    :family "Menlo"
+                    :height 120)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+set-face-attribute 関数を用いて利用可能なフォントから指定する。
+:height はフォントサイズである。
+%%
+%% 款：日本語フォントを指定する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{日本語フォントを指定する}
+set-fontset-font 関数と font-spec 関数を用いて日本語フォントを指定する。
+ここでは例として、Google が提供している Noto フォント\footnote{https://www.google.com/get/noto}を利用する。
+実際に試す場合には、予めダウンロードしてインストールしておくこと。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 日本語フォントを Noto Serif CJK JP に設定する。
+(set-fontset-font nil 'japanese-jisx0208
+                  (font-spec :family "Noto Serif CJK JP"))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、漢字以外の全角文字だけフォント変更することも可能である。
+設定方法は、日本語を変更した後に平仮名だけ別のフォントで上書きする形となる。
+指定には Unicode の符号を利用する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 平仮名とカタカナを Noto Sans CJK JP に変更する。
+;; U+3000-303F CJK の記号および句読点
+;; U+3040-309F ひらがな
+;; U+30A0-30FF カタカナ
+(set-fontset-font nil '(#x3040 . #x30ff)
+                  (font-spec :family "Noto Sans CJK JP"))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 款：フォントの横幅を調節する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{フォントの横幅を調節する}
+set-fontset-font 関数で設定したフォントのサイズ調整は face-font-rescale-alist から行う。\enlargethispage{0.35zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Noto フォントの横幅を調節する。
+(add-to-list 'face-font-rescale-alist '(".*Noto*" . 1.2))
+\end{verbatim}
+\end{mdframed}\vspc{-0.80zw}
+\texttt{(フォント名の正規表現 .\hphantom{.}横幅の倍率)} という書式で指定する。
+うまく調節することができれば、全角文字と半角文字の比率を 2：1 にすることが可能である。
+%%
+%% 節：ハイライトの設定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ハイライトの設定}
+シンタックスハイライトやフォント以外にも、編集時の見易さを支援する仕組みが用意されている。
+例えば、現在行の表示を目立たせることで直ちに見つけることが可能となる。
+また、括弧がネスト（入れ子）になっている場合、対応関係を視覚化することで編集ミスを防ぐことが可能となる。
+%%
+%% 項：現在行のハイライト
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{現在行のハイライト}
+現在行をハイライトして目立たせたい場合、標準で含まれる hl-line-mode を用いる。
+表示をカスタマイズしたい場合はフェイスを調節することで自由に変更可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(defface my-hl-line-face
+  ;; 背景が dark ならば背景色を NavyBlueにする。
+  '((((class color) (background dark))
+     (:background "NavyBlue" t))
+    ;; 背景が light ならば背景色を LightSkyBlue にする。
+    (((class color) (background light))
+     (:background "LightSkyBlue" t))
+    (t (:bold t)))
+  "hl-line's my face")
+(setq hl-line-face 'my-hl-line-face)
+(global-hl-line-mode t)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：対応する括弧のハイライト
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{対応する括弧のハイライト}
+カーソル位置の括弧と対応する括弧を強調表示することが可能である。
+Elisp は括弧が多く登場する言語なので、この設定を行うことで Elisp の記述が非常に楽になる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; paren-mode；対応する括弧を強調して表示する。
+(setq show-paren-delay 0) ; 表示までの秒数。初期値は 0.125 秒。
+(show-paren-mode t)       ; 有効化する。
+;; paren のスタイルを設定：expression は括弧内も強調表示する。
+(setq show-paren-style 'expression)
+;; フェイスを変更する。
+(set-face-background 'show-paren-match-face nil)
+(set-face-underline-p 'show-paren-match-face "darkgreen")
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：バックアップとオートセーブ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{バックアップとオートセーブ}
+コンピュータ上の作業では、時として異常事態が起こりアプリケーションや OS が突然終了することがある。
+その際、まだ保存されていないファイルはその作業が失われることになる。\\
+
+しかし、優秀なアプリケーションはこのような自体に備えて最悪の事態を回避する努力をしている。
+Emacs においては、第 3 章で解説したオートセーブがそれに当たる。
+Emacs では標準で 300 回のタイプ、あるいは 30 秒間何もしないと編集中のファイル名の前後に \# を付けたオートセーブファイルを作成するようになっている。
+%%
+%% 項：オートセーブからの復元
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{オートセーブからの復元}
+オートセーブファイルからの復元はとても簡単である。
+例えば、\textasciitilde{}/.emacs.d/init.el ファイルを編集中に何らかの事情で Emacs が突然終了したとする。\enlargethispage{0.15zw}
+しかし、幸いにも \textasciitilde{}/.emacs.d/\#init.el\# ファイルが存在していた。\\
+
+オートセーブファイルから復元したい場合には、次のコマンドを実行する。
+\# 付きの \#init.el\# ではないことに注意すること。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb|M-x recover-file RET ~/.emacs.d/init.el RET|
+\end{itemize}\vspc{-0.50zw}
+次のような問いがミニバッファに表示されるので yes と答える。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{Recover auto save file /Users/ユーザ名/.emacs.d/\#init.el\#? (yes or no)}
+\end{itemize}\vspc{-0.50zw}
+すると、オートセーブファイルの内容が反映された init.el が開かれる。
+この時点ではまだファイルの保存がされていないため、問題がなければ保存しておく。
+%%
+%% 項：バックアップとオートセーブの設定
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{バックアップとオートセーブの設定}
+バックアップとオートセーブをより便利に利用するためにの設定を紹介しておく。
+%%
+%% 款：バックアップとオートセーブファイルの作成先を変更する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{バックアップとオートセーブファイルの作成先を変更する}
+Web 上に公開されている多くの者の設定ファイルを参照すると、以外にもバックアップファイルとオートセーブファイルを利用しない設定をしている者が一定数いるようである。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; バックアップファイルを作成しない。
+(setq make-backup-files nil) ; 初期値は t
+;; オートセーブファイルｗｐ作成しない。
+(setq auto-save-default nil) ; 初期値は t
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+もしもの為のせっかくの機能が用意されているにも関わらず、利用しないのは勿体ない話である。
+恐らく、オートセーブを利用しない者の心理として、邪魔なファイルを自動的に作成されるのが嫌なのであろう。
+そんな者のために、編集ファイルと同じ場所ではなく特定のディレクトリに集めてしまう方法を紹介する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; バックアップファイルの作成場所をシステムの Temp ディレクトリに変更する。
+(setq backup-directory-alist
+      '((".*" . ,temporary-file-directory)))
+;; オートセーブファイルの作成場所をシステムの Temp ディレクトリに変更する。
+(setq auto-save-file-name-transforms
+      '((".*" ,temporary-file-directory t)))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この設定の Elisp 中にある \texttt{'} はバッククォート構文と呼ばれるもので、リスト中の \texttt{,} に続く引数を評価する（すなわち、評価後の値が利用される）。
+尚、この temporary-file-directory はシステムの temp ディレクトリとなっているが、例えば次のように \textasciitilde{}/.emacs.d 以下に作成した backups というディレクトリをしていする者も多い。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; バックアップとオートセーブファイルを ~/.emacs.d/backups/ へ集める。
+(add-to-list 'backup-directory-alist
+              (cons "." "~/.emacs.d/backups/"))
+(setq auto-save-file-name-transforms
+      '((".*" ,(expand-file-name "~/.emacs.d/backups/") t)))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 款：オートセーブの間隔を変更する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{オートセーブの間隔を変更する}
+オートセーブファイルを標準の間隔よりも早く作成してほしい場合は、次の設定を追記する。\enlargethispage{0.50zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; オートセーブファイル作成までの秒間隔を設定する。
+(setq auto-save-timeout 15)
+;; オートセーブファイル作成までのタイプ間隔を設定する。
+(setq auto-save-interval 60)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 節：変更されたファイルの自動更新
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{変更されたファイルの自動更新}
+Emacs でファイルを編集中に別のプログラムからファイルが更新された場合、Emacs 上のファイル（バッファ）はまだ変更されておらず、ファイルを編集しようとした際に変更を反映するかを確認される。
+この場合、y を押すと編集を続行し、n を押すとファイルの変更を中断、r を押すとファイルを読み込み直す。\\
+
+この動作は非常に安全な仕組みだが、Git で別のブランチにチェックアウトするなど、大量のファイルが更新されるような場合は、わざわざ全てのファイルに変更を反映させるかどうかを確認しなければならず、逆に面倒に感じることがある。
+%%
+%% 項：ファイルの自動更新
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ファイルの自動更新}
+ファイルに変更があった場合、確認を行わずに即剤に変更を反映してほしいのであれば、次の設定を追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 更新されたファイルを自動的に読み直す。
+(global-auto-revert-mode t)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+すると、Emacs は全てのファイルについて確認を行わずに自動的にファイルを読み込み直すようになる。
+%%
+%% 節：フック
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{フック}
+本節ではフックという設定のテクニックを解説する。
+フック（\emph{hook}）とは、引っ掛けるフックと同じニュアンスであり、特定のイベント（ファイルの保存やメジャーモードの変更など）に予め関数をセットして（引っ掛けて）おき、イベント発生時にセットした関数を自動的に実行する仕組みである。\\
+
+これを利用することで、例えばメジャーモードだけで常に有効化したい機能をフックに設定しておくことで自動的に実行されたかのように動作する。
+%%
+%% 項：自動化の仕組み
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{自動化の仕組み}
+実際の例を見ながら解説する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ファイルが #! から始まる場合、+x 属性を付加して保存する。
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+after-save-hook は Emacs がバッファをファイルとして保存する際に実行されるフックである。
+フックとして登録している executable-make-buffer-file-executable-if-script-p という関数はファイルをチェックして、もし 1 行目が「\texttt{\#!}」から始まるならば「\texttt{+x}（実行権）」を与えて保存する関数である。\\
+
+このように、特定の動作に対して予め実行する関数をセットしておくことで、毎回行うような作業を自動化することが可能となる。
+%%
+%% 項：利用方法
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{利用方法}
+フックの設定は、これまでも何度かサンプルが登場しているが、次のように記述する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{(add-hook フック名 実行する関数)}
+\end{itemize}\vspc{-0.50zw}
+第 2 引数の「実行する関数」の部分は、関数を 1 つだけ追加する場合はそのシンボルを渡せばよいのだが、複数の関数を追加したい場合は lambda 式を利用する方法とフック用の関数を定義してそのシンボルを渡す方法の 2 通りの方法がある。
+尚、次の例で登場する emacs-lisp-mode-hook など特定のモード用のフックに記述した設定は、その設定を評価した際ではなく、それ以降に emacs-lisp-mode が選択された際に実行される。
+%%
+%% 款：無名関数 lambda を利用する場合
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{無名関数 lambda を利用する場合}
+無名関数 lambda を利用する場合は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; emacs-lisp-mode のフックをセットする。
+(add-hook 'emacs-lisp-mode-hook
+          '(lambda ()
+             (when (require 'eldoc nil t)
+               (setq eldoc-idle-delay 0.2)
+               (setq eldoc-echo-area-use-multiline-p t)
+               (turn-on-eldoc-mode))))
+\end{verbatim}
+\end{mdframed}\vspc{-0.00zw}
+この設定はカーソル位置にある Elisp 関数や変数の情報をエコーエリアへ表示させる有用な設定である。
+この設定を init.el へ追記すると init.el の編集が非常に楽になる。
+%%
+%% 款：関数を定義する場合
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{関数を定義する場合}
+続いて、関数を定義する場合は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; emacs-lisp-mode-hook 用の関数を定義する。
+(defun elisp-mode-hooks ()
+  "lisp-mode-hooks"
+  (when (require 'eldoc nil t)
+    (setq eldoc-idle-delay 0.2)
+    (setq eldoc-echo-area-use-multiline-p t)
+    (turn-on-eldoc-mode)))
+;; emacs-lisp-mode のフックをセットする。
+(add-hook 'emacs-lisp-mode-hook 'elisp-mode-hooks)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+一見すると、lambda 式を利用した方が楽なように見えるが、実は大きな欠点が存在する。
+それは、もし Emacs 起動中に lambda 式の中身を変更した場合、その内容だけを評価することができないため、その変更内容は基本的に Emacs の再起動時にしか設定が反映されないという点である。\\
+
+一方、専用の関数を定義した場合はフック実行時に関数が呼び出されるため、中身を変更してもその関数自体を評価するだけで設定が反映される。
+従って、できる限り定義済みの関数をフックに追加することを推奨する。
+%%
+%% 項：代表的なフック一覧
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{代表的なフック一覧}
+特に頻繁に利用されるフックは表\ref{イベント用フック一覧}の通りである。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{イベント用フック一覧\label{イベント用フック一覧}}                                 \\[-1.30zw]\toprule
+  \textgt{名前}              & \textgt{説明}                                                   \\ \midrule\midrule
+  after-save-hook            & ファイル保存後に実行される。                                    \\ \midrule
+  fine-file-hook             & \texttt{C-x C-f (find-file)} でファイルを開いた際に実行される。 \\ \midrule
+  emacs-startup-hook         & Emacs 起動時に設定ファイルを読み終えてから一度だけ実行される。  \\ \midrule
+  kill-emacs-hook            & Emacs 終了時に実行される。                                      \\ \midrule
+  c-mode-hook                & c-mode を起動した後に実行される。                               \\ \midrule
+  php-mode-hook              & php-mode を起動した後に実行される。                             \\ \midrule
+  cperl-mode-hook            & cperl-mode を起動した後に実行される。                           \\ \midrule
+  emacs-lisp-mode-hook       & emacs-lisp-mode ｗｐ起動した後に実行される。                    \\ \midrule
+  lisp-interaction-mode-hook & lisp-intraction-mode を起動した後に実行される。                 \\ \midrule
+  js-mode-hook               & js-mode を起動した後に実行される。                              \\ \midrule
+  css-mode-hook              & css-mode を起動した後に実行される。                             \\ \midrule
+  nxml-mode-hook             & nxml-mode を起動した後に実行される。                            \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+例えば、特定のメジャーモードにおいて after-save-hook を利用したい場合は、次のように設定ファイルに追記することで実現することができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(defun php-after-save-hooks ()
+  ;; メジャーモードが php-mode と一致する場合は中身を実行する
+  (when (eq major-mode 'php-mode)
+    実行したい処理
+    ))
+;; after-save-hook に関数をセットする。
+(add-hook 'after-save-hook 'php-after-save-hooks)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}

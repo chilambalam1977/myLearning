@@ -1,0 +1,459 @@
+%%
+%% 章：設定ファイルの管理方法
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{設定ファイルの管理方法}
+%%
+%% 節：効率的な設定ファイルの作成方法と管理方法
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{効率的な設定ファイルの作成方法と管理方法}
+Emacs 操作の基礎を一通り学んだところで、次は Emacs の最も魅力的な部分であるカスタマイズに進みたい。
+本章では Emacs の設定を学ぶ前段階として、設定ファイルの管理方法を解説していく。\\
+
+Emacs を本格的に使用していくと様々な設定を追加することになる。
+自分だけの Emacs を築くための設定ファイルはかけがえのない資産である。
+もし、何かの拍子に設定ファイルを失うような事があれば、きっと大きなショックを受けることになるだろう。\\
+
+本章では、その様な事にならないように次の項目を中心に、より良い設定ファイルの管理方法を解説していく。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item バックアップし易い管理体制の構築
+\item 異なる環境下でも共通の設定ファイルを利用する方法
+\item 設定ミスによる起動エラーの回避
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 項：~/.emacs.d ディレクトリに設定をまとめて管理する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{\textasciitilde/.emacs.d ディレクトリに設定をまとめて管理する}
+設定ファイルやインストールした拡張機能ファイルなどが様々な場所に分散していると、全体の把握や管理が困難になってしまう。
+そこで  Emacs の設定にまつわる全てのファイルを効率良く管理すべきである。\\
+
+第 2 章では、Emacs の設定ファイルは「.emacs」「.emacs.el」「init.el」の 3 種類が存在することを説明した上で、最後の init.el の利用を推奨したが、その理由は.emacs.d ディレクトリに Emacs の設定や拡張機能を集約するためである。
+そうすることで.emacs.d ディレクトリ 1 つをバックアップするだけで全ての機能を保護し、また別のマシンにコピーするだけで同じ Emacs 環境が復元可能となる。
+%%
+%% 款：サブディレクトリの構成
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{サブディレクトリの構成}
+基本方針として.emacs.d ディレクトリ以下に必要なサブディレクトリを作成していく。
+拡張機能によってファイルを追加する必要がある場合は.emacs.d ディレクトリ直下もしくはサブディレクトリを追加することになる。\\
+
+最近の拡張機能の多くでは、標準で.emacs.d 以下にファイルまたはディレクトリを作成して管理してくれる。
+%%
+%% 款：Elisp をどのように配置すべきか
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Elisp をどのように配置すべきか}
+Emacs は Elisp を読み込むことで様々な拡張機能を追加することができるエディタである。
+この Elisp はプログラミングコードが記述された el という拡張子の（スクリプト）ファイルに過ぎない。\\
+
+Elisp をインストール（ロードパスに追加済みのディレクトリにファイルを配置する）する場所は、UNIX 系 OS で標準的にインストールされた場合は、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item /usr/local/share/emacs/site-lisp
+\item /use/local/share/emacs/27.1/site-lisp
+\end{itemize}\vspc{-0.50zw}
+などのディレクトリが用意されている。
+この中に配置された Elisp を読み込むことが可能となるのだが、このディレクトリへのインストールは良い点とあまり良くない点が混在しているため、一考の余地がある。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \textgt{良い点}
+  \vspc{-0.00zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+  \item[・] 全ユーザに対してがインストールされた拡張機能が利用可能となる。
+  \item[・] サブディレクトリ以下も自動的に追加してくれる。
+  \item[・] バージョン別ディレクトリが存在するため、拡張機能が要求するバージョンを切り分けることができる。
+  \end{itemize}\vspc{-0.00zw}
+\item[] \textgt{あまり良くない点}
+  \vspc{-0.00zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+  \item[・] OS やインストール方法によって異なるディレクトリ配置となる可能性がある。
+  \item[・] バックアップを取るのが少々面倒である。
+  \end{itemize}\vspc{-0.00zw}
+\end{itemize}\vspc{-0.50zw}
+拡張機能をインストールするディレクトリは、設定によって別途ユーザが任意で追加することが可能であり、上記の良い点も後述する分割管理と設定の分岐によって改善することができることから、本稿では.emacs.d 以下にインストールすることを推奨する。\\
+
+基本方針で示した構造に従う場合は \texttt{\textasciitilde{}/.emacs.d/elisp} ディレクトリに Elisp をインストールしていくことになる。
+複数のファイルが存在する大きめの拡張機能の場合は、elisp ディレクトリ中にサブディレクトリを作成し、それも自動的に読み込むようにすると綺麗に整理することができる。
+また、Git や Subversion などのバージョン管理システムを利用してリポジトリをチェックアウトしてインストールする場合は \texttt{\textasciitilde{}/.emacs.d/public\_repos} 以下へチェックアウトするようにする。
+これはリポジトリからチェックアウトしている拡張機能を判別し易くするためである。
+%%
+%% 款：Elisp 配置用のディレクトリを作成する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Elisp 配置用のディレクトリを作成する}
+前項の基本方針に従った環境を構築するために、まずディレクトリを作成しておく。
+ターミナルからは次のようにしてディレクトリを作成する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+$ cd ~/.emacs.d
+$ mkdir elisp public_repos conf elpa
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+本稿では、これらのディレクトリを作成し、これから解説する設定を記述していく前提で解説を進める。
+ディレクトリ名や場所を変更する場合は適宜読み替えること。
+%%
+%% 款：ロードパスを追加する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ロードパスを追加する}
+続いて、ロードパスという拡張機能や設定ファイルを検索するためのディレクトリを設定する。
+ロードパスは load-path 変数にリストとして登録されており、任意のディレクトリを追加する場合はこの変数に追加する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ~/.emacs.d/elisp ディレクトリをロードパスに追加
+;; 但し、add-to-load-path 関数を作成した場合は不要
+(add-to-list 'load-path "~/.emacs.d/elisp")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+基本的には、このようにしてディレクトリをロードパスへ追加していくが、この方法ではサブディレクトリは自動的に追加されない。
+サブディレクトリも毎回 add-to-list 関数を用いてロードパスへ追加するのは少々面倒なので、次の関数を用いて簡略化する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ロードパスをサブディレクトリも含めて追加する関数の定義
+(defun add-to-load-path (&rest paths)
+  (let (path)
+    (dolist (path paths paths)
+      (let ((default-directory
+              (expand-file-name (concat user-emacs-directory path))))
+        (add-to-list 'load-path default-directory)
+        (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+            (normal-top-level-add-subdirs-to-load-path))))))
+;; 引数のディレクトリとそのサブディレクトリをロードパスに追加
+(add-to-load-path "elisp" "conf" "public_repos")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この新しく作成した add-to-load-path 関数を利用すると.emacs.d ディレクトリ直下のディレクトリ名を渡すだけで、サブディレクトリが存在すれば自動的にロードパスへ追加してくれるようになる。
+本稿では、この add-to-load-path 関数によってロードパスを追加する設定を行ったという前提で以後解説を進める。
+また、この設定は init.el のできるだけ最初の部分に記述しておくと良い。
+パスの設定については、第 5 章「パスの設定」において更に詳しく解説する。
+%%
+%% 款：設定を反映する方法
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{設定を反映する方法}
+上述の設定を反映するには、次のいずれかを行う。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-0.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[\ajMaru{1}] Emacs を再起動する。
+\item[\ajMaru{2}] この S 式の末尾で \texttt{C-x C-e} を実行する。
+\end{itemize}\vspc{-0.50zw}
+\ajMaru{2} を行うとコードが評価（Lisp ではコードを実行することを評価すると言う）され、設定を即時に反映することができる。
+この評価については第 5 章「設定を反映する方法」で詳しく解説する。
+%%
+%% 項：設定を分割して管理する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{設定を分割して管理する}
+Emacs は何でも設定することが可能であるため、使い込めば使い込むほど設定ファイルの行数が膨らんでしまう。
+ある程度 Emacs の設定に慣れてきて行数が増えてきた時、init.el に全て記述するのではなく、環境変数に関する設定や各種プログラミング言語のための設定などをファイル単位で分割してジャンル毎に管理したいと思うかもしれない。
+本節では、そんな設定の分割管理について解説していく。\\
+
+但し、設定を分割すると読み込みの順番によってはエラーが生じる可能性があるため、本稿における解説は分割せずに全て init.el に設定を記述している前提で進める。
+%%
+%% 款：ファイルを分ける
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ファイルを分ける}
+設定ファイルも拡張機能と同じ Elisp ファイルなので、ファイルに書き出して読み込むだけで簡単に分割することができる。
+前節で \textasciitilde/.emacs.d/conf というディレクトリを作成してロードパスに追加したが、この conf というディレクトリに分割した設定ファイルを追加し、init.el から読み込むようにする。
+例えば、conf 以下に init-perl.el というファイルが存在し、これを読み込みたい場合は init.el に次のように記述するだけでよい。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(load "init-perl") ; 拡張子は不要
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、自身で分割するのではなく Emacs が自動的に init.el に書き込む設定を別のファイルに保存させ、それを init.el から読み込むことも可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; カスタムファイルを別ファイルにする
+(setq custom-file (locate-user-emacs-file "custom.el"))
+;; カスタムファイルが存在しない場合は作成する
+(unless (file-exists-p custom-file)
+  (write-region "" nil custom-file))
+;; カスタムファイルを読み込む
+(load custom-file)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この設定を利用すると第 6 章で解説する ELPA やテーマを利用した際に自動的に追加される設定が \textasciitilde{}/.emacs.d/custom.el ファイルに書き込まれるようになる。
+%%
+%% 款：init-loader.el を利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{init-loader.el を利用する}
+init-loader.el\footnote{https://github.com/emacs-jp/init-loader}は、IMAKADO 氏が作成した分割した設定ファイルを自動的に読み込むための拡張機能である。\\
+
+これを利用するには init-loader.el ファイルをダウンロードして \textasciitilde{}/.emacs.d/elisp ディレクトリにインストールすればよい。
+init-loader.el が設定を読み込むディレクトリを指定する必要があるため、次の設定を init.el に追記する。\enlargethispage{1.35zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(require 'init-loader)
+(init-loader-load "~/.emacs.d/conf") ; 設定ファイルがあるディレクトリを指定する
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これにより、conf ディレクトリ以下に存在する設定ファイルが init-loader の次の規則に従って読み込まれるようになる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-0.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[\ajMaru{1}] 2 桁の数字から始まる設定ファイルを数字の順番に読み込む。（例：00\_eval.el $\rightarrow$ 01\_perl.el）
+\item[\ajMaru{2}] Meadow の場合「meadow」から始まる名前の設定ファイルを読み込む。（例：meadow-emacs-config.el）
+\item[\ajMaru{3}] CarbonEmacs の場合「carbon-emacs」から始まる名前の設定ファイルを読み込む。（例：carbon-emacs-config.el）
+\item[\ajMaru{4}] CocoaEmacs の場合「cocoa-emacs」から始まる名前の設定ファイルを読み込む。（例：cocoa-emacs-config.el）
+\item[\ajMaru{5}] ターミナルの場合「nw」から始まる名前の設定ファイルを読み込む。（例：nw-config.el）
+\end{itemize}\vspc{-0.50zw}
+init-loader.el には分割された設定ファイルの記述に何らかのエラーが含まれている場合でも、そこで設定ファイルの読み込みを中断せずにスキップし、次のファイルの読み込みを進行するというメリットがある。
+読み込み状況は *Messages* という Emacs のログが蓄積されるバッファへと記録されるので、エラーが発生している場合はそこから確認する。
+%%
+%% 節：環境に応じた設定の分岐
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{環境に応じた設定の分岐}
+前述した init-loader.el にも Meadow や CarbonEmacs などの OS 固有の Emacs に対してのみ設定を読み込ませる仕組みが存在したが、どういった仕組みで分岐しているのかを解説しておく。\\
+
+Emacs には自分がどの様な環境で利用されているのかを識別するための変数が用意されている。
+この値を利用することで OS やターミナルか GUI かという環境に応じた柔軟な分岐を行えるようになっている。
+%%
+%% 項：OS の違いによる分岐
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{OS の違いによる分岐}
+Emacs がどの OS 上で動作しているかどうかを知るには system-type という変数の値を調べればよい。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item Windows の場合：windows-nt あるいは cygwin
+\item Mac の場合：darwin
+\item Linux の場合：gnu/linux
+\end{itemize}\vspc{-0.50zw}
+もし、Mac だけに読み込ませたい設定がある場合は、次のように記述することになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (eq system-type 'darwin)
+  (require 'ucs-normalize)
+  (setq file-name-coding-system 'utf-8-hfs)
+  (setq local-coding-system 'utf-8-hfs))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：CLI と GUI による分岐
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{CLI と GUI による分岐}
+Windows や Mac などの GUI が当たり前となった OS を利用している者には、ウィンドウシステムという言葉に馴染みがないかもしれない。
+ウィンドウシステムとは GUI 操作を実現するための画面を描画するシステム、またはそのソフトウェアの事を指す。\\
+
+window-system という変数に Emacs が起動しているウィンドウシステム名がセットされている。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-0.40zw}%\setlength{\labelsep}{+1.00zw}
+\item Windows の場合：w32 あるいは pc
+\item Mac の場合：ns
+\item Linux の場合：x
+\item ターミナルの場合：nil
+\end{itemize}\vspc{-0.50zw}
+これを利用して、次のような設定を行うことができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ターミナル以外はツールバー、スクロールバーを非表示にする
+(when window-system
+  (tool-bar-mode 0)
+  (scroll-bar-mode 0))
+;; CocoaEmacs 以外はメニューバーを非表示にする
+(unless (eq windowsystem 'ns)
+  (menu-bar-mode 0))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 項：Emacs のバージョンによる分岐
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Emacs のバージョンによる分岐}
+昔から Emacs を利用している者にとっては、Emacs のバージョンも非常に重要な情報である。
+Emacs がメジャーバージョンアップする際、内部で使用されている関数が変更される場合がある。\\
+
+そういった内部変更によって、メンテナンスが追い付いていない拡張機能は最新バージョンの Emacs でうまく動作しない場合がある。
+また、自身で書いた設定が特定のバージョンに依存するケースもあるだろう。
+特定のバージョンのみに設定を反映させるために、emacs-version もしくは emacs-major-version 変数の値を利用して設定を分岐させることができる。
+両者の違いは emacs-version が完全なバージョン番号を格納する変数であるのに対して、emacs-major-version はメジャーバージョン番号のみを格納する変数であることである。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Emacs 23 より以前のバージョンを利用している場合、
+;; user-emacs-directory 変数が未定義であるため、次の設定を追加する
+(when (< emacs-major-version 23)
+  (defver user-emacs-directory "~/.emacs.d/"))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：拡張機能の読み込み方
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{拡張機能の読み込み方}
+ディレクトリにインストールされた拡張機能は、Emacs に読み込むように設定ファイルに記述して初めて利用可能となる。
+逆に言えば、読み込みを行わない限り、拡張機能をインストールしても機能を利用することはできない。
+%%
+%% 項：require と autoload の違い
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{require と autoload の違い}
+拡張機能の読み込み方式には、最初から全て読み込む方式とコマンドを登録だけしておき実行時に読み込む方式の 2 種類が用意されており、拡張機能によって使い分けられる。
+これらは前者が require 方式、後者が autoload 方式と呼ばれ、本項ではそれぞれの違いについて解説する。
+%%
+%% 款：require
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{require}
+require 関数は最も標準的な拡張機能の読み込み方式で、もしインストールした拡張機能が require を用いて読み込めるのであれば、通常はこれを用いて読み込む。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\textgt{(require 機能名 ファイル名 エラーの制御)}}
+\end{itemize}\vspc{-0.50zw}
+拡張機能側で用意されている「機能（FEATURE）」を用いて読み込む。
+一度読み込んだ拡張機能は別の場所で require されても繰り返し読み込まれることはない。
+拡張機能で機能名が用意されていない場合は require で読み込むことができない可能性があるが、実際に機能名が用意されていない拡張機能はほとんど存在しない。
+尚、第 2 引数の「ファイル名」以下の引数は省略可能となっている。\\
+
+例えば、cl-lib という Emacs 上で Common Lisp というプログラミング言語の関数を利用可能とするための拡張機能を読み込む場合は、次のようにする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; cl-lib パッケージを読み込む
+(require 'cl-lib)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+require は読み込みに失敗するとエラーを出力し、それ以降の読み込みを停止するが、第 3 引数の「エラー制御」に対して non-nil（nil ではない）な値を渡すと、require 時にエラーが発生しても処理を停止せず、nil を返すだけとなる（読み込みに成功した場合は機能名を返す）。
+これを利用して読み込みに成功した場合のみ、その拡張機能を有効化する設定などを作成することが可能となる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; php-mode を読み込む
+(when (require 'php-mode nil t)
+  ;; 読み込みに成功した場合のみ、拡張子 ctp を php-mode で実行する
+  (add-to-list 'auto-mode-alist '("\\.ctp$" . php-mode)))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+php-mode は Emacs 25 現在、標準で同梱されていないため、各自でインストールする必要がある。
+インストール方法などの詳細は、第 7 章で解説する。尚、require は拡張機能の使用の有無に関わらず全てを読み込む。
+そのため、読み込む拡張機能が大量である場合 Emacs の起動時間が長くなり、メモリの使用量も増加するという欠点がある。
+%%
+%% 款：autoload
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{autoload}
+autoload は require とは異なり、登録した関数（コマンド）を実行した際に指定した拡張機能ファイルを読み込む仕組みである。
+起動時に全てを読み込まないため、require に比べて起動時間が早くなりメモリも節約することができる。
+しかし、拡張機能ファイル内で使用されている変数もコマンド実行時に定義されるため、幾つかの面で注意が必要となる。\\
+
+autoload の書式は次の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[]  \texttt{\textgt{(autoload 関数名 ファイル名 説明文 対話判定 関数の種類)}}
+\end{itemize}\vspc{-0.50zw}
+autoload は関数名とファイル名（拡張子は不要）を記述して利用する。
+require では機能名を指定したが、autoload ではファイル名を指定することに注意する。
+また、対話判定に non-nil な値を与えるとコマンドとして実行可能（すなわち \texttt{M-x} から実行できる）となり、関数の種類の値を keymap もしくは macro と指定することで、それらをロードすることも可能である。
+尚、説明文以下の引数は省略可能となっている。\\
+
+autoload を利用した読み込みの設定例として、第 7 章で解説する Ruby 用の拡張機能を読み込むために、次のように設定ファイルに記述している。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; run-ruby 関数の初呼び出し時に inf-ruby.el を読み込む
+(autoload 'run-ruby "inf-ruby"
+  "Run an inferior Puby process")
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：コマンドが存在する場合のみ読み込む
+%%------------------------------------------------------------------------------------------------%%
+\subsection{コマンドが存在する場合のみ読み込む}
+基本的に自分自身が利用しているメイン環境であれば、外部コマンドの有無も把握済みで、足りないコマンドがあれば直ちにインストールすることができる。
+しかし、メイン以外の環境で Emacs を利用する場合、コマンドのインストールができないなどの理由で同じ環境を構築することが難しいこともある。\\
+
+そのような場合、少々気を付けて設定ファイルを記述することで、インストールされていないコマンドに依存する機能に関する設定のみを無視して、それ以外はメイン環境と同じ状態の Emacs の設定を利用可能である。\\
+
+コマンドがインストールされているかどうかを確認するには excutable-find 関数を用いる。
+もし、引数として渡されたコマンドを Emacs から見つけることができればコマンドのパスを返し、見つからなければ nil を返す。
+これにより、今まで通り when と組み合わせることで、コマンドが見つかった場合のみ評価される設定を作成することができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (excutable-find "git")
+  (require 'magit nil t))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この設定は git コマンドが見つかった場合のみ Magit（Git を Emacs から使い易くするための拡張機能）を読み込む。
+Magit の導入、利用方法については第 7 章「Git フロントエンド」で詳しく解説する。
+%%
+%% 節：Web サービスを用いたバックアップ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{Web サービスを用いたバックアップ}
+本節では Web サービスを用いたバックアップ方法を紹介する。\\
+
+既に、本章を読み終えて \textasciitilde{}/.emacs.d ディレクトリに設定ファイルや拡張機能ファイルを集約する方法を覚えたなら、この 1 つのディレクトリを定期的にバックアップすることで Emacs に関する設定をバックアップすることができるようになっている。\\
+
+但し、ローカルのみにバックアップを配置しておくとハードウェアごと故障した場合は対処しきれない。\enlargethispage{1.00zw}
+近年では便利な Web サービスが存在するため、サーバを持たない者にも簡単に Web 上にバックアップを配置することができるようになっている。
+%%
+%% 項：GitHub
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{GitHub}
+Web サービスを用いたバックアップの内、 1 つ目は GitHub\footnote{https://github.com} や Bitbucket\footnote{https://bitbucket.org} などのコードホスティングサービスを利用したバックアップが挙げられる。
+GitHub では様々な者が dotfiles というプロジェクト名で設定ファイルを公開している。
+一度ホスティングサービスへプッシュ（送信）した設定ファイルは、チェックアウトすることで容易に他の環境へコピーすることも可能となる。\\
+
+GitHub では非公開リポジトリの作成は有用プランとなっているが、Bitbucket では無料で非公開リポジトリを作成することが可能なので、無料で非公開にしておきたい場合は BitBucket を利用するとよいだろう。
+%%
+%% 款：~/projects/dotfiles ディレクトリに設定ファイルを移動する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{\textasciitilde{}/projects/dotfiles ディレクトリに設定ファイルを移動する}
+GitHub は勿論、Git や BitBucket は Mercurial か Git をバージョン管理システムとして利用可能である。
+ここでは、両者で利用することができる Git を用いて解説する。\\
+
+Git のインストールについては、Mac の場合は最新の Command Line Tools をインストールするだけで利用可能となる。
+UNIX 系 OS の場合は各種パッケージ管理ツール、もしくはソースコードからインストールする。
+Windows の場合は Git for Windows\footnote{https://git-for-windows.github.io} をインストールする。\\
+
+著者の環境を例に挙げながら解説すると、まずホームディレクトリに \textasciitilde{}/projects/dotfiles というディレクトリを作成し、その中に.emacs.d ディレクトリを移動する。
+これはホームディレクトリを Git で管理するわけではないためである。
+dotfiles ディレクトリの中のファイルを Git で管理した上で、シンボリックリンクを利用してホームディレクトリに.emacs.d を配置する。
+この方法を利用すると.emacs.d 以外の設定ファイル（例えば.bashrc など）も 1 つのリポジトリで管理することが可能となる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+$ mkdir -p ~/projects/dotfiles
+$ cd ~/projects/dotfiles
+$ mv ~/.emacs.d ./
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：シンボリックリンクを利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{シンボリックリンクを利用する}
+dotfiles ディレクトリへ移動した設定ファイルは、シンボリックリンクを利用することで今まで通り利用可能となる。
+シンボリックリンクは UNIX 系 OS で利用することが可能（Windows でも Vista 以降では利用可能）な、ファイルやディレクトリを別の場所から参照することができる仕組みである。
+シンボリックリンクは ln -s source\_file target\_file というコマンド（Windows の場合は mklink コマンド）で作成することができるので、次のようにして作成する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Mac、Linux の場合：
+$ cd ~/
+$ ln -s /Users/ユーザ名/projects/dotfiles/.emacs.d .emacs.d
+Windows の場合：
+> %HOME%\mklink /D .emacs.d %HOME%\projects\dotfiles\.emacs.d
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：Git にコミットする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Git にコミットする}
+ここまで準備してから Git による管理を開始する。
+dotfiles ディレクトリでリポジトリを初期化し、ファイルをリポジトリへと追加しコミットする。\enlargethispage{1.750zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+$ cd ~/projects/dotfiles
+$ git init
+$ git add .
+$ git commit -m "First commit"
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで Git による dotfiles の管理が開始される。
+全てのファイルを追加したくない場合は、ファイルを追加（git add）する前に dotfiles 直下に.gitignore ファイルを作成し、除外したいファイルを指定する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Git で管理しないファイル
+.*~
+*~
+/.emacs.d/*
+;; Git で管理したいファイル（行頭に ! を付加する）
+!/.emacs.d/init.el
+!/.emacs.d/conf
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：GitHub へプッシュする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{GitHub へプッシュする}
+Git による管理を始めた後は GitHub でリポジトリを作成し、そのリポジトリをリモート先として登録してプッシュすることで GitHub によるバックアップを開始することができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+GitHub で作成したリポジトリをリモートとして登録する。
+$ git remote add origin git@github.com:ユーザ名/dotfiles.git
+リモートリポジトリにファイルをプッシュする。
+$ git push -u origin master
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+因みに、GitHub Desktop\footnote{https://desktop.github.com} という GUI から簡単に Git を利用することができ、GitHub にもプッシュすることができるツールも存在する。
+他にも GUI で Git を扱うことができるソフトウェアは幾つか存在する\footnote{https://git-scm.com/downloads/guis}ので、Git の使い方がまだよく分からないという者は試してみるとよいだろう。
+%%
+%% 項：Dropbox
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Dropbox}
+もっと簡単にバックアップを取りたい場合は、オンラインストレージサービスの Dropbox\footnote{https://www.dropbox.com} を利用するのも 1 つの手である。
+Dropbox はインストールすると自動的に Windows であればドキュメントフォルダ内の My Dropbox 以下を、Mac であればユーザディレクトリ内の Dropbox 以下をオンライン上に同期するサービスである。\\
+
+利用方法としては、前節で解説した GitHub を利用する方法とほぼ同じであり、Dropbox で管理されているディレクトリに設定ファイルを移動し、ホームディレクトリにはそのシンボリックリンクを張るだけである。\\
+
+勿論、そのディレクトリを Git で管理することも可能なので、Dropbox による自動バックアップと Git によるバージョン管理という二段構えの体制でバックアップをることも可能である。

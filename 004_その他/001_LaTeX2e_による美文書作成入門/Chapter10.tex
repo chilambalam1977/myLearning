@@ -1,0 +1,224 @@
+%%
+%% 章：相互参照・目次・索引・リンク
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{相互参照・目次・索引・リンク}
+\LaTeX{}で作成した文書には自動的に目次を付けることができる。
+また、\verb'\label'、\verb'\ref'、\verb'\pageref' といった命令を用いると、章・節・図・表などの番号・ページを参照することができる。
+更に、索引に載せたい語句に \verb'\index' という命令を付加しておけば、MakeIndex（または mendex、upmendex）というソフトを併用することにより索引を自動的に作成することができる。
+%%
+%% 節：相互参照
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{相互参照}
+相互参照とは「5.3 節を参照されたい」とか「結果は 123 ページの図 10.5 のようになった」のように、ページ・章・節・図・表・数式などの番号を入れることである。\\
+
+\LaTeX{}を使えば、この相互参照が簡単に行える。
+まず、参照したい番号出力する命令の直後に、次のようにしてラベル（名札）を貼っておく。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'\section{文書処理とコンピュータ}'   \\
+  \    & \verb'\label{bunsho}'                     \\
+  \    & \verb'\subsection{\LaTeX による文書処理}' \\
+  \    & \verb'\label{labun}'                      \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & {\Large {\textgt\ 5\ \ \ 文書処理とコンピュータ}}    \\
+  \    & {\large {\textgt\ 5.1 \ \ \ \LaTeX{}による文書処理}} \\
+\end{longtable}\vspc{-1.00zw}
+見ての通り \verb'\label{...}' は出力には直接影響しない。
+しかし、これで「文書処理とコンピュータ」というセクションには \texttt{bubsho} というラベルが貼られ、「\LaTeX{}による文書処理」というサブセクションには \texttt{labun} というラベルが貼られた。\\
+
+ラベルは \verb'label{bunsho}' のような半角文字でも \verb'\label{文書}' のような全角文字でも構わない。
+但し、ラベル中で半角の \verb'\ { }' の 3 文字は使用することができない。
+また、同じラベルを 2 箇所に貼ることはできない。
+大文字と小文字は区別される\footnote{実際には、大文字と小文字だけ異なるラベル名などは、紛らわしいので使わないことを推奨する。}。\\
+
+ラベル名としては、章のラベルには \texttt{ch:bunsho}、節のラベルには \texttt{sec:LaTeX}、図のラベルには \texttt{fig:zu}、式のラベルには \texttt{eq:Eular} のように系統的に命名するとよいだろう。\\
+
+先程の例では「\LaTeX{}による文書処理」という節に \texttt{labun} というラベルを貼ったが、その前でも後でも、この「\LaTeX{}による文書処理」という節を参照したいところがあれば、次のようにする。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'この件については\ref{labun}節（\pageref{labun}ページ）を参照されたい。' \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & この件については 5.1 節（123 ページ）を参照されたい。\\
+\end{longtable}\vspc{-1.00zw}
+すなわち、\texttt{labun} というラベルを貼った節番号を出力したい場所には \verb'\ref{labun}' と記述し、ページ番号を出力したい場所には \verb'\pageref{labun}' と記述する。
+ところが \verb'\ref' や \verb'pageref' を用いた際は、\LaTeX{}を 1 回実行しただけでは正しい出力が得られない。\\
+
+\LaTeX{}の 1 回目の実行では、次のような警告メッセージが表示される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+LaTeX Warning: Reference 'labun' on page 1 undefined on input line 8.
+LaTeX Warning: There were undefined references.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これは「相互参照を正しくするためにもう一度実行して下さい」ということである。
+もし、この警告を無視して dvi ファイルを出力すると、節番号・ページの部分が伏せ字（``??''）になってしまう。\\
+
+通常は 2 回目の\LaTeX{}の実行で警告が出なくなる。
+しかし、2 回目の実行で正しい番号を埋めた際、肝心のページ番号がずれてしまうことがあり得る。\\
+
+また、1 回目の実行の後で文書ファイルに手を加えた際も、ページ番号が合わなくなる。
+これらの場合は伏せ字にはならないが、完全に辻褄が合うまで、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+という警告メッセージが出る。
+この警告メッセージが出なくなるまで実行を繰り返す必要がある。\\
+
+また、2 回目以降の実行でも、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+LaTeX Warning: There were undefined references.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+の警告が出る際は、\verb'\ref' や \verb'pageref' に対応する \verb'\label' がない場合である。
+%%
+%% 節：目次
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{目次}
+\LaTeX{}で目次を出力するのはとても簡単である。
+目次を出力したい場所（例えば、序文の後）に \verb'\tableofcontents' と記述するだけである。
+同様に、\verb'\listoffigures'、\verb'\listoftables' という命令で図目次、表目次を出力することができる。\\
+
+但し、これらの目次を出力するには、前節で述べた事と同様の理由で、文書ファイルを\LaTeX{}で少なくとも 2 回処理しなければならない。\\
+
+目次にどのレベルまでの見出しを出力するかはドキュメントクラスによって決まっているが、変更は容易である。
+出力するレベルを \verb'\section' までにするなら、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\setcounter{tocdepth}{1}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\verb'\subsection' までにするなら、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\setcounter{tocdepth}{2}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とプリアンブルに記述しておく。
+%%
+%% 節：索引と MakeIndex、mendex、upmendex
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{索引と MakeIndex、mendex、upmendex}
+索引を用意するには、昔はまず本文から重要な語句を拾い出してカードに書き、それを五十音順に並べ替えていた。
+これは大変な作業で、よく間違いが生じた。\\
+
+MakeIndex というソフトを\LaTeX{}を組み合わせて用いることで、文書ファイル中で索引に載せたい語に \verb'\index' という命令を付けておくだけで、自動的に索引が作成される\footnote{MakeIndex 以外に xindy というソフトが存在する。}。\\
+
+MakeIndex を日本語化したものが mendex、upmendex である。\enlargethispage{+0.70zw}
+以下では、mendex を用いた索引を作り方を説明するが、upmendex でも全く同様である。
+%%
+%% 節：索引の作り方
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{索引の作り方}
+例えば、次のような文章を考える。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+　ピッツィカートすべき個所の指定は、楽譜の上では pizz と書かれ、またもとどおりに弓でひく箇所に、イタリア語で acro（弓）と書くことになっています。
+\end{mdframed}\vspc{-0.70zw}
+この中で、
+\begin{quote}
+  ピッツィカート\hspc{+3.00zw}pizz\hspc{+3.00zw}弓\hspc{+3.00zw}acro
+\end{quote}
+の 4 つの語を索引に載せたいとする。
+それには \verb'\index{...}' という命令を用いる。
+この命令は、半角アルファベットや平仮名・片仮名だけの索引語は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\index{pizz}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように \verb'\index{索引語}' の形で用いる。
+漢字を含む索引後は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\index{ゆみ@弓}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように \verb'\index{よみかた@索引語}' の形で用いる。
+更に、文書ファイルのプリアンブルに
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{makeidx}
+\makeindex
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述しておく。
+また、索引を出力したい場所（大抵は文書の最後）に \verb'\printindex' と記述しておく。\\
+
+先程の例に索引語の指定などを書き加えると次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\usepackage{makeidx}
+\makeindex
+\begin{document}
+ピッツィカート\index{ピッツィカート}すべき個所の指定は、
+楽譜の上では pizz\index{pizz} と書かれ、
+またもとどおりに弓\index{ゆみ@弓}でひく箇所に、
+イタリア語で acro\index{acro}（弓）と書くことになっています。
+
+\printindex
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この文書ファイルを ongaku.tex という名前で保存し、まず\LaTeX{}で通常通りに処理する。
+すると、ongaku.tex と同じディレクトリに ongaku.idx というファイルが作成される（これは \verb'\makeindex' の仕業であり、\verb'\usepackage{makeidx}' や \verb'\printindex' はこの段階では特に意味を持たない）。\\
+
+次に mendex でこの ongaku.idx ファイルを処理する。
+コマンドなら、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+$ mendex ongaku.idx
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように打ち込むことになる。
+これで mendex は ongaku.idx ファイルをアルファベット・50 音順に並べ替え、ongaku.ind というファイルに出力する。
+最後に、もう一度\LaTeX{}で処理すると \verb'\printindex' コマンドが ongaku.ind を読み込んで、その場所に索引が挿入される。\enlargethispage{+1.65zw}
+%%
+%% 節：ハイパーリンク
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ハイパーリンク}
+米国 Los Alamos National Laboratory 発祥の有名な物理学のプレプリントサーバ e-Print archive\footnote{http://arxiv.org、現在は Cornell University 内} では\TeX{}を用いたプレプリントを蓄積しているが、その相互参照を容易にするために Hyper\TeX{}という仕組みが開発された\footnote{http://arxiv.org/hypertex/}。\\
+
+これは当時 World Wide Web で使われ始めたハイパーリンクの仕組みを\TeX{}に持ち込んだものである。
+現在 Hyper\TeX{}の仕組みを利用するために広く用いられているのは hyperref パッケージである。\\
+
+プリアンブルには、できるだけ後の方に\footnote{いろいろなコマンドを書き換えるので、できるだけ後で指定しないと他のパッケージの影響を受けてしまう。}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage[ドライバ名]{hyperref}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述しておく。
+ドライバ名には dvipdfmx、pdftex、dvips、tex4ht、xetex、hypertex などが指定できる。
+最後の hypertex は Hyper\TeX{}拡張をサポートする一般のドライバ用である（dviout はこれを指定する）。
+Lua\TeX{}は pdftex でも大丈夫だが、栞が化けるのを防ぐために unicode=true というオプションも付加する。\\
+
+これで、リンクを貼りたい箇所に、例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+Hyper\TeX は \href{http://arxiv.org/}{arXiv} で開発された。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように記述すれば、その部分がリンクとなる。\\
+
+hyperref パッケージで使える主な命令をまとめておく。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\href{URL}{テキスト}' は HTML の \verb|<a href="URL">テキスト</a>| に相当し、リンクを作成する。
+\item \verb'\hyperbseurl{URL}' は \verb|<base href="URL"| に相当し、相対 URL の基準を指定する。
+\item \verb'\hyperimage{URL}' は \verb|<image src="URL">| に相当し、画像を挿入する。
+\item \verb'\hyperlink{名前}{テキスト}' は \verb|<a href="#名前">テキスト</a>| に相当し、文書内へのリンクを作成する。
+\item \verb'\hypertarget{名前}{テキスト}' は \verb|<a name="名前">テキスト</a>| に相当し、文書内からのリンクの飛び先となる。
+\end{itemize}\vspc{-0.50zw}
+hyperref では、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\url{http://www.gihyo.co.jp/}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように書いた URL もリンクとなる。
+この url パッケージは単独で用いても URL の表記に便利である。
+\verb'\url' コマンドは \verb'\verb' に似ているが、長い URL は途中で改行することができる。
+長いファイル名を書く際にも便利である。

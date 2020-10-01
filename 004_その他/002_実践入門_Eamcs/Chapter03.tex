@@ -1,0 +1,805 @@
+%%
+%% 章：基本的な操作
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{基本的な操作}
+%%
+%% 節：コマンド
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{コマンド}
+Emacs はエディタなので文字入力ができるのは当然だが、文字を入力するだけなら単機能なエディタと同じであると言える。
+Emacs が多くの開発者に愛されているのは、様々なことが行える優秀なコマンドが多く用意されているからである。
+%%
+%% 項：入力して実行する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{入力して実行する}
+コマンドを実行する方法は 2 通り存在する。\\
+
+その 1 つがコマンド名を入力して実行する方法である。
+Emacs 上で \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Alt\vphantom{x}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{x\vphantom{l}}}}} を押すとミニバッファにフォーカスが移動し、コマンド入力待ちの状態となる。
+この状態で、例えば \texttt{about} と入力して \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Tab\vphantom{T}}}}} を押してみる。
+\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Tab\vphantom{T}}}}} はミニバッファで入力を補完してくれる非常に便利なキーである。
+about から始まるコマンドは about-emacs のみなので about-emacs が補完されたはずである。
+この状態で \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Enter\vphantom{E}}}}} キーを押すと、環境にインストールされている Emacs のバージョン情報が表示されるバッファが開く。\\
+
+続いて、同じく \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Alt\vphantom{x}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{x\vphantom{l}}}}} を押してコマンド入力待ちの状態にし、help-with-tutorial-spec-language と入力してみる。
+今度はウィンドウが分割され、ミニバッファには Language: と表示されるはずである。
+これは、更なる入力を求めている状態であり、japa と入力して \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Tab\vphantom{T}}}}} キーを押す。
+Japanese が補完されるので \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Enter\vphantom{E}}}}} を押すと、Emacs チュートリアルの日本語版が開く。
+このチュートリアルは、読み進めながら指示通りに操作することで Emacs の一連の操作をマスターすることができるようになっている。
+%%
+%% 項：キーバインドから実行する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{キーバインドから実行する}
+もう 1 つのコマンド実行方法はキーバインドから実行する方法である。
+キーバインドとは一般的にキーボードショートカットと呼ばれるもので、修飾キーと文字キーを組み合わせた操作のことである。\\
+
+Emacs には様々なキーバインドが用意されている。
+このキーバインドを覚えることで、魔法のように速く編集を行うことができるようになる。\\
+
+何か文字のある行の途中で \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{a\vphantom{C}}}}} を押してみる。
+すると、カーソルが行頭に移動する。
+続けて \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{e\vphantom{C}}}}} を押すと、今度はカーソルが行末に移動する。
+これは、それぞれのキーバインドに beginning-of-line と move-end-line というコマンドが割り当てられ実行されているのである。\\
+
+Emacs のコマンドはプログラムの関数となっており、それがキーに割り当てられている。
+キーバインドには自分で好きなコマンドを割り当てることも可能なので、全てのコマンドをキーバインドから実行することも可能である。
+%%
+%% 款：コマンドの表記方法
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{コマンドの表記方法}
+本稿でコマンドを表記する場合は次のように表記する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\textgt{M-x コマンド名}}
+\end{itemize}\vspc{-0.50zw}
+\texttt{M-x} は \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Alt\vphantom{x}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{x\vphantom{l}}}}} と同じ意味で、この後「キーバインドの表記方法」で詳しく解説する。
+尚、\texttt{M-x} は「メタエックス」もしくは「エムエックス」と読む。\\
+
+コマンドに続けて更にミニバッファに入力を求められる場合は、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\textgt{M-x コマンド名 RET 追加入力 RET}}
+\end{itemize}\vspc{-0.50zw}
+と表記する。
+RET は \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Enter\vphantom{E}}}}} もしくは \raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{m\vphantom{C}}}}} を意味する。
+%%
+%% 款：キーバインドの表記方法
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{キーバインドの表記方法}
+本稿でキーバインドを表記する場合は表\ref{キーバインド早わかり表}のように表記する。
+\vspc{-0.50zw}\begin{longtable}{llllll}
+  \caption[]{キーバインド早わかり表\label{キーバインド早わかり表}} \\[-1.30zw] \toprule
+  \textgt{キーの種類} & \textgt{名前}  & \textgt{表記}           & \textgt{キーの種類} & \textgt{名前}  & \textgt{表記}               \\ \midrule\midrule
+  装飾キー            & Control        & \texttt{C-}             & 特殊キー            & $\leftarrow$   & \texttt{<left>}             \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & Meta           & \texttt{M-}             &                     & $\rightarrow$  & \texttt{<right>}            \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & Shift          & \texttt{S-}             &                     & PageUp         & \texttt{<prior>}            \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & Super          & \texttt{s-}             &                     & PageDown       & \texttt{<next>}             \\ \cmidrule{1-3}\cmidrule{5-6}
+  文字・記号          & a,1,?,$\cdots$ & \texttt{a,1,?,$\cdots$} &                     & Home           & \texttt{<home>}             \\ \cmidrule{1-3}\cmidrule{5-6}
+  特殊キー            & Tab            & \texttt{TAB}            &                     & End            & \texttt{<end>}              \\ \cmidrule{1-3}\cmidrule{5-6}
+  {}                  & Space          & \texttt{SPC}            &                     & Backspace      & \texttt{<backspace>}        \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & Escape         & \texttt{ESC}            &                     & Delete         & \texttt{<del>}              \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & Return         & RET            &                     & Shift$+$TAB    & \texttt{<backtab>}          \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & $\uparrow$     & \texttt{<up>}           &                     & F1,F2,$\cdots$ & \texttt{<f1>,<f2>,$\cdots$} \\ \cmidrule{2-3}\cmidrule{5-6}
+  {}                  & $\downarrow$   & \texttt{<down>}         &                     &                &                             \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 款：キーバインドの表記サンプル
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{キーバインドの表記サンプル}
+キーバインドを説明する際、\texttt{C-n} や \texttt{M-x}、\texttt{C-x f} などの特殊な表記を用いるため、表\ref{キーバインドの表記}で説明しておく。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{キーバインドの表記\label{キーバインドの表記}} \\[-1.30zw] \toprule
+  \textgt{キー}      & \textgt{説明}                                                                                                                                                                                                                                                                                                              \\ \midrule\midrule
+  \texttt{C-n}       & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{n\vphantom{C}}}}} を押す。                                                                                                                                                               \\ \midrule
+  \texttt{M-f}       & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Meta\vphantom{C}}}}} を押しながら \raise0.1ex\hbox{\ovalbox{\footnotesize{\texttt{f\vphantom{C}}}}} を押す。                                                                                                                                                               \\ \midrule
+  \texttt{C-RET}     & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Enter\vphantom{C}}}}} を押す。                                                                                                                                                           \\ \midrule
+  \texttt{C-x k}     & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{x\vphantom{C}}}}} を押し、\raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} を離してから \raise0.1ex\hbox{\ovalbox{\footnotesize{\texttt{k\vphantom{C}}}}} を押す。   \\ \midrule
+  \texttt{C-x C-c}   & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{x\vphantom{C}}}}} を押し、そのまま \raise0.1ex\hbox{\ovalbox{\footnotesize{\texttt{c\vphantom{C}}}}} を押す。                                                                            \\ \midrule
+  \texttt{C-M-S-v}   & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} と \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Meta\vphantom{C}}}}} と \raise0.1ex\hbox{\ovalbox{\footnotesize{\texttt{Shift\vphantom{C}}}}}を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{v\vphantom{C}}}}} を押す。               \\ \midrule
+  \texttt{C-/, C-\_} & \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}} を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{/\vphantom{C}}}}}、もしくは \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}}を押しながら \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{\_\vphantom{C}}}}} を押す。 \\ \bottomrule
+\end{longtable}\vspc{-0.70zw}
+また、Emacs の解説では次のようにキーバインドの後にコマンド名を表記する場合がある。\enlargethispage{0.50zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{C-x C-f (find-file)}
+\end{itemize}\vspc{-0.50zw}
+これは \texttt{C-x C-f} と入力する他に \texttt{M-x find-file RET} としても利用可能である、という意味である。
+本稿でも、キーバインドと同じ処理を実現するコマンドが存在する場合にはこの形で表記する。
+%%
+%% 款：プレフィックスキー（起点キー）
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{プレフィックスキー（起点キー）}
+\texttt{C-x C-f} の \texttt{C-x} などは単体ではコマンドが実行されず、その後にキー入力を必要とするキーバインドである。
+Emacs ではこのようなキーをプレフィックスキーと呼ぶ。
+プレフィックスキーには、それぞれキーバインド設計のための指針が用意されているので、表\ref{プレフィックスキーの指針}で解説しておく。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{プレフィックスキーの指針\label{プレフィックスキーの指針}} \\[-1.30zw] \toprule
+  \textgt{キー} & \textgt{説明}                                                                   \\ \midrule\midrule
+  \texttt{C-x}  & システムコマンドが利用する。                                                    \\ \midrule
+  \texttt{C-c}  & ユーザがキーバインドを定義する。                                                \\ \midrule
+  {}            & 拡張機能を作成する場合は \texttt{C-c} で始まるキーバインドは定義しない方がよい。\\ \midrule
+  \texttt{M-g}  & 行移動に関するキーバインドが定義されている。                                    \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：起動と終了
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{起動と終了}
+起動と終了を説明しなければならないのは些か時代遅れな気がするが、Emacs は様々な OS や環境で利用できるように一般のアプリケーションより少々方法が多くなっているので、ここで解説しておく。
+%%
+%% 項：起動する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{起動する}
+最も簡単な Emacs の起動はアイコンをダブルクリックする方法である。
+Mac では Emacs.app のアイコン、バイナリインストールした Windows では runemacs.exe のアイコンをダブルクリックして起動する。\\
+
+ターミナルからは emacs、もしくは emacs-27.1 のようにバージョン番号を付けて起動する。
+もし、X で起動する Emacs をターミナル内で起動したい場合は次のように -nw という引数を付加する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\textgt{\$ emacs -nw} もしくは \texttt{-{}-no-window-system}}
+\end{itemize}\vspc{-0.50zw}
+尚、Mac の Emacs.app もターミナル上で次のようにするとターミナル上で起動することができる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[]\texttt{\textgt{\$ /Applications/Emacs.app/Contents/MacOS/Emacs -nw}}
+\end{itemize}\vspc{-0.50zw}
+Windows でもコマンドプロンプトもしくは PowerShell から bin\textyen{}emacs.exe に -nw 引数を付加して起動することで、プロンプト上で Emacs を利用可能である。
+%%
+%% 款：Emacs デーモンで起動を高速化する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Emacs デーモンで起動を高速化する}
+Emacs は引数を付加して起動することで様々な状態で起動することが可能である。
+主だった引数はターミナル上でで引数 -{}-help を付けて実行することで確認することができるが、覚えておきたいのが Emaacs デーモンである。\\
+
+Emacs デーモンは Emacs 23 から導入された機能で、Emacs をデーモンと呼ばれるバックグランドで動作するプログラムとして起動しておくことで、瞬時に Emacs を起動させることができる仕組みである。\\
+
+デーモンとして起動するには、Emacs に -{}-daemon という引数を付加して実行するだけである。
+但し、Windows プラットフォームでは Emacs デーモンはサポートされていない。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\$ emacs -{}-daemon}
+\end{itemize}\vspc{-0.50zw}
+デーモンとして起動しておいた Emacs を利用するには、emacsclient というコマンドを用いる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\$ emacsclient -c} もしくは \texttt{-{}-create-frame}
+\end{itemize}\vspc{-0.50zw}
+-c は主に X で Emacs を利用するために用いる。
+ターミナル上で Emacs デーモンを利用する場合は次の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\$ emacsclient -c} もしくは \texttt{-nw}
+\end{itemize}\vspc{-0.50zw}
+尚、Emacs デーモンは普通に終了してもバックグランドで起動し続けている。
+本当に終了したい場合は、Emacs 上で \texttt{M-x kill-emacs} を実行するか、シェル上で次のコマンドを実行する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\$ emacsclient -e `(kill-emacs)`}
+\end{itemize}\vspc{-0.50zw}
+常に Emacs デーモンを利用したいのであれば、シェルにエイリアスを設定しておくとよい。\\
+
+また、OS の起動スクリプトを利用して OS に起動と同時に自動的に Emacs デーモンを起動する方法が「Emacs Wiki: Emacs As  Daemon」\footnote{http://www.emacswiki.org/emacs/EmacsAsDaeom}に紹介されている。
+%%
+%% 款：デバックモードで起動する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{デバックモードで起動する}
+Emacs は第 4 章で解説する設定ファイル（init.el）を用意することで、起動時にユーザが記述した設定を読み込むようになる。
+その際、設定に記述ミスがあると途中でエラーが発生し、それ以降の読み込みを中断する。
+そのような場合、デバックモードで起動することでエラーの原因を調べることができる。\\
+
+例えば、以下のような設定ファイルを読み込むようにしていたとする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; cl-lib パッケージを読み込む。
+(require `cl-lib)
+;; スタートアップメッセージを非表示にする。
+(setq inhibit-startup-screen t)
+p(when window-system  % ← 行頭に不要な p が入っている
+  ;; tool-bar を非表示にする。
+  (tool-bar-mode 0)
+  ;; scroll-bar を非表示にする。
+  (scroll-bar-mode 0))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+すると、Emacs は起動時に以下のようなエラーを出力する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Warning (initilaization): An error occured while loding `/Usrs/ユーザ名/.emacs.d/
+init.el` :
+
+Symbol's value as variable is boid: p
+
+To ensure normal operation, you should investigate and remove the cause of the
+error in your initialization file. Start Emacs with fg4the `--debag-init' option
+to view a complete error backtrace.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この大まかな意味は「init.el ファイルを読み込み時にエラーが発生しました。p というシンボル変数は存在しません」である。
+そして最後に「-{}-debag-init オプションを利用することで、完全なエラーのバックトレースを見ることができます」という説明が書かれている。
+実際に -{}-debag-init を付加して起動してみると、Emacs 上で次のように表示される。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Debugger entered--Lisp error: (void-variable p)
+  eval-buffer(#<buffer *load> nil "/Users/ユーザ名/.emacs.d/init.el" nil t) ;
+Readnig at buffer position 92
+  load-with-code-conversion("/Users/ユーザ名/.emacs.d/init.el" "/Users/ユーザ名/
+.emacs.d/init.el/" t t)
+  load("/Users/ユーザ名/.emacs.d/init" t t)
+  #[0 "H\205\266^Q \306=/203^Q^Q\307^H\310Q\202?^Q
+  （中略）
+  command-line()
+  normal-top-level()
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+注目してほしいのは「Reading at buffer position 92」の部分である。
+92 という数値は Emacs 内部の文字の場所（ポイントと呼ぶ）の数値である。\enlargethispage{1.00zw}
+従って、この場所では init.el ファイルを開いて \texttt{M-x goto-char RET 92 RET} といコマンドを実行すると p という文字にカーソルが移動し、ここに p という文字が紛れ込んでいるのを発見することができる。
+%%
+%% 項：終了する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{終了する}
+Emacs を終了させるためには、通常 \texttt{C-c C-x} というキーバインドを利用する。
+まだ保存されていないファイルが存在する場合は、ミニバッファに、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb|Save file /Users/ユーザ名/.emacs.d/init.el? (y, n, !, ., q, C-r, d or C-h)|
+\end{itemize}\vspc{-0.50zw}
+という質問が表示される。
+この質問に対するそれぞれの指示は表\ref{未保存のファイルが存在する場合の対応}の通りである。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{未保存のファイルが存在する場合の対応\label{未保存のファイルが存在する場合の対応}} \\[-1.30zw]\toprule
+  \textgt{キー} & \textgt{説明}                                                                \\ \midrule\midrule
+  \texttt{y}    & このファイルを保存する。                                                     \\ \midrule
+  \texttt{n}    & このファイルを保存しない。                                                   \\ \midrule
+  \texttt{!}    & 全てを保存する（未保存のファイルが複数存在する場合）。                       \\ \midrule
+  \texttt{.}    & このファイルを保存して Emacs を終了する。                                    \\ \midrule
+  \texttt{q}    & 全てのファイルを保存しない。                                                 \\ \midrule
+  \texttt{C-r}  & ファイルを表示する（フレーム上に表示されていない場合）。                     \\ \midrule
+  \texttt{d}    & 保存されているファイルと編集中のファイルの差分を表示する。                   \\ \midrule
+  \texttt{C-h}  & 選択肢のヘルプを表示する。                                                   \\ \midrule
+  \texttt{C-g}  & 操作をキャンセルする（何もしない）。                                         \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+表\ref{未保存のファイルが存在する場合の対応}のキーを押すことで対応する操作が実行される。
+未保存のファイルが複数存在する場合は全てのファイルに対して同じ質問が繰り返される。
+保存を拒否したファイルが存在する場合、最後に次のように質問される。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{Modified buffers exist anyway? (yes or no)}
+\end{itemize}\vspc{-0.50zw}
+これは「変更がまだ残っていますが、本当に終了しますか？」という意味なので、\texttt{yes RET} とタイプすると変更を破棄して終了し、\texttt{no RET} で終了をキャンセルする。
+\texttt{C-g} でもキャンセル可能である。
+%%
+%% 節：ファイル（バッファ）を開く、保存する
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ファイル（バッファ）を開く、保存する}
+Emacs はコマンドラインの時代から利用されているアプリケーションであるため、ファイルを開く、保存するなど非常に一般的な操作も通常はキーボードから操作する。
+また、ここで解説するファイルの開き方はあくまで基本となる操作であり、第 6 章で解説する Helm という拡張機能を利用することで簡単にファイルを開くことが可能となる。
+%%
+%% 項：ファイル（バッファ）を開く
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ファイル（バッファ）を開く：C-x C-f}
+\texttt{C-x C-f (find-file)} というコマンドは、ファイルを開くための基本コマンドである。
+カレントバッファのディレクトリを起点とし、ミニバッファにファイル名を入力する。
+ミニバッファでは TAB による補完が利用できるため、慣れてくるとマウスでファイルを見つけてダブルクリックするよりも速くファイルを開くことができるようになる。\\
+
+また、存在しないファイル名を入力するとバッファが作成され、保存時にディスクにファイルとして書き込まれる。
+%%
+%% 項：ファイル（バッファ）を保存する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ファイル（バッファ）を保存する：C-x C-s}
+ファイルを開くという動作は、実際にはファイルを Emacs のバッファに読み込むという操作のことである。
+従って、編集したバッファは保存するまでは実際のファイルに反映されない。
+バッファを保存するには \texttt{C-x C-s (save-buffer)} というキーバインドを用いる。\\
+
+尚、標準の設定では一番初めにファイルを保存する際、ファイルを開いた時の状態をバックアップファイル（後述）として保存する。
+この機能を利用することで、何度保存しても最初に開いた時の状態に復元することができる。
+%%
+%% 項：全てのファイル（バッファ）を保存する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{全てのファイル（バッファ）を保存する：C-x s}
+\texttt{C-x s (save-some-buffers)} というコマンドも用意されている。
+こちらは「Emacs の終了」で解説したものと同じで、Emacs 上で開いている全てのファイルに対して保存するか否かそれぞれ確認する。
+%%
+%% 項：バックアップファイル
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{バックアップファイル}
+Emacs が作成するバックアップファイルは、ファイル名の末尾に \textasciitilde（チルダ）を付けた名前となっている。
+例えば「init.el」というファイルであれば「init.el\textasciitilde」というファイルがバックアップファイルである。
+%%
+%% 款：オートセーブファイル
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{オートセーブファイル}
+前述のバックアップファイルは Emacs が終了しても残り続けるが、これ以外にも Emacs には編集中のファイルのバックアップを随時作成するオートセーブという仕組みが用意されている。
+これはアイドルタイム（Emacs を操作していない時間）を利用してファイル名の前と後ろに \# マークが付いたオートセーブファイルを自動的に作成してくれる。
+尚、このオートセーブファイルはバッファをファイルに保存すると自動的に削除される。
+このオートセーブに関する詳しい設定については第 5 章で解説する。
+%%
+%% 項：別名で保存する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{別名で保存する：C-x C-w}
+ファイルを別名で保存するには \texttt{C-x C-w (write-file)} というキーバインドを用いる。
+コマンドを入力すると \texttt{C-x C-f (find-file)} と同じようにファイル名（パスも含めて）を聞かれるので、入力して RET とすると別名で保存される。
+%%
+%% 項：バッファに別ファイルを挿入する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{バッファに別ファイルを挿入する：C-x i}
+現在開いているバッファに別のファイルを挿入することも可能である。
+\texttt{C-x i (insert-file)} を実行すると、ミニバッファで「Insert file:」とファイル名を聞かれるので、ファイルを開く時と同様にファイル名を入力するだけで簡単にファイルを挿入することができる。
+また、\texttt{M-x insert-buffer} でバッファを挿入することも可能である。
+すなわち、既に Emacs で開いているファイルまたは Emacs が自動生成するバッファの内容を挿入することができる。
+%%
+%% 項：文字コード・改行コードを変換する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{文字コード・改行コードを変換する：C-x RET f}
+最近は意識する必要が少なくなったとはいえ、テキストファイルを扱う上で忘れてならないのが文字コードと改行コードである。\\
+
+Emacs はエディタの中でも最も多くの文字コードを扱うことができるエディタの 1 つである。
+基本的には自動判別して適切な文字コードでファイルを開いてくれる。
+尚、Emacs でファイルを作成した際の標準文字コードは Unicode（UTF-8）、改行コードは UNIX（LF）となっている。\\
+
+現在編集中のバッファの文字コードを変更したい場合は、\texttt{C-x RET f (set-buffer-file-coding-system)} というキーバインドを用いる。
+実行するとミニバッファで「Coding system for saving file (default nil):」と問われるので、変更したい文字コードの名前（コーディングシステム名）を入力すると文字コードが変更される。
+例えば、sjis-dos とすると Shift-JIS で CR+LF、sjis であれば Shift-JIS で改行コードは変更しないという意味となる。\\
+
+指定可能な文字コードを表\ref{文字コード}、改行コードを表\ref{改行コード}に示す。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{文字コード\label{文字コード}} \\[-1.30zw] \toprule
+  \textgt{モードライン表記} & \textgt{文字コード名} & \textgt{Emacs 上の呼称}                                 \\ \midrule\midrule
+  \texttt{U}                & Unicode               & utf-8、utf-16、utf-7 など                               \\ \midrule
+  \texttt{S}                & Shift\_JIS            & sjis（shift\_jis）                                      \\ \midrule
+  \texttt{J}                & JIS コード            & iso-2022-jp など                                        \\ \midrule
+  \texttt{E}                & 日本語 EUC            & euc-jp、euc-jis-2004 など                               \\ \midrule
+  \texttt{1}                & Lattin-1              & latin-1（iso$-$8859$-$1）                               \\ \midrule
+  \texttt{M}                & emacs-mule            & emacs-mule                                              \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}{llll}
+  \caption[]{改行コード\label{改行コード}} \\[-1.30zw] \toprule
+  \textgt{モードライン表記} & \textgt{改行コード名} & \textgt{Emacs 上の呼称} & 説明                          \\ \midrule\midrule
+  \texttt{:}                & LF                    & unix                    & UNIX 系 OS で主に利用される。 \\ \midrule
+  \texttt{(DOS)}            & CR+LF                 & dos                     & Windows で主に利用される。    \\ \midrule
+  \texttt{(Mac)}            & CR                    & mac                     & Mac OS 9 まで利用されていた。 \\ \bottomrule
+\end{longtable}\vspc{-1.00zw}
+文字コードの選択でも TAB による補完と候補一覧を利用することができる。
+%%
+%% 項：文字コード・改行コードを変換して開き直す
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{文字コード・改行コードを変換して開き直す：C-x RET r}
+次は、途中変更ではなく文字コードを指定して開き直す方法である。
+\texttt{C-x RET r (revert-buffer-with-coding-sys\\tem)} というキーバインドで、前述と同様に文字コードを問われるので入力するとファイル名を指定した文字コードで開き直してくれる。
+%%
+%% 項：バッファを切り替える
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{バッファを切り替える：C-x b}
+今までも何度か登場したが、Emacs ではファイルを開くとバッファを作成し、消去しない限り Emacs 上に保持し続ける。
+これはブラウザで言うところのタブのようなもので、タブを切り替えるようにバッファを切り替えることで複数のファイルを 1 つの Emacs で編集することができる。\\
+
+バッファを切り替えるには \texttt{C-x b (switch-to-buffer)} というキーバインドを用いる。
+するとミニバッファでバッファ名を問われるので入力して RET を押す。
+この時、勿論 TAB による補完が利用可能である。
+いちいちバッファ名を入力するのが煩わしい場合は、\texttt{C-x <right> (next-buffer)}、\texttt{C-x <left> (previous-buffer)} というキーバインドを利用するとよいだろう。
+これは Emacs 内で管理しているバッファリストに従って、バッファを順番に切り替えてくれる。
+バッファリストの確認は \texttt{C-x C-b (list-buffers)} というキーバインドで可能である。
+%%
+%% 項：バッファを消去する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{バッファを消去する：C-x k}
+バッファを消去するには \texttt{C-x k (kill-buffer)} というキーバインドを用いる。
+すると消去するバッファを問われるので、そのまま RET するとカレントバッファが消去される。\\
+
+もし、そのバッファがまだ保存されていない場合は「buffer バッファ名 modified; kill anyway? (yes or no)」と問われるので、yes と入力するとバッファを保存せずに消去、すなわち編集を破棄する。
+no または \texttt{C-g} でバッファの消去をキャンセルする。
+%%
+%% 節：カーソル移動
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{カーソル移動}
+次はカーソル移動である。
+第 1 章でも述べたが、Emacs を使うメリットとしてキーボードで思い通りのカーソル移動ができるという点が挙げられる。
+その優れた操作性を身に付けることで、とても快適な編集を実現してくれる。
+%%
+%% 項：キーバインド一覧
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{キーバインド一覧}
+カーソル移動については、Emacs チュートリアルで一通り学ぶことができるが、改めて主要なキーバインド一覧を表\ref{カーソル移動系の主要キーバインド}にまとめておく。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{カーソル移動系の主要キーバインド\label{カーソル移動系の主要キーバインド}}  \\[-1.30zw] \toprule
+  \textgt{キー}    & \textgt{コマンド名}               & \textgt{説明}                                                      \\ \midrule\midrule
+  \texttt{C-l}     & \texttt{recenter-top-bottom}      & カーソル位置を起点にウィンドウの表示をリフレッシュする。           \\ \midrule
+  \texttt{C-p}     & \texttt{backward-line}            & 1 つ上の行に移動する。                                             \\ \midrule
+  \texttt{C-n}     & \texttt{next-line}                & 1 つ下の行に移動する。                                             \\ \midrule
+  \texttt{C-f}     & \texttt{previous-line}            & 1 文字前に移動する。                                               \\ \midrule
+  \texttt{C-b}     & \texttt{previous-line}            & 1 文字後に移動する。                                               \\ \midrule
+  \texttt{C-a}     & \texttt{move-beginning-of-line}   & 行頭に移動する。                                                   \\ \midrule
+  \texttt{C-e}     & \texttt{move-end-of-line}         & 行末に移動する。                                                   \\ \midrule
+  \texttt{C-v}     & \texttt{scroll-up-command}        & 1 画面下にスクロールする。                                         \\ \midrule
+  \texttt{M-v}     & \texttt{scroll-down-command}      & 1 画面上にスクロールする。                                         \\ \midrule
+  \texttt{C-M-v}   & \texttt{scroll-other-window}      & ウィンドウ分割時に他のウィンドウに対して \texttt{C-v} を実行する。 \\ \midrule
+  \texttt{C-M-S-v} & \texttt{scroll-other-window-down} & ウィンドウ分割時に他のウィンドウに対して \texttt{M-v} を実行する。 \\ \midrule
+  \texttt{M-<}     & \texttt{beginning-of-buffer}      & バッファの先頭へ移動する。                                         \\ \midrule
+  \texttt{M->}     & \texttt{end-of-buffer}            & バッファの終端へ移動する。                                         \\ \midrule
+  \texttt{M-g g}   & \texttt{goto-line}                & ミニバッファで入力した行番号へ移動する。                           \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：文字の入力や文字列の操作
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{文字の入力や文字列の操作}
+続いては入力に関する操作である。
+通常の文字タイピングに関しては特筆すべき事はないが、コピーやカット、ペーストなどの入力補助については大いに有用である。
+%%
+%% 項：マークとリージョン
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{マークとリージョン：C-SPC}
+コピーやカットを行う為には、まず範囲選択を行う。
+この範囲選択はメモ帳などのエディタでは \raise0.2ex\hbox{\ovalbox{\footnotesize{\texttt{Shift\vphantom{$\uparrow$}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{ $\uparrow$ }}} \raise0.3ex\hbox{\ovalbox{\footnotesize{ $\downarrow$ }}} \raise0.3ex\hbox{\ovalbox{\footnotesize{$\leftarrow$\vphantom{$\uparrow$}}}} \raise0.3ex\hbox{\ovalbox{\footnotesize{$\rightarrow$}\vphantom{$\uparrow$}}} を用いるのが一般的だが、Emacs では一風変わった範囲選択方法が用意されている。
+それがマークとリージョンという概念である。\\
+
+マークは言葉の通りカーソル位置にマーキング（印付け）を行う操作である。
+キーバインドは \texttt{C-SPC (mark-set-command)} もしくは \texttt{C-@} である。
+マークしてからカーソル移動すると、マークから現在位置までが選択範囲となる。
+これがリージョンである。
+Emacs はリージョンを用いてコピーやカットなどの一般的な操作から整形、変換など高度な処理を行うことができる。
+%%
+%% 項：コピーとカット
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{コピーとカット：M-w、C-w}
+リージョンを学んだ上で、コピーとカットの方法を解説する。
+まずはコピーだが、リージョンによる範囲選択を行ってから \texttt{M-w (kill-ring-save)} というキーバインドを用いるとリージョンをコピーしてくれる。\\
+
+コマンド名に kill-ring（キルリング）という言葉が入っているが、これは一般的にクリップボードと呼ばれるような機構で、消去（キル）したテキストを記録しておく場所となっている。\\
+
+カットはコピーと同じくリージョンを作成してから \texttt{C-w (kill-region)} というキーバインドを用いる。
+コマンド名は kill-region となっているが、このキルは消去という意味であり、キルされたテキストは全てキルリングに記録される。
+尚、キルリングに記録しない文字の消去は削除（delete）と表現し、コマンド名も delete から始まるものが用いられる。
+%%
+%% 項：行を消去する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{行を消去する：C-k}
+少し特殊な操作として行の消去がある。
+\texttt{C-k (kill-line)} はカーソル位置より右にあるテキストを行末まで（改行は含まない）を消去する。
+消去なのでテキストはキルリングに記録される。
+非常によく用いられる操作としては、行頭へ移動して行を消去する \texttt{C-a C-k} が挙げられる。\\
+
+\texttt{C-k} はカーソルが改行に位置する場合、改行のみを消去する。
+また、連続して \texttt{C-k} を用いて消去した内容は 1 回のペーストで貼り付けることができるようになっている。
+%%
+%% 項：ペーストする
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ペーストする：C-y、C-y M-y}
+コピーやカットなどで消去され、キルリングに記憶されたテキストは \texttt{C-y (yank)} を用いていつでもヤンク（ペースト）可能である。
+このヤンクは直前に消去された内容を貼り付けるコマンドである。\\
+
+以前にキルリングに記録した内容を遡ってヤンクするには、\texttt{C-y} に続けて \texttt{M-y (yank-pop)} を入力する。
+\texttt{M-y} は直前のコマンドが \texttt{C-y} だった場合にのみ利用可能なコマンドで、キルリングの内容を遡ってヤンクする。
+\texttt{M-y} を続けて入力することでキルリングを遡り続けるのだが、インタフェースとしては少々使いづらいものであるため、第 6 章で紹介する helm-show-kill-ring という拡張機能を利用する方がよいかもしれない。
+%%
+%% 項：コメントする、コメントを解除する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{コメントする、コメントを解除する：M-;}
+コメントとはコードや設定ファイルにおいて処理に含めない部分のことであり、読む人間のためのメモ書きやコード処理させないようにする（コメントアウトする）などに利用する。
+Emacs には \texttt{M-; (comment-dwin)} という言語と状況によってコメントを挿入・解除してくれるコマンドが備わっている。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item リージョン選択中に \texttt{M-;} するとコメントアウト、もしくはコメント解除する。
+\item リージョン選択中に \texttt{C-u 数値 M-;} するとコメント文字列を数値分にする。
+\item 何も書かれていない行（空行）で \texttt{M-;} した場合、コメント文字列を挿入する。
+\item 何か書かれている行で \texttt{M-;} した場合、行末にコメント文字列を挿入する。
+\item コメントが存在する行で \texttt{M-;} した場合、コメント本文までジャンプする。
+\item コメント行で引数を与えて \texttt{M-;} した（例えば \texttt{C-u M-;}）場合、コメント行であれば削除する。
+\end{itemize}\vspc{-0.50zw}
+編集中のファイルが特有のコメント開始文字を持たない場合はミニバッファで「No comment syntax is defined. Use:」と問われるので、例えば \# として RET すると \# をコメント開始記号として利用してくれる。
+%%
+%% 項：特殊文字を入力する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{特殊文字を入力する：C-q}
+テキストには、例えば改行文字やタブ文字など通常の文字とは異なる文字（制御文字など）が存在する。
+これらを入力する方法を覚えておくと、思わぬところで役立つ可能性がある。
+\texttt{C-q (quoted-insert)} は、次に入力したキーの制御文字を挿入してくれる。
+例えば、リターンではなく改行文字そのものを挿入したい場合は \texttt{C-q C-j} を実行する。
+同じくインデントではなくタブ文字を挿入したい場合は \texttt{C-q TAB} を実行し、\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{Ctrl\vphantom{C}}}}}＋\raise0.3ex\hbox{\ovalbox{\footnotesize{\texttt{c\vphantom{C}}}}} の制御文字を挿入したい場合は \texttt{C-q C-c} を実行する。
+この \texttt{C-q} による特殊文字の入力を覚えておくと、例えば一括変換で改行を消去したり、カンマ（，）を改行に変換したりすることなどが簡単に行えるようになる。
+%%
+%% 項：アンドゥ
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{アンドゥ：C-/、C-\_、C-x u}
+入力中に編集内容を 1 つ前の状態に戻したい場合はアンドゥを利用する。
+\texttt{C-/ (undo)} を実行すると、直前の変更を元の状態に戻すことが可能である。\\
+
+アンドゥとは逆の操作を実現するリドゥは Emacs 標準には用意されておらず、\texttt{C-g} を実行してからアンドゥを行うことでリドゥとの機能を実現する。
+この操作に馴染めない場合は、第 6 章で紹介する拡張機能 undo-tree を導入するとよいだろう。\enlargethispage{1.00zw}
+%%
+%% 節：Emacs の正規表現
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{Emacs の正規表現}
+Emacs では他のエディタ同様、検索や置換などに正規表現を利用することができる。
+正規表現については本節ではあまり深く語らないが、Emacs の正規表現は文字列で記述するため、一般的な正規表現リテラルによる記述とは少々異なり注意が必要な部分が存在する。
+%%
+%% 項：特別な文字
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{特別な文字}
+特別な文字とは一般的にメタキャラクタと呼ばれるもので、普通の文字とは異なり特殊な意味を持つ文字のことである。
+表\ref{正規表現で使うことのできる特別な文字（メタキャラクタ）}にメタキャラクタを示す。
+\vspc{-0.50zw}\begin{longtable}{lp{18zw}p{22zw}}
+  \caption[]{正規表現で使うことのできる特別な文字（メタキャラクタ）\label{正規表現で使うことのできる特別な文字（メタキャラクタ）}} \\[-1.30zw] \toprule
+  \textgt{文字}                                                         & \textgt{説明}                                                                  & \textgt{利用例}                                                                                                                \\ \midrule\midrule
+  \texttt{.}                                                            & 改行以外の任意の文字に一致する。                                               & .macs（Emacs, imacs などに一致）                                                                                               \\ \midrule
+  \textasteriskcentered{}                                               & 直前の正規表現を可能な限り反復する後置演算子。                                 & E\textasteriskcentered{}macs（macs, Emacs, EEEmacs などに一致）                                                                \\ \midrule
+  \texttt{+}                                                            & 直前の正規表現に 1 回以上一致する。                                            & E+macs（Emacs, EEmacs, EEEmacs などに一致）                                                                                    \\ \midrule
+  \texttt{?}                                                            & 直前の正規表現に 1 回以上一致するか、あるいは 1 回も一致しない。               & E?macs（macs, Emacs に一致）                                                                                                   \\ \midrule
+  \texttt{\textbackslash\{n\}\textbackslash}                            & 直前の正規表現がｎ回の場合のみ一致する後置演算子。                             & E\textbackslash\{2\textbackslash\}macs（EEmacs に一致）                                                                        \\ \midrule
+  \texttt{\textbackslash\{n, m\textbackslash\}}                         & 直前の正規表現がｎ回からｍ回まで一致する後置演算子。                           & E\textbackslash\{1, 3\textbackslash\}macs（Emacs, EEmacs, EEEmacs に一致）                                                     \\ \midrule
+  \texttt{[\hphantom{.}\ldots\hphantom{\^{}}]}                          & この間にある文字集合に一致する。                                               & [Ee]macs（Emacs, emacs に一致）                                                                                                \\ \midrule
+  \texttt{[\^{}\ldots\hphantom{\^{}}]}                                  & この間にある文字集合以外に一致する。                                           & [\^{}Ee]macs（Emacs, emacs 以外に一致）                                                                                        \\ \midrule
+  \texttt{\^{}}                                                         & 行頭に一致する。                                                               & \^{}Emacs（行頭の Emacs に一致）                                                                                               \\ \midrule
+  \texttt{\$}                                                           & 行末に一致する。                                                               & Emacs\$（行末の Emacs に一致）                                                                                                 \\ \midrule
+  \texttt{\textbackslash}                                               & 特別な文字をクオート（エスケープ）する。\textbackslash{}.は文字{.}に一致する。 & \textbackslash{}.emacs（.emacs に一致）                                                                                        \\ \midrule
+  \texttt{\textbackslash{}|}                                            & 両端の正規表現のどちらかに一致する。通常はグループ化と組合わせて使用する。     & a\textbackslash|{}b（a か b に一致する）                                                                                       \\ \midrule
+  \texttt{\textbackslash(\hphantom{.}\ldots\hphantom{.}\textbackslash)} & グループ化。囲まれた正規表現を 1 つの文字のように扱う。                        & \textbackslash{}(Emacs\textbackslash{}|emacs\textbackslash)（Emacs か emacs に一致）                                           \\ \midrule
+  \texttt{\textbackslash{}1,\textbackslash{}2,\ldots,\textbackslash{}9} & グループ化した文字を引用する。                                                 & \textbackslash(Emacs\textbackslash).\textasteriskcentered{}?\textbackslash{}1（Emacs から同じ行に登場する次の Emacs まで一致） \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：検索と置換
+%%----------------------------------------------------------------------------------------------------------%%
+\section{検索と置換}
+検索と置換はエディタの中心機能の 1 つである。
+そもそも、検索は見つけるという操作以外にも移動したり思い出すなど様々な役割があり、OS を含む全てのアプリケーションにおいて検索を使いこなせるか否かで作業効率が大幅に変化する。
+%%
+%% 項：grep による検索
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{grep による検索}
+grep とは UNIX 系 OS における検索の代名詞とも言えるコマンドであり、指定されたファイルの中から正規表現を用いて検索して一致する行を一覧表示してくれるものである。
+Emacs には \texttt{M-x grep} というコマンドが用意されており、Emacs から直接 grep を実行することができる。
+\texttt{M-x grep RET} と入力すると「Run grep (like this): grep -nH -e」という内容がミニバッファに表示される。
+これはターミナルにおいて grep を実行する場合と同じ要領でコマンドを入力せよ、という要求である。
+検索対象となるディレクトリはカレントディレクトリとなる。\\
+
+例えば、emacs という単語を全てのファイルから検索したい場合、\verb'grep -nH -e "emacs" * RET' と入力する。
+すると *grep* というバッファが開かれ、通常の grep と同様に一致した行が一覧表示される。\enlargethispage{0.50zw}
+この一覧表からファイルを直接開くことが可能である。\\
+
+通常の grep 以外にも対話式 grep コマンドである lgrep、再帰的に grep を行う rgrep というコマンドも用意されており、両方とも有用である。
+%%
+%% 項：インクリメンタル検索
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{インクリメンタル検索：C-s、C-r、C-M-s、C-M-r}
+\texttt{C-s (isearch-forward)} は Emacs で非常によく利用されるキーバインドの 1 つである。
+ミニバッファで「I-search:」と問われるので、文字を入力するとインクリメンタル検索が開始され、カレントバッファ上のカーソル以降にあるマッチ（一致）する文字の場所へカーソルがジャンプする。
+尚、\texttt{C-r (isearch-backward)} は \texttt{C-s} とは逆にカーソル以前のマッチする文字へジャンプする。\\
+
+\texttt{C-s} や \texttt{C-r} は検索している際に連続で入力すると、次にマッチする場所までカーソルが移動する。
+これによって本文検索とカーソル移動を同時に実現することができる。\\
+
+\texttt{C-M-s (isearch-forward-regexp)} は regexp という名前の付く通り isearch の正規表現版である。
+%%
+%% 項：対話置換、一括置換
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{対話置換、一括置換：M-\%、C-M-\%}
+文字列の置換は正しく利用することで確実にテキストを置き換えてくれる。
+Emacs には正規表現を利用するかどうか、置換時に確認するかどうかという異なる条件の置換コマンドが 4 つ用意されている。
+尚、置換は全てカーソル以降に対してのみ行われるようになっており、カーソル以前は対象外となる。\\
+
+\texttt{M-\%(query-replace)} は対話型の置換コマンドで、ミニバッファに検索する文字列、次に置換する文字列を入力することで置換が開始される。
+検索にマッチした文字列を見つけるとカーソルが移動し「Query replacing 検索文字列 with 置換文字列: (?\hphantom{.}for help)」と問われる。
+?\hphantom{.}を押すとヘルプが表示され、y で置換、n でスキップする。\\
+
+\texttt{C-M-\%(query-replace-regexp)} は同じく対話型置換コマンドの正規表現利用版である。
+\texttt{M-x replace-string} は対話無しで一括置換を行うコマンドであり、\texttt{M-x replace-string-regexp} は同じく一括置換の正規表現利用版である。
+%%
+%% 款：ナローイングを用いてバッファの一部のみを編集する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ナローイングを用いてバッファの一部のみを編集する}
+ナローイング（narrowing）は普段あまり利用する機会のあるものではないが、意図しないキー操作によって実行される場合がある為、記憶に留めておいた方がよい仕組みである。\\
+
+範囲を制限するという意味であるナローイングは、Emacs では編集可能範囲を制限するという意味で用いられる。
+ある範囲だけを置換対象にしたい場合にも利用することができる。\\
+
+リージョン選択時に \texttt{C-x n n (narrow-to-region)} というコマンドを実行すると、バッファからリージョンのみを残して他の部分が消え去る。\\
+
+このコマンドは初心者にとって混乱の原因となる為、標準では利用できないようになっている。
+そのため、初めて実行した際に本当に実行するかどうかを確認する問いが表示される。
+\vspc{+0.05zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+You have typed C-x n n, invoking disable command narrow-to-region.
+It is disabled because new users often find it confusing.
+Here's the first part of its description:
+
+（中略）
+
+You can now type
+y   to try it and enable it (no question if you use it again).
+n   to cancel--don't try the command, and it remains disabled.
+SPC to try the command just this once, but leave it disabled.
+!   to try it, and enable all disable commands for this session only.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+そして、ミニバッファでは「Type y,n,!\hphantom{,}or\hphantom{,}SPC (the space bar):」という問いが表示され入力待ちとなる。
+y を押すと narrow-to-regin が実行され、 2 度と同じ質問がされなくなる。
+それぞの選択結果については表\ref{narrow-to-region の問いに対する選択結果}にまとめる。
+\vspc{-0.60zw}\begin{longtable}{lp{42zw}}
+  \caption[]{narrow-to-region の問いに対する選択結果\label{narrow-to-region の問いに対する選択結果}} \\[-1.30zw] \toprule
+  \textgt{キー} & \textgt{説明}                                                                                                     \\ \midrule\midrule
+  \texttt{y}    & narrow-to-region を実行。\texttt{(put `narrow-to-region `disable nil)} を設定ファイルに追加し、2 度と質問しない。 \\ \midrule
+  \texttt{n}    & 実行をキャンセルする。次に実行する際は再度質問する。                                                              \\ \midrule
+  \texttt{SPC}  & 今回は実行するが、次に実行する際は再度質問する。                                                                  \\ \midrule
+  \texttt{!}    & 実行する。Emacs を終了するまで質問しない。                                                                        \\ \bottomrule
+\end{longtable}\vspc{-0.60zw}
+narrow-to-region を実行すると、モードラインに「Narrow」と表示され、リージョン以外が消えてしまった様な表示となるが、編集範囲を制限（隠した）だけである。
+ナローイングを解除するワイドニングは \texttt{C-x n w (widen)} である。
+ワイドニングを実行すると再び全体が表示される。
+%%
+%% 節：ウィンドウ操作
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ウィンドウ操作}
+Emacs を使っていると自動的にウィンドウ分割するコマンドが多々存在する為、本人が望まなくともウィンドウ操作を余儀なくされる。
+最初の内は少々ややこしいかもしれないが、実際にウィンドウ操作で覚えなければならないものは最低でも以下の 3 つだけである。
+%%
+%% 項：ウィンドウを分割する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ウィンドウを分割する：C-x 2、C-x 3}
+ウィンドウを分割するコマンドは 2 つのみである。
+横に 2 分割する \texttt{C-x 2(split-window-vertically)} と、縦に分割する \texttt{C-x 3 (split-window-horizontally)} である。\\
+
+vertically（垂直）と horizontally（水平）が、日本語の感覚としては逆であることが少々混乱を与えるが、横ではなく上下に分割するという意味合いから vertically と名付けられたのだろう。
+覚え方としては、漢字の「二」のように分割するのが \texttt{C-x 2} であると捉えると記憶し易いかもしれない。
+%%
+%% 項：ウィンドウを移動する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ウィンドウを移動する：C-x o}
+\texttt{C-x o (other-window)} は、ウィンドウが分割されている際に、カレントウィンドウを他のウィンドウへ移動するコマンドである。
+%%
+%% 項：分割したウィンドウを閉じる
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{分割したウィンドウを閉じる：C-x 1、C-x 0}
+ウィンドウを閉じるコマンドは 2 つ用意されている。\\
+
+1 つ目は \texttt{C-x 1 (delete-other-window)} で、実行するとカレントウィンドウ以外の全てのウィンドウを閉じる。\\
+
+2 つ目は \texttt{C-x 0 (delete-window)} で、実行するとカレントウィンドウのみを閉じる。
+状況に応じて使い分けると良いだろう。
+因みに、ウィンドウを閉じてもバッファが削除されることはない。
+%%
+%% 節：ディレクトリ操作（Dired）
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ディレクトリ操作（Dired）}
+Emacs はテキストエディタだが、標準でディレクトリ操作が可能である。\\
+
+それが Dired という機能である。
+\texttt{C-x d (dired)} から \texttt{C-x C-f} と同じように開きたいディレクトリを指定して RET する。
+すると、Dired というディレクトリエディタの為のバッファが開く。\\
+
+Dired ではディレクトリやファイルのコピー、リネーム、作成、パーミッション変更など、標準的なファイラの機能は全て利用可能である。
+基本操作を表\ref{Dired 上での代表的なコマンド一覧}にまとめる。
+\vspc{-0.50zw}\begin{longtable}{llll}
+  \caption[]{Dired 上での代表的なコマンド一覧\label{Dired 上での代表的なコマンド一覧}} \\[-1.30zw] \toprule
+  \textgt{キー}        & \textgt{説明}                  & \textgt{キー} & \textgt{説明}                     \\ \midrule\midrule
+  \texttt{n、SPC}      & 次の行へ移動する。             & \texttt{u}    & 現在行のマークを外す。            \\ \midrule
+  \texttt{p}           & 前の行へ移動する。             & \texttt{*{}!} & マークを全て外す。                \\ \midrule
+  \texttt{RET、f}      & 現在行のファイルを開く。       & \texttt{+}    & ディレクトリを作成する。          \\ \midrule
+  \texttt{d}           & 削除候補としてマークする。     & \texttt{C\_}  & 操作を 1 つ戻す。                 \\ \midrule
+  \texttt{x}           & マークしたファイルを削除する。 & \texttt{D}    & 指定したファイルを削除する。      \\ \midrule
+  \texttt{m}           & マークする。                   & \texttt{R}    & 指定したファイルの名前を変更する。\\ \midrule
+  \texttt{*\%}         & 正規表現でマークする。         & \texttt{C}    & 指定したファイルをコピーする。    \\ \midrule
+  \texttt{<backspace>} & 1 行上のマークを外す。         & \texttt{q}    & ウィンドウを閉じる。              \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：ファイル名の一括変更
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ファイル名の一括変更：wdired-change-to-wdired-mode}
+Dired を利用してバッファに表示されているファイル名をテキストファイルを編集するように一括変換する機能が備わっている。
+\texttt{M-x wdired-to-change-wdired-mode} というコマンドを実行すると、Dired 画面に表示されているディレクトリ名を含む全てのファイル名がテキストとして編集可能となる。
+すなわち、第 7 節の「検索と置換」や第 6 章で解説する「矩形編集」などの Emacs の持つエディタとしての編集機能を活用することでファイル名を一括変換することができる。
+%%
+%% 節：キーボードマクロによる繰り返し操作
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{キーボードマクロによる繰り返し操作}
+キーボードマクロは Excel などのマクロの様に、使用頻度の高い操作を記録して再利用可能とする機能である。
+%%
+%% 項：基本的な使い方
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{基本的な使い方}
+キーボードマクロの基本的な利用方法は \verb|C-x ( (start-kbd-macro)| を実行し、繰り返したい操作を行う。操作が終わってから \verb|C-x ) (end-kbd-macro)| でその操作が記録される。
+すると、\texttt{C-x e (call-last-kbd-macro)} で先程記録したキーボードマクロを呼び出すことができる。
+もし、10 回実行したければ \texttt{C-u 10 C-x e} の様に前置引数を付加して実行する。\\
+
+例えば、行頭に移動して{-}と入力して次の行に移動するというマクロを作成したければ、\verb|C-x (| を実行した後に \texttt{C-a- C-n} とし、最後に \verb|C-x )| を実行することになる。
+この状態で \texttt{C-e} を実行すると行頭に「{-}」が挿入される。
+%%
+%% 項：名前をつける
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{名前をつける}
+\texttt{M-x name-last-kbd-macro} というコマンドを用いて、直近に記録したキーボードマクロに名前を付けることができる。
+\texttt{M-x name-last-kbd-macro RET insert- RET} と入力すると \texttt{M-x insert-} というコマンドが用意され、別のキーボードマクロを作成しても利用し続けることが可能となる。
+しかし、名前を付けても設定ファイルに保存しなければ Emacs を終了すると記録は消されてしまう。
+%%
+%% 項：再利用するために保存する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{再利用するために保存する}
+定義したキーボードマクロを Emacs を終了しても利用可能とするには、設定ファイルに保存する必要がある。
+名前を付けた後に設定ファイルを開いて、\texttt{M-x insert-kbd-macro RET insert- RET} と入力する。
+すると、次の S 式が挿入される。
+\vspc{+0.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(fset 'insert-
+   "\C-a- \C-n")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この式を読み込むことで \texttt{M-x insert-} というコマンドを常に利用することができる。
+%%
+%% 節：表示の変更
+%%----------------------------------------------------------------------------------------------------------%%
+\section{表示の変更}
+本節では、少々毛色の変わった表示に関する操作を解説する。
+%%
+%% 項：文字サイズをすぐに変更する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{文字サイズをすぐに変更する：C-x C-+、C-x C-=、C-x C-{}-、C-x C-0}
+\texttt{C-x C-+} もしくは \texttt{C-x C-=} は文字サイズを大きくするするコマンドである。
+逆に、小さくするコマンドが \texttt{C-x C-{}-} である。
+\texttt{C-x} の後のキーを連続でタイプすることで段階的にサイズ変更することが可能である。
+そして、\texttt{C-x C-0} で元のサイズに戻すことができる。\\
+
+これらは \texttt{M-x text-scale-adjust} というコマンドを利用しており、起点となるサイズを 0 として +1 または -1 と表示サイズレベルを変化させる（モードラインに現在のサイズレベルが表示される）。
+尚、このレベルは text-scale-mode-step という変数の値（初期値は 1.2）を現在の文字の高さに乗算したものとなっている。\\
+
+\texttt{C-u 5 M-x text-scale-adjust} というコマンドで直接サイズレベルを指定することも可能であり、この場合は +5 のレベルを指定しているので 1.2 の 5 乗となり、デフォルトのサイズが 12pt である場合には約 29pt となる。
+%%
+%% 項：行の折り返し表示を変更する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{行の折り返し表示を変更する：M-x toggle-truncate-lines}
+テキストの 1 行当たりの文字数に制限はないが、当然ながら Emacs の表示幅は有限である。
+その為、1 行が表示幅を超える様な場合には折り返す／折り返さないという 2 つの表示方法を選択することが可能である。
+因みに、標準では折り返す設定になっている。\\
+
+行の折り返し設定を切り替えるには \texttt{M-x toggle-truncate-line} というコマンドを用いる。
+因みに、toggle というのはオンオフを両方兼ね備えたスイッチという意味であり、\texttt{toggle-} から始まるコマンドは 1 つのコマンドによってオン／オフを切り替えることができる。
+%%
+%% 節：ヘルプの利用
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ヘルプの利用}
+Emacs は「Emacs is an extensible self-documenting editor」\footnote{http://www.emacswiki.org/emacs/SelfDocumentation}と称されることもあるくらい、ドキュメントが充実している（但し、英文である）。
+これには Elisp 自体に説明文を埋め込めるようになっていたり、またそれらを検索する仕組みがあったり、更にはコミュニティの協力があったりなど様々な要因がある。\\
+
+総じて重要なことは「Emacs で分からない事があれば Emacs から直接教えてもらう事ができる」ということである。
+%%
+%% 項：info：M-x info
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{info：M-x info}
+info とは説明書の事である。
+ターミナルからも info コマンドを利用することができるが、Emacs からも利用可能である。
+%%
+%% 項：ヘルプコマンド：C-h、<f1>
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ヘルプコマンド：C-h、<f1>}
+Emacs を自分好みにカスタマイズできるようになるためには、Emacs の機能や関数を自分で調べることができるようになる必要がある。
+標準のキーバインドであれば \texttt{C-h} はヘルプコマンドを呼び出すための接頭辞キーとなっている。
+\texttt{C-h} に続いてキーをタイプすることで、Emacs の様々な情報を調べることができる。
+\texttt{C-h C-h} を実行すると、どういったヘルプコマンドが用意されているのかを確認することができる。\enlargethispage{0.50zw}
+%%
+%% 項：よく利用されるヘルプコマンド
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{よく利用されるヘルプコマンド}
+よく利用されるヘルプコマンドを紹介しておく。
+尚、where-is と describe-function と describe-variable については、実行した時のカーソル位置の文字を自動的に拾ってくれる。
+その場合はコマンド名などを入力せずに RET でヘルプを参照することができる。
+%%
+%% 款：C-h a 文字列 RET
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h a 文字列 RET}
+入力した文字列が含まれるコマンドのリストを表示する。
+%%
+%% 款：C-h b (decribe-bindings)
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h b (M-x describe-bindings)}
+現在の割り当てキー表を表示する。
+%%
+%% 款：C-h k キーバインド
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h k キーバインド}
+キーバインドが実行するコマンド（関数）とそのドキュメントを表示する。
+%%
+%% 款：C-h w コマンド名 RET (M-x where-is)
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h w コマンド名 RET (M-x where-is)}
+入力したコマンドを実行するキーを表示する。
+%%
+%% 款：C-h f 関数名 RET (M-x describe-function)
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h f 関数名 RET (M-x describe-function)}
+入力した関数の説明を表示する。
+%%
+%% 款：C-h v 変数名 RET (M-x describe-variable)
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{C-h v 変数名 RET (M-x describe-variable)}
+入力した変数の説明を表示する。
+%%
+%% 項：日本語ドキュメント
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{日本語ドキュメント}
+Emacs 本体に同梱されているドキュメントは全て英語で書かれている。
+但し、バージョンは古いが過去に様々な人達によって翻訳されたドキュメントが Web 上に存在し「EmacsWiki: Emacs Lisp リファレンス」\footnote{EmacsWiki: Emacs Lisp リファレンス：https://www.emacswiki.org/emacs?interface=ja}にまとめられている。

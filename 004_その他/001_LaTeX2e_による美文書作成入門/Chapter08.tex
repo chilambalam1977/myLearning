@@ -1,0 +1,515 @@
+%%
+%% 章：表組み
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{表組み}
+本章では、\LaTeX{}標準の tabular 環境と、それを改良するための array、tabularx、booktabs パッケージ、ページをまたぐ表を作成する longtable パッケージについて説明する。
+%%
+%% 節：表組みの基本
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{表組みの基本}
+\LaTeX{}には、通常のテキスト内で作表する tabular 環境、数式内で作表する array 環境が用意されている。
+まずは、tabular 環境の基本として、罫線のない表を書いてみる。
+\begin{center}
+  \begin{tabular}{lrr}
+    品名   & 単価（円）& 個数 \\
+    りんご &       100 &    5 \\
+    みかん &        50 &   10
+  \end{tabular}
+\end{center}
+このように出力するには、次のように入力する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+\begin{center}
+  \begin{tabular}{lrr}
+    品名   & 単価（円）& 個数 \\
+    りんご &      100 &    5 \\
+    みかん &       50 &   10
+  \end{tabular}
+\end{center}
+\enddocument}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+center 環境は表を左右中央に置くためで、表組みとの直接的な関係はない。
+その内側の tabular 環境が表をそのものを出力する環境である。
+この命令は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+  \verb`\begin{tabular}{`\texttt{\textcolor{blue}{列指定}}\verb`}` \\
+  \verb`  `\texttt{\textcolor{blue}{表本体}}                       \\
+  \verb`\end{tabular}`
+\end{mdframed}\vspc{-0.70zw}
+の形で用いる。列指定は、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{l}：\textcolor{blue}{左寄せ（left）}
+\item \texttt{c}：\textcolor{blue}{中央（center）}
+\item \texttt{r}：\textcolor{blue}{右寄せ（right）}
+\end{itemize}\vspc{-0.50zw}
+を列の数だけ並べる。
+先程の \verb`\begin{tabular}{lrr}` では、列指定は \texttt{lrr} だったので、1 列目は左寄せ、2 列目と 3 列目は右寄せとなっている。\\
+
+表本体では、列の区切りは \verb`&`、行の区切りは \verb`\\` である。
+表の最下行の終わりには \verb`\\` は付けない（後述の \verb`\bottomrule` や \verb`\hline` が付く場合は例外である）。\\
+
+上の例では表を center 環境に入れたが、flushleft（左寄せ）や flushright（右寄せ）にすると、tabular 環境の両側にほんの少し余分なスペースが入っているのがわかる。
+この余分なスペースを消すには、例えば列指定が \texttt{\{lrr\}} なら \texttt{\{@\{\}llr@\{\}\}} のように、列指定の両側に \texttt{@\{\}} という命令を入れる。
+\texttt{@\{\textcolor{blue}{何か}\}} は表の両側や列間に \textcolor{blue}{何か} を挿入するためのものだが、\texttt{@\{\}} のように中身を空にすることで、本来入るはずの表の両側のスペースを消している。
+%%
+%% 節：booktabs による罫線
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{\texttt{\textbackslash{}booktabs} による罫線}
+先ぼどの例に罫線を引いてみる。
+\LaTeX{}標準の罫線は後述するが、ここではまず最近よく用いられれる booktabs パッケージを説明する。
+日本人は格子状の罫線を好むが、横書きの文化圏では次のように横罫線だけを使うのが原則である。
+\begin{center}
+  \begin{tabular}{lrr}           \toprule
+    品名   & 単価（円）& 個数 \\ \midrule
+    りんご &       100 &    5 \\
+    みかん &        50 &   10 \\ \bottomrule
+  \end{tabular}
+\end{center}
+このように出力するには、booktabs パッケージを用いて次のようにする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\usepackage{booktabs}
+\begin{document}
+\begin{center}
+  \begin{tabular}{lrr}         \toprule
+    品名   & 単価（円）& 個数 \\ \midrule
+    りんご &      100 &    5 \\
+    みかん &       50 &   10 \\ \bottomrule
+  \end{tabular}
+\end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+booktabs パッケージで仕える命令は、次の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{\textbackslash{}toprule~~~~} \textcolor{blue}{最初の罫線}
+\item \texttt{\textbackslash{}midrule~~~~} \textcolor{blue}{中央の罫線}
+\item \texttt{\textbackslash{}bottomrule~} \textcolor{blue}{最後の罫線}
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 節：LaTeX 標準の罫線
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{\LaTeX{}標準の罫線}
+\LaTeX{}標準の \verb`\hline` という命令で罫線を引くと次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\usepackage{array}
+\begin{document}
+\begin{center}
+  \begin{tabular}{lrr}         \hline
+    品名   & 単価（円）& 個数 \\ \hline
+    りんご &      100 &    5 \\
+    みかん &       50 &   10 \\ \hline
+  \end{tabular}
+\end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{center}
+  \begin{tabular}{lrr}           \hline
+    品名   & 単価（円）& 個数 \\ \hline
+    りんご &       100 &    5 \\
+    みかん &        50 &   10 \\ \hline
+  \end{tabular}
+\end{center}
+\end{mdframed}\vspc{-0.70zw}
+このように、標準では線の太さが全て同じになる。
+\LaTeX{}標準のものでは、指定列の文字列（この場合 \texttt{lrr}）の中に縦棒（\verb`|`）を入れると、次のように縦罫線を引くことができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}{|l|r|r|}     \hline
+  品名   & 単価（円）& 個数 \\ \hline
+  りんご &      100 &    5 \\
+  みかん &       50 &   10 \\ \hline
+\end{tabular}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+出力は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{center}
+  \begin{tabular}{|l|r|r|}       \hline
+    品名   & 単価（円）& 個数 \\ \hline
+    りんご &       100 &    5 \\
+    みかん &        50 &   10 \\ \hline
+  \end{tabular}
+\end{center}
+\end{mdframed}\vspc{-0.70zw}
+\verb`\hline\hline` と続けて書くと 2 重の横罫線になる。また、列指定の中で \verb`||` と書くと 2 重の縦罫線になる。\\
+
+次のように、\verb`\cline{`\texttt{\textcolor{blue}{欄番号}}\verb`-`\texttt{\textcolor{blue}{欄番号}}\verb`}` で部分的に罫線を引くことができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}{|ccc|} \hline
+  こ & れ & は \\ \cline{2-3}
+  迷 & 路 & で \\ \cline{1-1} \cline{3-3}
+  し & ょ & う \\ \hline
+\end{tabular}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+出力は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{center}
+  \begin{tabular}{|ccc|} \hline
+    こ & れ & は \\ \cline{2-3}
+    迷 & 路 & で \\ \cline{1-1} \cline{3-3}
+    し & ょ & う \\ \hline
+  \end{tabular}
+\end{center}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 節：表の細かい制御
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{表の細かい制御}
+表の行送りや上下の罫線との距離は次のようにして自由に制御することができる。\\
+
+まず、各行の最後の \verb`\\` の後に \texttt{[\textcolor{blue}{長さ}]} を付けると、その長さだけ行送りが増える。
+負の長さなら行送りが減る。
+但し、\verb`\hline` のある行の行送りを減らすと横罫線が変な位置に来てしまう。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}{|l|r|r|}     \hline
+  品名   & 単価（円）& 個数 \\ \hline
+  りんご &      100 &    5 \\[-5pt]
+  みかん &       50 &   10 \\ \hline
+\end{tabular}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+出力は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \begin{center}
+    \begin{tabular}{|l|r|r|}       \hline
+      品名   & 単価（円）& 個数 \\ \hline
+      りんご &      100  &    5 \\[-5pt]
+      みかん &       50  &   10 \\ \hline
+    \end{tabular}
+  \end{center}
+\end{mdframed}\vspc{-0.70zw}
+全体の行送りを一定の割合で変えたい場合は、\verb`\arraystretch` というマクロを再定義する。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\renewcommand{\arraystretch}{0.8}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+で行送りが 0.8 倍になる。
+array パッケージで追加された \verb`\extrarowheight` という長さを設定することで、行の高さを一律に増やすことができる。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\setlengh{\extrarowheight}{2pt}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすれば、行送りが一律 2\,pt 増える。\\
+
+更に、特定の行だけ上下の空きを調節するには、第 3 章で説明した \verb`\rule` を幅 0 にして挿入し、上下の罫線を押し上げ・下げるための支柱とする。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\rule[-1zw]{0zw}{3zw}りんご & 100 & 5 \\ \hline
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のようにすれば、上下の罫線との間に全角の隙間が入る（値は微調整する必要がある）。
+%%
+%% 節：列割りの一時変更
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{列割りの一時変更}
+一時的にいくつかの列をまとめて 1 列のように扱う命令は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+  \verb`\multicolum{`\texttt{\textcolor{blue}{まとめる列数}}\verb`}{`\texttt{\textcolor{blue}{列の指定}}\verb`}{`\texttt{\textcolor{blue}{中身}}\verb`}`
+\end{mdframed}\vspc{-0.70zw}
+である。例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \begin{center}
+    \begin{tabular}{lcr}
+      \multicolumn{3}{c}{\textgt{請求書}} \\
+      \multicolumn{1}{c}{品名}     & 数量 & \multicolumn{1}{c}{金額} \\
+      基礎からわかる情報リテラシー &    1 & 1480 円 \\
+      R で楽しむ統計               &    1 & 2500 円
+    \end{tabular}
+  \end{center}
+\end{mdframed}\vspc{-0.70zw}
+のように出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center}
+  \begin{tabular}{lcr}
+  \multicolumn{3}{c}{\textgt{請求書}} \\
+  \multicolumn{1}{c}{品名}  & 数量 & \multicolumn{1}{c}{金額} \\
+  基礎からわかる情報リテラシー &    1 & 1480 円 \\
+  R で楽しむ統計             &    1 & 2500 円
+  \end{tabular}
+\end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と入力する。ここで、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\multicolumn{3}{c}{\textgt{請求書}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+は 3 列分をまとめて中央揃え、ゴシック体で「請求書」と出力する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\multicolumn{1}{c}{品名}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+は単に「品名」を中央揃えに直しただけである。
+これに罫線を引いてみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \begin{center}
+    \begin{tabular}{|l|c|r|} \hline
+      \multicolumn{3}{|c|}{\textgt{請求書}}                           \\ \hline
+      \multicolumn{1}{|c|}{品名}   & 数量 & \multicolumn{1}{c|}{金額} \\ \hline
+      基礎からわかる情報リテラシー &    1 & 1480 円                   \\
+      R で楽しむ統計               &    1 & 2500 円                   \\ \hline
+    \end{tabular}
+  \end{center}
+\end{mdframed}\vspc{-0.70zw}
+これを出力するには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center}
+  \begin{tabular}{|l|c|r|} \hline
+    \multicolumn{3}{|c|}{\textgt{請求書}} \\ \hline
+    \multicolumn{1}{|c|}{品名} & 数量 & \multicolumn{1}{c|}{金額} \\ \hline
+    基礎からわかる情報リテラシー  &   1 & 1480 円 \\
+    R で楽しむ統計              &   1 & 2500 円 \\ \hline
+  \end{tabular}
+\end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と入力する。
+%%
+%% 節：横幅の指定
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{横幅の指定}
+ある列の幅を例えば 5\,cm に固定して左揃えにするには、\texttt{l} の代わりに \texttt{p\{5cm\}} と指定する。
+中央揃えなら \texttt{c} の代わりに \verb`>{\centering}p{5cm}`、右揃えなら \texttt{r} の代わりに \verb`>{\raggedleft}p{5cm}` とする。\\
+
+全体の横幅の定まった表は tabular の代わりに tabularx パッケージの tablarx を用いる。
+使い方は、プリアンブルに、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{tabularx}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いておき、表を出力したい場所に、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+  \verb`\begin{tabularx}{`\texttt{\textcolor{blue}{幅}}\verb`}{`\texttt{\textcolor{blue}{列指定}}\verb`}` \\
+  \hspc{+2.00zw}$\vdots$ \\
+  \verb`\end{tabularx}`
+\end{mdframed}\vspc{-0.70zw}
+と書く。幅を自由に変えて構わない列は \texttt{X} と指定する。例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \begin{center}
+    \begin{tabularx}{65mm}{|X|r|r|}            \hline
+      \multicolumn{3}{|c|}{\textgt{請求書}} \\ \hline
+      品名           & 数量 & 金額          \\ \hline
+      R で楽しむ統計 &    1 & 2500 円       \\ \hline
+    \end{tabularx}
+  \end{center}
+\end{mdframed}\vspc{-0.70zw}
+のように横幅を 65\,mm の幅にするには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center}
+  \begin{tabularx}{65mm}{|X|r|r|} \hline
+    \multicolumn{3}{|c|}{\textgt{請求書}} \\ \hline
+    品名          & 数量 &     金額 \\ \hline
+    R で楽しむ統計 &   1  & 2500 円 \\ \hline
+  \end{tabularx}
+\end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とする。
+最初の列は \texttt{X} と指定されているので、幅は可変である。
+次の 2 つの列は \texttt{r} と指定されているので、右寄せとなる。
+\texttt{X} と指定された列は、中身が長くなっても適当に改行される。
+%%
+%% 節：色のついた表
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{色のついた表}
+colortbl パッケージを利用すれば、行ごと、列ごと、あるいは特定のセルに色を付けることができる。
+そこで、前述した xcolor パッケージを利用する場合は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage[table]{xcolor}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のようにオプション table を付けて呼び出すと、xcolor 内部から colortbl パッケージが読み込まれる。\\
+
+ここでは白に近いグレイ（\verb`\color[gray]{0.8}`）を使って説明する。
+この 0.8 という数値は 0（黒）と 1（白）の間で選択する。
+まず、行全体の背景色の指定は次のようにして行う。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}{|c|} \hline
+  \rowcolor[gray]{0.8} 第 1 の行 \\ \hline
+                       第 2 の行 \\ \hline
+\end{tabular}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+列全体の背景色の指定は次のようにする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}{|>{\coloumncolor[gray]{0.8}}c|c|} \hline
+  最初の列 & 次の列 \\ \hline
+  最初の列 & 次の列 \\ \hline
+\end{tabular}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+行と列の指定がかち合うときは \verb`\rowcolor` が勝つ。
+特定のセルだけに色をつけるには \verb`\multicolumn` を用いる。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}{|c|c|} \hline
+  \multicolomn{1}{|>{\columncolor[gray]{0.8}}c|}{左上} & 右上 \\ \hline
+  左下 & \multicolomn{1}{|>{\columncolor[gray]{0.8}}c|}{右下} \\ \hline
+\end{tabular}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\verb`\usepackage[table]{xcolor}` を用いると \verb`\rowcolors` という命令も利用可能となる。
+例えば、3 列目以降は奇数行で黒 20\,\%、偶数行で無色とするには \verb`\rowcolors{3}{black!20}{}` とする。
+%%
+%% 節：ページをまたぐ表
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ページをまたぐ表}
+tabular 環境は 1 つの大きな文字と同等に扱われるため、ページをまたぐことができない。
+ページをまたぐ表を作表するには longtable パッケージを用いる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{longtable}{|l|l|}
+  \hline 名前 & 住所 \\ \hline \endhead
+  \hline \endfoot
+  技評太郎 & 東京都新宿区市谷左内町21-13 \\
+  ………… & …… \\
+  ………… & ……
+\end{longtable}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\verb`\endhead` までの部分は各ページの表の頭に出力する。
+ここでは横線（\verb`\hline`）、名前、住所、改行（\verb`\\`）を出力している。
+その次から \verb`\endfoot` までの部分は各ページの表の最後に出力するものである。
+ここでは横線だけにしている。
+それ以外は、通常の tabular 環境と同様である。\\
+
+これを\LaTeX{}で処理すると最初は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+Package longtable Waring: Table widths have changed. Return LaTeX.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+というメッセージが画面に出力される。
+このメッセージが出なくなるまで繰り返し\LaTeX{}を実行する。
+%%
+%% 節：表組みのテクニック
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{表組みのテクニック}
+表の列間隔を変えるには \verb`\setlength` を用いて \verb`\tabcolsep` という変数の値を変更する。
+例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+この{\setlength{\tabcolsep}{3pt}\footnotesize
+\begin{tabular}{|c|c|c|} \hline
+  2 & 9 & 4 \\ \hline
+  7 & 5 & 3 \\ \hline
+  6 & 1 & 8 \\ \hline
+\end{tabular}} を 3 次の魔法陣という。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすると、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+この{\setlength{\tabcolsep}{3pt}\footnotesize
+\begin{tabular}{|c|c|c|} \hline
+  2 & 9 & 4 \\ \hline
+  7 & 5 & 3 \\ \hline
+  6 & 1 & 8 \\ \hline
+\end{tabular}} を 3 次の魔法陣という。
+\end{mdframed}\vspc{-0.70zw}
+のように出力される。
+列間隔は \verb`\tabcolsep` に設定した値（上の例では 3\,pt）の 2 倍（6\,pt）になる。
+元々の \verb`\tabcolsep` の値は 6\,pt（列間隔は 12\,pt）である。\\
+
+このように一時的に変数の値を変更する場合は、変更の命令と tabular 環境全体を中括弧 \verb`{ }` で囲んでおく必要がある。
+もし、tabular 環境全体が center 環境などの中にあるなら、変数の値の変更はその環境の外に及ばないので中括弧で囲む必要はない。\\
+
+なお、上の例では表は上下中央揃えになったが、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}[b]{...}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすると、表の下端が前後の文のベースラインに一致し、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+この{\setlength{\tabcolsep}{3pt}\footnotesize
+\begin{tabular}[b]{|c|c|c|} \hline
+  2 & 9 & 4 \\ \hline
+  7 & 5 & 3 \\ \hline
+  6 & 1 & 8 \\ \hline
+\end{tabular}} を 3 次の魔法陣という。
+\end{mdframed}\vspc{-0.70zw}
+のように出力される。
+逆に、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{tabular}[t]{...}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすると、表の上端が前後の文のベースラインと一致する。\\
+
+tabular 環境の前に例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\setlength{\arrayrulewidth}{0.8pt}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いておくと、罫線の太さが 0.8\,pt になる（元の値は 0.4\,pt）。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\setlength{\doublerulesep}{0pt}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすると 2 重罫線の間隔が 0\,pt になる（元の値は 2\,pt）。
+2 重罫線の間隔を 0\,pt にすると \verb`\hline\hline` や \verb`{|c||}` のように罫線を重複指定することで罫線の太さを 2 倍にすることができる（array パッケージの場合）。\\
+
+次の表のように小数点で桁揃えしたい場合や、微妙な文字間・行間の調整をしたい場合がある。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{center}
+\renewcommand{~}{\phantom{0}}
+\begin{tabular}{rlr} \toprule
+  \multicolumn{1}{c}{$T$ (deg)} &
+  \multicolumn{1}{c}{$t$ (sec)} &
+  \multicolumn{1}{c}{$X_{n}$}                     \\ \midrule
+  $           10^{12}$ & ~0       & 0.496         \\[-4pt]
+  $  3 \times 10^{11}$ & ~0.00129 & 0.488\rlap{*} \\[-4pt]
+  $1.3 \times 10^{9~}$ & 98*      & 0.15~         \\ \bottomrule
+\end{tabular}
+\end{center}
+\end{mdframed}\vspc{-0.70zw}
+このような場合は、\verb`\phantom{`\texttt{\textcolor{blue}{何々}}\verb`}` と書くと「何々」と同サイズの空白が出力されることを用いるのが簡単である。
+また、\verb`\rlap{`\texttt{\textcolor{blue}{何々}}\verb`}` とすれば右に向かって「何々」と出力してから、その幅だけ左に戻るので、あたかも「何々」を出力しなかったような列揃えになる。\\
+
+次の入力例は、\verb`\phantom{0}` と入力する代わりに \verb`~` で数字の幅の空白が出力できるように \verb`~` を \verb`\renewcommand` で再定義している。
+center 環境内での再定義なので、center 環境を抜ければ \verb`~` の定義は元に戻る。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center}
+\renewcommand{~}{\phantom{0}}
+\begin{tabular}{rlr} \toprule
+  \multicolumn{1}{c}{$T$ (deg)} &
+  \multicolumn{1}{c}{$t$ (sec)} &
+  \multicolumn{1}{c}{$X_{n}$}                     \\ \midrule
+  $           10^{12}$ & ~0       & 0.496         \\[-4pt]
+  $  3 \times 10^{11}$ & ~0.00129 & 0.488\rlap{*} \\[-4pt]
+  $1.3 \times 10^{9~}$ & 98*      & 0.15~         \\ \bottomrule
+\end{tabular}
+\end{center}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+ここで \verb`\\[-4pt]` は、その行間を標準より 4\,pt 狭くする命令である。
+欧文用のクラスファイルを使う場合は行間を狭くする必要はほとんどないが、和文用のクラスファイルでは行間が広く設定してあるので、このような数表を組むと行間が広くなりすぎる。
+3 ～ 4\,pt 狭くするとよいだろう。

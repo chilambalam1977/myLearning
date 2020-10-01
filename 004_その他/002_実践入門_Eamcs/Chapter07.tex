@@ -1,0 +1,1659 @@
+%%
+%% 章：開発を更に効率化する拡張機能
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{開発を更に効率化する拡張機能}
+%%
+%% 節：各種言語の開発環境
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{各種言語の開発環境}
+Emacs はテキストエディタなので、種類を問わずテキストを書く全ての者のためのソフトウェアである。
+しかし、Emacs というソフトウェアに巡り合った多くの者は開発のための機能を Emacs に求めているのではないだろうか？
+そこで、締めくくりとなる本章では開発に主眼を置いた Emacs の利用方法を紹介する。\\
+
+まずは各種言語に関する設定である。
+Emacs には様々な言語を扱うためのメジャーモードとマイナーモードが用意されている。
+Emacs 本体に同梱されているものからインストールが必要なものまで様々存在し、また同一言語でも複数のメジャーモードが用意されている。
+本稿では多くの者に支持されている機能を中心に紹介していく。
+%%
+%% 項：Web 開発
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Web 開発}
+Web 開発は HTML、CSS、JavaScript などのフロントエンド技術や PHP や Ruby などのサーバサイド技術などが複合していることが一般的である。
+そのため、1 つのファイル内で複数の言語が入り乱れることもある。\\
+
+Emacs は第 2 章で解説した通り、バッファに対して 1 つのメジャーモードが適用される仕組みとなっているため、1 つのファイルの中に複数の言語が書かれている場合、シンタックスハイライトやインデントなどがうまく機能しない問題が存在していた。\\
+
+しかし、ここで紹介する web-mode は 1 つのメジャーモードで複数の言語をうまく扱う仕組みが用意されているため、web-mode を利用することで、これまで解決が難しかったこれらの問題を回避することができる。\\
+
+勿論、それぞれのメジャーモードには専用のコマンドが用意されているため、全てのケースにおいて必ずしも web-mode が最適の選択であるとは限らないが、とりあえずファイルを開いて編集するだけの目的であれば最適なメジャーモードであろう。
+そのため、まず web-mode を紹介した後に各言語別のメジャーモードを紹介していくので、自分の利用環境に応じて適切な選択を行うこと。
+%%
+%% 款：web-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{web-mode}
+web-mode が提供する機能は主に次のようになっており、HTML や JavaScript、PHP や Ruby などの言語が混在する環境でも適切に動作するのが最大の特徴となっている。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item 複数言語の同時編集
+\item 自動インデント
+\item HTML タグの自動挿入（主に閉じタグ）
+\item シンタックスハイライト
+\item コメントアウト／アンコメント
+\item コードの折り畳み
+\end{itemize}\vspc{-0.50zw}
+web-mode は ELPA から次のようにしてインストールする。\enlargethispage{1.00zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET web-mode RET}
+\end{itemize}\vspc{-0.50zw}
+基本となる編集については特に意識することなく使えるようになっているが、表\ref{web-mode における代表的なコマンド一覧}のキー操作を覚えることで、より編集が楽になる。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{web-mode における代表的なコマンド一覧\label{web-mode における代表的なコマンド一覧}} \\[-1.30zw]\toprule
+  \textgt{キー}      & \textgt{説明}                                                             \\ \midrule\midrule
+  \texttt{M-;}       & カーソル行およびブロックをコメントアウト／アンコメントする。              \\ \midrule
+  \texttt{C-c C-n}   & 開始タグおよび閉じタグへカーソルを移動する。                              \\ \midrule
+  \texttt{C-c C-f}   & タグ内の文字列を折り畳む／折り畳みを解除する。                            \\ \midrule
+  \texttt{C-c C-i}   & カーソル行もしくはリージョンをインデントする。                            \\ \midrule
+  \texttt{C-c C-e r} & カーソル付近の HTML 開始タグと閉じタグを一括リネームする。                \\ \midrule
+  \texttt{C-c C-e /} & 閉じタグを挿入する。                                                      \\ \midrule
+  \texttt{C-c C-s}   & スニペットを挿入する。                                                    \\ \midrule
+  \texttt{C-c C-d d} & HTML タグの文法をチェックする。                                           \\ \bottomrule
+\end{longtable}\vspc{-2.00zw}
+%%
+%% 款：web-mode の基本設定
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{web-mode の基本設定}
+特定のファイルを自動的に web-mode で開きたい場合、次の設定を init.el に追記する。
+尚、インデントは標準でスペース 2 つ分に設定されている。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (require 'web-mode nil t)
+  ;; 自動的に web-mode を起動したい拡張子を追加する。
+  (add-to-list 'add-mode-alist '("\\.html\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.css\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.js\\'"  . web-mode))
+  (add-to-list 'add-mode-alist '("\\.jsx\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.tpl\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.php\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.ctp\\'" . web-mode))
+  (add-to-list 'add-mode-alits '("\\.jsp\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.asx\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.cpx\\'" . web-mode))
+  (add-to-list 'add-mode-alist '("\\.erb\\'" . web-mode))
+;; web-mode のインデント設定用フックの設定
+  (defun web-mode-hook ()
+    "Hooks for Web mode."
+     (setq web-mode-markup-indent-offset 2)  ; HTML 用のインデント
+     (setq web-mode-css-indent-offset    2)  ; CSS  用のインデント
+     (setq web-mode-code-indent-offset   2)  ; JS, PHP, Ruby など用のインデント
+     (setq web-mode-comment-style        2)  ; web-mode 内のコメントのインデント
+     (setq web-mode-style-padding        1)  ; <style>  内のインデント開始レベル
+     (setq web-mode-script-padding       1)) ; <script> 内のインデント開始レベル
+  (add-hook 'web-mode-hook 'web-mode-hook))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：HTML
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{HTML}
+HTML（\emph{HyperText Markup Language}）は文章をコンピュータ処理しやすくするために、タグと呼ばれるマークアップ（意味付け）を行うことによって見出し・箇条書きといった各要素をコンピュータに理解できるようにした言語である。
+WWW はインターネットによる文書の恒久的なアーカイブを目的として誕生したため、Web 標準に準拠した妥当（Valid）な HTML で記述する限り、例えば Google Chrome がバージョン 100 になり、HTML 10 が誕生したとしても、将来も閲覧することができることが保証されている。\enlargethispage{1.00zw}
+マークアップ検証サービスも提供されている。\\
+
+但し、HTML ソースは人間にとって読み書きしにくいものである。
+そのような HTML を可能な限り記述しやすく補助してくれるモードを紹介する。
+%%
+%% 款：html-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{html-mode}
+Emacs で HTML ファイルを開くと標準で選択されるのが html-mode である。
+この html-mode は sgml-mode をベースに HTML 特有のタグをサポートしてくれる。
+基本的な機能としてはタグの入力補助、シンタックスハイライト、インデント補助のみの非常にシンプルな設計となってる。
+%%
+%% 款：html-mode を用いてタグを入力する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{html-mode を用いてタグを入力する}
+html-mode ではキーバインドに用意されている HTML タグの入力サポートを利用することができる。
+基本的なキーバインドを表\ref{html-mode における基本キーバインド}に示す。
+詳しくは html-mode を選択中に \texttt{M-x describe-bindings (<f1>,\hspc{1.00pt}C-h b)} からメジャーモードのキーバインドを参照すること。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{html-mode における基本キーバインド\label{html-mode における基本キーバインド}}                  \\[-1.30zw]\toprule
+  \textgt{キー}           & \textgt{コマンド名}          & \textgt{説明}                                    \\ \midrule\midrule
+  \verb|C-c 1|            & \texttt{html-headline-1}     & h1 要素を挿入する。                              \\ \midrule
+  \verb|C-c 2|            & \texttt{html-headline-2}     & h2 要素を挿入する。                              \\ \midrule
+  \verb|C-c 3|            & \texttt{html-headline-3}     & h3 要素を挿入する。                              \\ \midrule
+  \verb|C-c RET|          & \texttt{html-paragragh}      & p\hphantom{l} 要素を挿入する。                   \\ \midrule
+  \verb|C-c C-j|          & \texttt{html-line}           & br 要素を挿入する。                              \\ \midrule
+  \verb|C-c C-c o|        & \texttt{html-ordered-list}   & ol 要素と li 要素を挿入する。                    \\ \midrule
+  \verb|C-c C-c u|        & \texttt{html-unordered-list} & ul 要素と li 要素を挿入する。                    \\ \midrule
+  \verb|C-c C-c l|        & \texttt{html-list-item}      & li 要素を挿入する。                              \\ \midrule
+  \verb|C-c C-c i|        & \texttt{html-image}          & 画像のあるアドレスを聞いて img 要素を挿入する。  \\ \midrule
+  \verb|C-c /, C-c ]|     & \texttt{sgml-close-tag}      & カーソルの位置するタグ要素の閉じタグを挿入する。 \\ \midrule
+  \verb|C-c C-d, C-c DEL| & \texttt{sgml-delete-tag}     & カーソル位置かその後ろにあるタグを削除する。     \\ \midrule
+  \verb|C-c C-t|          & \texttt{sgml-tag}            & ミニバッファから聞かれたタグを挿入する。         \\ \midrule
+  \verb|C-c C-n|          & \texttt{sgml-name-char}      & 入力した文字の文字実体参照を挿入する。           \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 款：html-mode が自動選択される仕組み
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{html-mode が自動選択される仕組み}
+標準で html-mode が選択される仕組みは、第 2 章で解説した auto-mode-alist 変数に、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb|("\\.[sx]?html?\\(\\.[a-zA-Z_]+\\)?\\'" . html-mode)|
+\end{itemize}\vspc{-0.50zw}
+という指定があるためである。
+もし HTML を編集する際に違うモードを利用したければ、init.el に設定を追加して auto-mode-alist 変数の値を書き換える必要がある。
+例として、nxml-mode を Emacs で標準利用する場合の設定を後述する。
+%%
+%% 款：nxml-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{nxml-mode}
+nxml-mode（\emph{New XML editing mode}）は XML 文章を編集する際に Emacs で標準選択されるモードである\footnote{xml-mode は nxml-mode のエイリアスとなっている。}。\enlargethispage{1.25zw}
+HTML には XHTML という HTML を XML で記述するマークアップ言語が存在し、XHTML を編集する場合には nxml-mode を利用することができる。\\
+
+nxml-mode には html-mode のような豊富なタグ入力補助機能は用意されていないのだが、スキーマ（Schema）を利用した構文チェック機能を利用することができる。\\
+
+通常 XML は XML Schema と呼ばれるスキーマ言語によって論理構造が定義されているが、nxml-mode では RELAX NG\footnote{http://relaxng.org} というスキーマ言語を利用して XML 文書構造の定義を持っている。
+そして、スキーマを利用してリアルタイムに構文をチェックしてくれる。
+%%
+%% 款：nxml-mode を HTML 編集のデフォルトモードにする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{nxml-mode を HTML 編集のデフォルトモードにする}
+nxml-mode を Emacs で HTML を編集する際のデフォルトモードをしたい場合は、次の設定を init.el に追記する。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(add-to-list 'auto-mode-alist
+             '("\\.[sx]?html?\\(\\.[a-zA-Z]+\\)0+\\)?\\'" . nxml-mode))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで html-mode が選択されるはずだったファイルは全て nxml-mode が選択されるようになる。
+但し、全ての HTML ファイルが nxml-mode を利用するようになるため、XML でない HTML を編集する場合には注意が必要となる。
+その場合は、\texttt{M-x html-mode} で個別に切り替えるとよい。
+もし XHTML しか編集せず、構文チェックを利用したければ nxml-mode を、そうでなければ入力補助機能を利用可能な html-mode を利用するのがよいだろう。
+%%
+%% 款：nxml-mode で構文チェックを利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{nxml-mode で構文チェックを利用する}
+nxml-mode では標準で rng-validate-mode（\texttt{C-c C-v\hspc{1.00pt}でオン／オフが切り替え可能}）というリアルタイム構文チェック機能がオンになっている。
+この構文チェックはロードされたスキーマを利用して行われる。\\
+
+XML 文書と利用するスキーマの対応は rng-schema-locating-file-alist 変数によって管理されており、XHTML の場合は xhtml.rnc というファイルを利用する。
+XHTML の場合は xhtmk.rnc というファイルを利用している。
+スキーマ（RDF、XHTML、XSLT など）は \texttt{C-c C-s (rng-set-document-type-and-validate)} からスキーマ名を入力（\texttt{TAB} による補完が可能）して切り替えることができる。\\
+
+rng-validate-mode がオンの状態では、XHTML が妥当であればモードラインに「Valid」妥当でなければ「Invalid」と表示される。
+また、\texttt{C-c C-n (rng-next-error)} というキーバインドが用意されており、エラー箇所にジャンプすることが可能である。
+エラー箇所にカーソルを乗せると、ミニバッファにエラー内容が表示される（例えば、スキーマに定義されていないタグを利用する「Unkown element」と表示される）。
+%%
+%% 款：HTML5 を nxml-mode で編集する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{HTML5 を nxml-mode で編集する}
+nxml-mode には HTML5 のためのスキーマが標準では用意されていないため、HTML5 を nxml-mode で編集すると section などの HTML5 から登場した要素は「Unknown element」としてエラーとなってしまう。
+しかし、nxml-mode ではスキーマを追加し独自の XML 文書にも対応させることが可能となっており、HTML5 もスキーマを導入することで構文をチェックすることができる。\\
+
+HTML5 のスキーマは ELPA から次のようにしてインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET html5-schema RET}
+\end{itemize}\vspc{-0.50zw}
+これで nxml-mode によって HTML ファイルを編集する場合、HTML5 のスキーマが自動選択されるようになる。
+%%
+%% 款：nxml-mode の基本設定
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{nxml-mode の基本設定}
+nxml-mode では html-mode のようなタグ入力のキーバインドは用意されていない。
+しかし、タグ補完などの機能が用意されているので、次の設定によってそれらを活用することが可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; </ を入力すると自動的にタグを閉じる。
+(setq nxml-slash-auto-complete-flag t)
+;; M-TAB でタグを補完する。
+(setq nxml-bind-meta-tab-to-complete-flag t)
+;; nxml-mode で auto-complete-mode を利用する。
+(add-to-list 'ac-modes 'nxml-mode)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、インデントの幅も調節可能である。\enlargethispage{0.55zw}
+インデント幅を変更したい場合は次の設定を追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 子要素のインデント幅を設定する（初期値は 2 ）。
+(setq nxml-child-indent 0)
+;; 属性値のインデント幅を設定する（初期値は 4 ）。
+(setq nxml-attribute-indent 0)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：CSS
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{CSS}
+HTML が文書を構造化するための言語であるのに対して、CSS（\emph{Cascading Style Sheets}）は文書に表現（レイアウトや文字修飾）を与えるために誕生した言語である。\\
+
+Emacs にはプロパティ名などを入力ミスしないよう手助けしてくれる機能が用意されている。
+また、CSS には拡張機能が施された LESS\footnote{http://lesscss.org} と Sass (SCSS)\footnote{http://sass-lang.com} という 2 つの代表的な言語が存在する。
+Emacs には標準で css-mode というメジャーモードが用意されており、CSS と SCSS に対応している。
+最初に紹介した web-mode も CSS と SCSS に対応してるため、この 2 つに関しては基本的にどちらかを利用するとよいだろう。
+css-mode と web-mode が対応していない LESS と Sass を編集する場合には次に紹介するメジャーモードをインストールしておく。
+%%
+%% 款：less-css-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{less-css-mode}
+LESS を編集する場合は less-css-mode を利用する。
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET less-css-mode RET}
+\end{itemize}\vspc{-0.50zw}
+ELPA からインストールすると、特に設定する必要がなく less ファイルを開くと less-css-mode が選択され、シンタックスハイライトやインデントが適用される。
+lessc コマンドがインストールされている環境であれば、less-css-compile コマンドによって LESS ファイルを CSS にコンパイルすることも可能である。
+%%
+%% 款：sass-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{sass-mode}
+Sass を編集する場合は sass-mode を利用する。
+こちらも ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET sass-mode RET}
+\end{itemize}\vspc{-0.50zw}
+こちらもインストールするだけで sass ファイルを開くと sass-mode が選択され、シンタックスハイライトなどが適用される。
+%%
+%% 項：JavaScript
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{JavaScript}
+JavaScript は近年の Web 開発において最重要言語と言ってよいだろう。
+HTML、CSS によって作成された Web ページのインタラクティブな操作や使いやすい UI を提供し、非同期通信による動的な処理を実現するなど、今や Web 制作を行う上で決して避けては通れない言語となっている。
+そんな JavaScript を Emacs で快適に編集するための設定を紹介する。
+%%
+%% 款：標準の js-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{標準のjs-mode}
+Emacs で JavaScript を編集するためにはには、どのメジャーモードが適切だろうか？
+数年前まではこの問いに答えるのは困難であった。\enlargethispage{1.00zw}
+しかし、Emacs~23.2 から js-mode が本体に同梱され、JavaScript ファイル（js\hspc{-0.01zw}ファイル）を開くとメジャーモードとして選択される。
+js-mode はそれまで espresso-mode と呼ばれていた拡張機能で、数ある JaveScript のメジャーモードの中でも最も構文解析に優れていた。\\
+
+js-mode で追加で設定することは殆どないが、もし、コーディング規約などによってスペース 2 つのインデントに変更したい場合は以下の設定を init.el に追記すればよい。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(defun js-indent-hook ()
+  ;; インデント幅を 4 にする。
+  (setq js-indent-level 2
+        js-expr-indent-offset 2
+        indent-tabs-mode nil)
+  ;; switch 文の case ラベルをインデントする関数を定義する。
+  (defun my-js-indent-line ()
+    (interactive)
+    (let* ((parse-status (save-excursion (syntax-ppss (point-at-bol))))
+           (offset (- (current-column) (current-indentation)))
+           (indentation (js--proper-indentation parse-status)))
+      (back-to-indentation)
+      (if (looking-at "case\\s-")
+          (indent-line-to (+ indantation 2))
+        (js-indent-line))
+      (when (> offset 0) (forward-char offset))))
+  ;; case ラベルのインデント処理を設定する。
+  (set (make-local-variable 'indent-line-function) 'my-js-indent-line)
+  ;; ここまで case ラベルを調整する設定。
+  )
+;; js-mode の起動時に hook を追加する。
+(add-hook 'js-mode-hook 'js-indent-hook)
+\end{verbatim}
+\end{mdframed}\vspc{-0.00zw}
+これで switch 文の case ラベルも 2 スペースのインデントになるはずである。
+もし、case ラベルのインデントが不要であれば my-js-indent-line 関数の定義以下の設定は必要ない。
+%%
+%% 款：構文チェック機能を備えた js2-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{構文チェック機能を備えた js2-mode}
+js-mode が標準で同梱される前から人気の高かったメジャーモードに js2-mode がある。
+js2-mode は Google の Steve Yagge 氏が開発したメジャーモードで、その最大の特徴として Rhino\footnote{http://www.mozilla.org/rhino} という Java で記述された Javascript 実装を Elisp に移植することで独自の構文チェックを備えている。
+%%
+%% 款：js2-mode をインストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{js2-mode をインストールする}
+js2-mode は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET js2-mode RET}
+\end{itemize}\vspc{-0.50zw}
+JavaScript ファイルを開いた際に自動的に js2-mode を適用するためには、init.el に次の設定を追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：PHP
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{PHP}
+ここまで紹介してきた HTML、CSS、JavaScript は主に Web 開発の中でもフロントエンド周りを開発するための言語である。
+次はサーバサイドに移ることにする。
+サーバでは Web サーバやデータベースサーバなどが動作しており、それらとフロントエンドを繋ぐのが Perl、Ruby、Python、PHP などのスクリプト言語である。
+それぞれに特徴のある言語であり、どれを学べばいいのかは本稿の趣旨とは異なるため語ることはしないが、どの言語も Emacs だけで開発が行うことができるという点は共通している。\\
+
+本項では PHP について紹介していく。
+PHP は別名テンプレート言語と呼ばれるほど HTML と親和性が高く、\verb|<?php ?>| という開始タグと終了タグに囲まれた部分以外は HTML をそのまま記述することができる。
+正確には、PHP は開始タグと終了タグを用いることで、どんなドキュメントにも埋め込むことが可能である。
+%%
+%% 款：php-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{php-mode}
+Emacs~25.2 では標準で PHP 用のメジャーモードが同梱されていない。
+そのため、自身でインストールすることが必要となる。
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET php-mode RET}
+\end{itemize}\vspc{-0.50zw}
+MELPA からインストールすると、php ファイルを開いた際に自動的に php-mode が適用される。
+また、設定次第で関数などの補完機能も利用可能となるが、第 6 章で紹介した auto-complete を導入していれば自動補完が適用され、こちらの方が php-mode に付属する補完機能よりも有用であるため、ここではあえて紹介することはしない。
+%%
+%% 款：オンラインドキュメントを利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{オンラインドキュメントを利用する}
+php-mode にはシームレスにオンラインドキュメントを利用する機能が備わっている。
+標準では英語のドキュメントを利用するようになっているが、php-manual-url 変数にシンボル \texttt{'ja} を設定すると日本語のドキュメントを利用するようになる。
+本稿執筆時点ではベースとなる PHP サイトの URL が古いようなので https を用いる URL に変更しておくとよいだろう。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 日本語ドキュメントを利用するための設定
+(when (require 'php-mode nil t)
+  (setq php-site-url "https://secure.php.net/"
+        php-manual-url 'ja))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+関数のリファレンスを調べたい場合は、調べたい関数にカーソルを合わせて \texttt{C-c C-f (php-search-documentation)} を実行するだけで、ブラウザでオンラインリファレンスを参照することができる。
+ドキュメントを開きたい場合は \texttt{C-c RET (php-browse-manual)} で直ちにブラウザでドキュメントのページを開くことができる。
+%%
+%% 款：php-mode のインデントを調整する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{php-mode のインデントを調整する}
+第 5 章でも少々触れたが php-mode のインデントは c-mode のインデントを利用している。
+従って、PHP によくあるコーディング規約に従う必要がある場合は、次の設定を追加することでインデントをそろえることができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; php-mode のインデントの設定
+(defun php-indent-hook ()
+  (setq indent-tabs-mode nil)
+  (setq c-basic-offset 4)
+  (c-set-offset 'case-label    '+)  ; switch 文の case ラベル
+  (c-set-offset 'arglist-intro '+)  ; 配列の最初の要素が改行した場合
+  (c-set-offset 'arglist-close  0)) ; 配列の閉じ括弧
+(add-hook 'php-mode-hook 'php-indent-hook)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+c-basic-offset 変数がインデントを行う際の基本文字数となっているので、もし 2 文字にしたい場合は、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{(setq c-basic-offset 4)} の部分を \texttt{(setq c-basic-offset 2)}
+\end{itemize}\vspc{-0.50zw}
+とすればよい。
+%%
+%% 項：Perl
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Perl}
+Perl は現在のようなフレームワークによる Web アプリケーション開発が一般的になるずっと前、CGI と呼ばれる掲示板やメールフォームしかなかった時代から Web 開発の第一線で使用されてきたスクリプト言語である。\\
+
+様々なプログラミング言語の中でも、特に Perl 開発者には Emacs を利用している者が多く存在する。
+その理由としては Perl には \ruby{TMTOWTDI}{ティムトゥディ}（\emph{There's More Than One Way To Do It}：やり方は色々ある）というポリシーがあり、非常に柔軟な書き方が可能な言語となっているためである。
+そのため、インデントやシンタックスハイライトを行うための構文解析も複雑で、それらに早くから対応していた Emacs を選択する者が多かったのではないかと考えられる。
+%%
+%% 款：cperl-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{cperl-mode}
+Emacs には Perl を編集するためのメジャーモードが最初から 2 つ用意されている。
+1 つは perl-mode であり、もう 1 つは構文解析を C 言語に似せた cperl-mode である。
+どちらを利用すればよいか悩むところだが、cperl-mode を利用している者が多いようである。
+本稿でも cperl-mode について解説していく。\\
+
+cperl-mode は最初から Emacs に同梱されているためインストールは不要である。
+但し、標準では pl ファイルを開くと perl-mode が自動選択されるため、cperl-mode を利用するなら cperl-mode が自動選択されるように設定する必要がある。
+cperl-mode を必ず利用するというのであれば、エイリアス（\emph{Alias}）という仕組みを利用するとよいだろう。
+コンピュータにはエイリアスというファイルやコマンドなどに別名を付けて呼び出す仕組みが備わっているが、Elisp でも関数や変数にエイリアス（別名）を付けることができる。\\
+
+これを利用することで、perl-mode を cperl-mode の別名にしてしまうことができる。\\
+
+設定するためのコードは非常に簡単で、defalias 関数に別名と実際に実行する関数の 2 つを引数として渡すだけでよい。
+\vspc{-1.10zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; perl-mode を cperl-mode のエイリアスに設定する。
+(defalias 'perl-mode 'cperl-mode)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この設定を init.el に追記して読み込むと、以後 perl-mode が実行されると全て cperl-mode が呼び出されるようになる。
+モードラインに「CPerl」と表示されていれば、cperl-mode が正しく呼び出されていることを確認するすることができる。
+%%
+%% 款：cperl-mode のインデントを調整する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{cperl-mode のインデントを調整する}
+cperl-mode においても細かくインデントを調整することができる。
+標準のインデントが気に入らない場合は、次のサンプルを参考にして自身に合ったインデントを設定すればよい。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; cperl-mode のインデント設定
+(setq cperl-indent-level               4 ; インデント幅を 4 にする
+      cperl-continued-statement-offset 4 ; 継続する文のオフセット
+      cperl-brace-offset              -4 ; ブレースのオフセット
+      cperl-label-offset              -4 ; ラベルのオフセット
+      cperl-indent-parens-as-block     t ; 括弧もブロックとしてインデントする
+      cperl-close-paren-offset        -4 ; 閉じ括弧のオフセット
+      cperl-tab-always-indent          t ; TAB をインデントにする
+      cperl-highlight-variables-indiscriminately t) ; スカラを常にハイライトする
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 款：yaml-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{yaml-mode}
+プログラミングの世界では様々なデータを扱うが、その 1 つに YAML（\emph{YAML Ain't Markup Language}）というテキスト形式のデータシリアライズ言語が存在する。
+YAML は Perl だけでなく様々な言語で標準利用可能だが、その昔は Perl でよく扱われていたため、ここで紹介しておく。\\
+
+yaml-mode は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET yaml-mode RET}
+\end{itemize}\vspc{-0.50zw}
+ELPA からインストールすると、yml ファイルを開くと自動的に yaml-mode が選択され、モードラインに「YAML」と表示される。
+%%
+%% 項：Ruby
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Ruby}
+今日（2017年10月現在）において、Ruby は最もプログラマに愛されている言語と言っても過言ではないだろう。
+プログラマがプログラムのことだけを考えて楽しく書くことを目標に設計された Ruby は、Ruby on Rails（以下 Rails と記す）というフレームワークの登場によって一躍世界中で注目を浴びた。\\
+
+因みに、Ruby の生みの親である まつもとゆきひろ 氏は、Emacs から利用可能なメーラ「morq」と「cmail」を開発する程の Emacs ユーザとしても知られている。\\
+
+Emacs で Ruby を編集するためのメジャーモードである ruby-mode は、Emacs~23 から本体に同梱されている。
+作者はまつもと氏本人であるため、安心して利用することができるだろう。
+%%
+%% 款：ruby-mode のインデントを調整する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ruby-mode のインデントを調整する}
+rb ファイルを開くと自動的に ruby-mode が選択される。
+ruby-mode も各種プログラミングモードと同様にインデントの設定が可能となっている。
+インデントの初期設定はスペース 2 つ分で、タブ文字は使用しないようになっている。
+これを変更したい場合は、次のように init.el に設定を追記することで変更することが可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ruby-mode のインデントを調整する
+(setq ruby-indent-level 3              ; インデント幅を 3 にする（初期値は 2 ）
+      ruby-deep-indent-paren-style nil ; 改行時のインデントを調整する
+      ;; ruby-mode 実行時に indent-tabs-mode を初期値に変更する
+      ruby-indent-tabs-mode t)         ; タブ文字を使用する（初期値は nil）
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：Ruby 編集用の便利なマイナーモードを利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Ruby 編集用の便利なマイナーモードを利用する}
+Ruby には Ruby のソースコードにも標準添付されている便利なマイナーモードが 2 つ用意されている。
+1 つは括弧などを自動挿入してくれる ruby-electric、もう 1 つが対話的に Ruby を実行可能にするインタラクティブシェルである irb を Emacs 上から利用可能とする inf-ruby である。\\
+
+2 つとも ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET ruby-electric RET}
+\item[] \texttt{M-x package-install RET inf-ruby RET}
+\end{itemize}\vspc{-0.50zw}
+インストール後、次の設定を init.el に追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ruby-mode-hook に ruby-electric-mode を追加する
+(add-hook 'ruby-mode-hook #'ruby-electric-mode)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで次回 ruby-mode を起動した際に ruby-electric-mode が利用可能となる。
+inf-ruby は自動的に ruby-mode-hook に追加されるため、特に設定しなくても利用可能となっている。
+ruby-electric は特に使い方を覚える必要なく利用することができるため、以降は inf-ruby の使用方法を解説する。
+%%
+%% 款：Emacs から irb を利用する -- inf-ruby
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Emacs から irb を利用するー\hspc{-2.0pt}ーinf-ruby}
+inf-ruby を利用するためには \texttt{C-c C-s (inf-ruby)} を実行する。
+実行するとウィンドウが分割され irb が起動した *ruby* バッファが開く。
+勿論、このまま irb を利用することも可能だが、編集中のソースコードのウィンドウで次の表\ref{inf-ruby のキーバインド}のコマンドが利用可能となる。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{inf-ruby のキーバインド\label{inf-ruby のキーバインド}}                  \\[-1.30zw]\toprule
+  \textgt{キー}    & \textgt{コマンド名}           & \textgt{説明}                    \\ \midrule\midrule
+  \texttt{C-c C-s} & \texttt{inf-ruby}             & irb を起動する。                 \\ \midrule
+  \texttt{C-c C-b} & \texttt{ruby-send-block}      & ブロックを irb へ送る。          \\ \midrule
+  \texttt{C-c C-x} & \texttt{ruby-send-definition} & メソッド定義を irb へ送る。      \\ \midrule
+  \texttt{C-c C-r} & \texttt{ruby-send-region}     & リージョンを irb へ送る。        \\ \midrule
+  \texttt{C-c C-z} & \texttt{ruby-switch-to-inf}   & *ruby* バッファへ移動する。      \\ \midrule
+  \texttt{C-c C-l} & \texttt{ruby-load-file}       & ファイルを読み込んで irb へ送る。\\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+例えば、実行したい部分をリージョンで囲って \texttt{C-c C-r} をタイプすると、実行結果が *ruby* バッファに表示される。
+%%
+%% 項：Python
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Python}
+Python はシンプルな文法を持ち、標準ライブラリが非常に充実したスクリプト言語である。
+Mac や Linux などで標準ツールの作成言語として活用されていたり、最近（2017年10月現在）では機械学習方面でも人気を博していて、Google や Dropbox などの Web サービスでも積極的に活用されている（Python の開発者である Guido van Rossum 氏は 2013 年まで Google に在籍し、2017 年からは Dropbox に在籍している）。
+Python のインデントはブロック構造を表現するための文法として機能する。
+そのため、誰が書いてもほぼ統一された見た目となり、その読み易さや効率の良さからプログラミング言語教育向きであるとも言われている。
+%%
+%% 款：python-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{python-mode}
+py ファイルを開くと自動的に python-mode が選択される。
+%%
+%% 款：構文をチェックする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{構文をチェックする}
+python-mode では \texttt{C-c C-v (python-check)} を実行することで構文チェックを行うことができる。
+標準では pyflacks を利用するように設定されているが、次の設定によって変更が可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb|(setq pyhon-check-command "flake8")|
+\end{itemize}\vspc{-0.50zw}
+Python には様々な構文チェックツールが用意されているので、必要に応じてインストールすればよい。
+%%
+%% 項：C/C++
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{C/C++}
+プログラミング言語の中で最も有名なのはやはり C であろう。
+C はチューリングマシン（イギリスの数学者 Alan Mathison Turing 氏の論文「計算可能数について―\hspc{-1.0pt}―決定問題への応用」で発表された仮想マシン）を具体化したノイマン型アーキテクチャに特化した言語であり、コンピュータが今の形を続ける限り滅びることはない。
+但し、C は Ruby などの新しいスクリプト言語に比べて読み書きが難しく、学習コストや生産性、メンテナンス性などを考えると簡単な処理に向いているとは言えない。
+だが、多くのプログラミング言語や OS が C で書かれている。
+そのため、Emacs には C を書くためのノウハウが凝縮されており、C でコーディングしたい者は Emacs の利用を推奨する。
+%%
+%% 款：cc-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{cc-mode}
+Emacs で C を編集する際は、本体に同梱されている cc-mode というメジャーモードを利用するのが一般的である。
+しかし、実際には cc-mode というメジャーモードは存在しない。
+cc-mode は「major-mode for editing C and similar language」という位置付けで、C を中心とした類似言語である C、C++、Objective-C、Java、AWK などをサポートしている。
+c-mode、c++-mode、objc-mode、java-mode、awk-mode などが cc-mode 上に定義されており、特に設定することなく、それぞれの拡張子のファイルを開くと自動的にメジャーモードが選択されるようになっている。\\
+
+尚、これまでも何度か解説してきたインデントについては、多くのプログラミング言語用のメジャーモードで c-mode のインデントスタイルを利用している。
+%%
+%% 款：cc-mode 付属のマイナーモード
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{cc-mode 付属のマイナーモード}
+cc-mode には幾つかのマイナーモードが付属している。
+例えば、c-mode を実行するとモードラインに「C/l」と表示され、c++-mode を実行すると「C++/l」と表示される。
+この「C」は c-mode の「C」であり「l」は electric mode というマイナーモードがオンになっているという印である。
+cc-mode には編集を手助けしてくれる機能が標準でマイナーモードとして搭載されており、利用者の好みで容易にオン／オフを切り替えることができるようになっている（表\ref{cc-mode 付属のマイナーモード}）。
+\vspc{-0.50zw}\begin{longtable}{@{}lp{12.5zw}lp{3.00zw}@{}}
+  \caption[]{cc-mode 付属のマイナーモード\label{cc-mode 付属のマイナーモード}}                                                                                                                                                                 \\[-1.30zw]\toprule
+  \textgt{マイナーモード名}           & \textgt{説明}                                                                                                               & \textgt{切り替えコマンド}                  & \textgt{モードラインの表示} \\ \midrule\midrule
+  \texttt{syntactic-indentation-mode} & 標準でオン。オフにすると \texttt{C-j} でインデントしない。                                                                  & \texttt{c-toggle-syntactic-indentation}    & なし                        \\ \midrule
+  \texttt{electric-mode}              & 特定の文字（\texttt{;}\hphantom{.}や\hphantom{.}\texttt{:} など）を入力すると自動的にインデントする。                       & \texttt{c-toggle-electric-state (C-c C-l)} & \texttt{|}                  \\ \midrule
+  \texttt{auto-newline-mode}          & 特定の文字（\texttt{\{}\hphantom{.}や\hphantom{.}\texttt{;} など）を入力すると自動的に改行を挿入する。                      & \texttt{c-toggle-auto-newline (C-c C-a)}   & \texttt{a}                  \\ \midrule
+  \texttt{hungry-delete-mode}         & \texttt{<del>} や \texttt{<backspace>} で空白文字を削除する際、次の文字が現れるまでの空白文字を全て削除する（改行も含む）。& \texttt{c-toggle-hungry-state}             & \texttt{h}                  \\ \midrule
+  \texttt{subword-mode}               & Emacs 上のワードの単位を \ruby{CamelCase}{キャメルケース} に対応させる。                                                    & \texttt{subword-mode (C-c C-w)}            & \texttt{w}                  \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[※] CamelCase（またはcamelCase）とは、単語の境界を \_ や \verb|-| などで区切らず大文字にすることで表現する記法である。先頭の文字を大文字から始めるアッパーキャメルケース（UCC）と小文字から始めるローワーキャメルケース（LCC）が存在する。プログラミングの世界では LCC が一般的に利用されている。
+\end{itemize}\vspc{-0.50zw}
+表\ref{cc-mode 付属のマイナーモード}最後の subword-mode だけは cc-mode 以外でも利用可能である（但し、キーバインドによオン／オフは cc-mode のみ標準で利用可能）。
+標準でオンにしたい／オフにしたい場合は、次に紹介するフックから設定が可能である。
+%%
+%% 款：c-mode-common-hook とそれぞれのフック
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{c-mode-common-hook とそれぞれのフック}
+cc-mode には cc-mode 全体で共通利用する c-mode-common-hook と、c-mode-hook や php-mode-hook などのようなそれぞれのメジャーモード専用のフックの 2 種類が用意されている。
+実行される順番は、先ず c-mode-common-hook が実行され、その後にそれぞれのメジャーモード専用のフックが実行されるようになっている。
+%%
+%% 節：Flycheck による文法チェック
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{Flycheck による文法チェック}
+括弧の対応関係などは、メジャーモード標準のインデントやシンタックスハイライトの機能などによって視覚的に直ちに気付くことが可能だが、例えば文末のセミコロンが抜けていてもプログラムを実行する際まで気付くことは難しい。
+このような簡単な文法ミスについても Emacs 上の編集段階で気付くことが可能である。
+この文法チェックの機能を提供してくれるのが Flycheck である。\\
+
+Flycheck の仕組みとしては、現在編集中のバッファのコピーを作成して外部の文法解析ツールを定期的に実行さる。
+各種文法解析ツールはフォーマットこそ多少異なるが、検知した文法ミスをエラー内容と行番号で出力するという形式はほぼ同じである。
+その結果を解析して間違いのレベルによって、警告やエラーなどを適切に色分けして Emacs 上に反映するという仕組みとなっている。
+そのため、特定の言語に限定することなく利用可能となっている。
+%%
+%% 項：Flymake との違い
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Flymake との違い}
+同様の仕組みとして Emacs に標準で Flymake という機能が備わっている。
+しかし、Flymake はその名の通り本来は文法チェックではなく make コマンドを実行するための仕組みとして用意されたものであるため、文法チェック機能に限れば Flycheck の方が多くの点で優れている。\\
+
+Flymake と Flycheck の違いについては「Flycheck versus Flymake」\footnote{http://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html}にまとめられているが、最大の違いは Flycheck では殆どの言語で設定を必要としない点であろう。
+%%
+%% 項：Flycheck を利用可能な言語
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Flycheck を利用可能な言語}
+Supported Language\footnote{http://www.flycheck.org/en/latest/languages.html} では次の通り 50 以上の言語が挙げられている。
+\vspc{-0.50zw}\begin{longtable}{@{}p{48zw}@{}}
+  Ada, AsciiDoc, C/C++, CFEngine, Chef, Coffeescript, Coq, CSS, D, Dockerfile, Elixir, Emacs Lisp, Erlang, ERuby, Fortran, Go, Groovy, Haml, Handlebars, Haskell, HTML, JavaScript, JSON, Less, Lua, Markdown, Perl, PHP, Processing, Protobuf, Pug, Puppet, Python, R, Racket, RPM Spec, reStructuredText, Ruby, Rust, Sass/SCSS, Scala, Scheme, Shell Scripting Language, Slim, SQL, systemd Unit Configuration, TeX/LaTeX, Texinfo, TypeScript, Verilog, XML, YAML
+\end{longtable}\vspc{-0.50zw}
+また、Python で紹介したように言語によっては複数の文法チェッカが存在する場合があるが、Flycheck は複数の文法チェッカを利用することも可能となっている。\enlargethispage{0.20zw}
+%%
+%% 項：Flycheck の利用
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Flycheck の利用}
+それでは Flycheck を実際に導入してみる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+Flycheck は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET flycheck RET}
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：文法チェックを実行する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{文法チェックを実行する}
+Flycheck による文法チェックは基本的には自動的に実行される。
+利用可能とするには init.el に次の設定を追記する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \verb|(add-hook 'after-init-hook \#'global-flycheck-mode)|
+\end{itemize}\vspc{-0.50zw}
+設定を追加すると Flycheck がサポートしていて、かつ文法チェッカが存在している言語のファイルを開くと自動的に文法チェックが開始され、エラー箇所に下線が引かれるようになる。
+%%
+%% 款：機能を追加する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{機能を追加する}
+Flycheck は拡張機能をインストールすることで対応する言語が追加可能となっている。
+追加したい言語がある場合は package.el のパッケージ一覧から探してインストールすればよい。\\
+
+言語追加以外にも、エラー表示をよりわかりやすくしてくれるパッケージも存在する。
+例えば、flycheck-pos-tip はエラーをツールチップとしてカーソル付近に表示してくれるパッケージである。\\
+
+これも ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET flycheck-popup-tip RET}
+\end{itemize}\vspc{-0.50zw}
+インストールした後、次の設定を init.el に追記することで、エラー表示がツールチップ表示されるようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Flycheck の追加機能を利用するための設定
+(with-eval-after-load 'flycheck
+  (flycheck-popup-tip-mode))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：コードの実行
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{コードの実行}
+Emacs 上でプログラムを書いている際、現在のコードを実行してみたいと思うことはないだろうか？
+そんな場合に便利なのが syohex 氏が開発した quickrun である。
+%%
+%% 項：quickrun によるコード実行
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{quickrun によるコード実行}
+quickrun は Emacs のバッファを様々なプログラムで実行可能な拡張機能である。
+殆どの代表的な言語に対応しており、バッファやリージョンのコードを実行して実行結果を *quickrun* バッファに表示する。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+quickrun は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET quickrun RET}
+\end{itemize}\vspc{-0.50zw}
+インストールが完了すると、直ちに quickrun が提供するコマンドが利用可能となる。
+%%
+%% 款：コードを実行する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{コードを実行する}
+quickrun が提供する機能を表\ref{quickrun が提供するコマンド一覧}に示す。
+実際によく利用するコマンドは quickrun と quickrun-region になるだろう。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{quickrun が提供するコマンド一覧\label{quickrun が提供するコマンド一覧}} \\[-1.30zw]\toprule
+  \textgt{コマンド名}              & \textgt{説明}                                   \\ \midrule\midrule
+  \texttt{quickrun}                & 現在のバッファを実行する。                      \\ \midrule
+  \texttt{quickrun-region}         & 選択中のリージョンのみ実行する。                \\ \midrule
+  \texttt{qucikrun-shell}          & シェルから対話的に実行する。                    \\ \midrule
+  \texttt{quickrun-compile-only}   & コンパイルのみ実行する。                        \\ \midrule
+  \texttt{quickrun-replace-region} & リージョンを実行結果で置換する。                \\ \midrule
+  \texttt{quickrun-with-arg}       & ミニバッファから引数をとって実行する。          \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+quickrun の使い方は非常に簡単である。
+プログラムを書いて実行したくなった際に \texttt{M-x quickrun} を実行するだけである。
+quickrun コマンドを実行すると、現在のメジャーモードからコンパイラやインタプリタを自動的に判別し、カレントバッファに記述されているコードの実行結果が *quickrun* バッファに表示される。\\
+
+quickrun を利用すると、これまでターミナルからプログラムを実行していた操作を Emacs 内で行えるようになり、より開発者に集中することが可能となる。
+%%
+%% 節：タグによるコードリーディング
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{タグによるコードリーディング}
+プログラムを読む際、ある関数、ある変数がどのように定義されているかを調べることが多々ある。
+1 つのファイルに書かれた短いスクリプトであれば検索ですぐに発見することができるかもしれないが、複数のファイルに渡る規模の大きなプログラムの場合は定義元を見つけるのもひと苦労である。
+そんな場合に役立つのがタグによるジャンプである。\\
+
+タグとはソースコードにあるオブジェクト（関数やクラスや変数）を参照しやすいようにインデックスを付したファイルのことで、Emacs では標準で Etags と呼ばれるタグを生成するプログラムと etags.el というタグを利用したジャンプ機能が備わっている。\\
+
+タグファイルを作成することで、Emacs からオブジェクト一覧を表示し、その定義元に一発でジャンプできるようになる。
+これによって初めて読むソースコードも素早く理解することが可能となる。
+%%
+%% 項：Etags 以外のタグ作成プログラム
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Etags 以外のタグ作成プログラム}
+Emacs には標準で備わっている Etags 以外にも有名なタグ作成プログラムが 2 つ存在する。
+1 つは GNU GLOBAL\footnote{http://www.gnu.org/software/global}（以下 gtags と記す）、もう 1 つは Exuberant Ctags\footnote{http://ctags.sourceforge.net}（以下 ctags と記す）である。\\
+
+gtags は対応言語こそ少ないものの構文解析に優れ、解析結果の HTML 出力が可能であるなどの高性能さが特徴である。\enlargethispage{1.75zw}
+ctags は豊富な言語対応と etags 互換タグファイルの作成が可能（すなわち etags.el から利用可能）となっている。\\
+
+どのタグシステムもそれぞれ利点があり、言語や環境または好みに応じて使い分けることが望ましかったのだが、gtags は 6.2.7 から ctags と連携可能となり、6.3.2 からは Python 製のシンタックスハイライター Pygments とも連携可能となった。
+そのため、gtags を利用すると現存する殆ど全ての言語でタグを利用することが可能となったので、特にこだわりがない場合は gtags を利用するとよいだろう。
+%%
+%% 項：gtags と Emacs の連携
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{gtags と Emacs の連携}
+gtags は Homebrew が利用可能な環境であれば簡単にインストールすることが可能である。
+ctags と Pygments と連携する場合は、次のコマンドでインストールする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+$ brew install global --with-exuberant-ctags --with-pygments
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+連携機能を利用したい場合は、更に利用しているシェルに環境変数を設定する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+# bash や Zsh での設定
+export GTASCONF=/usr/local/share/gtags/gtags.conf
+export GTAGSLABEL=pygments
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+gtags をインストールすると gtags コマンドが利用可能となる。
+タグを作成したいディレクトリで gtags -v コマンドを実行することで、ソースコードの解析とタグの作成の両方が行われる。
+%%
+%% 款：gtags.el をインストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{gtags.el をインストールする}
+次に Emacs から gtags を利用するために gtags.el をインストールする。
+gtags.el は gtags のソースコードを展開したディレクトリか /usr/local/share/gtags/ 内に配置されているので package.el を用いてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install-file RET /usr/local/share/gtags/gtags.el RET}
+\end{itemize}\vspc{-0.50zw}
+インストール完了後、次の設定を init.el に追記することで Emacs から GTAGS ファイルを利用したタグジャンプ機能を利用することが可能となる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; gtags-mode のキーバインドを有効化する。
+(setq gtags-suggested-key-mapping t)
+;; ファイル保存時に自動的にタグをアップデートする。
+(setq gtags-auto-update t)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+標準ではキーバインドは設定されていないが、読み込み時に gtags-suggested-key-mapping 変数に nil 以外の値をセットすると gtags-mode のキーバインドが有効化される。
+但し、gtags-mode のキーバインドは標準のキーバインドを一部上書きしてしまうため、一度試した上で好みに応じて設定を追加するとよいだろう。
+%%
+%% 款：gtags-mode の使い方
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{gtags-mode の使い方}
+gtags.el の機能は gtags-mode というマイナーモードとして設計されているが、マイナーモードがオンになっていなくても読み込んだ時点で各種コマンドが利用可能となっている。
+基本となるコマンドは、解析されたタグファイルの中から関数やクラスなどの定義元へジャンプする \texttt{M-x gtags-find-tag} とジャンプする前の場所へ戻る \texttt{M-x gtags-pop-stack} である。
+基本的には、この 2 つのコマンドを使いこなすだけで十分なのだが、それ以外の代表的なコマンドも簡単に紹介しておく。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{gtags.el のコマンド\label{gtags.el のコマンド}} \\[-1.30zw] \toprule
+  \textgt{キー}  & \textgt{コマンド名}        & \textgt{説明}                           \\ \midrule\midrule
+  \texttt{C-c t} & \texttt{gtags-find-tag}    & 関数の定義元へ移動する。                \\ \midrule
+  \texttt{C-c r} & \texttt{gtags-find-rtag}   & 関数の参照元へ移動する。                \\ \midrule
+  \texttt{C-c s} & \texttt{gtags-find-symbol} & 変数の定義元と参照元へ移動する。        \\ \midrule
+  \texttt{C-c P} & \texttt{gtags-find-file}   & タグで解析されているファイルへ移動する。\\ \midrule
+  \texttt{C-t}   & \texttt{gtags-pop-stack}   & 移動前の場所へ戻る。                    \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 款：Helm と gtags の連携
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Helm と gtags の連携}
+helm-gtags を利用することで Helm インタフェースを用いて gtags を利用することが可能となる。
+helm-gtags は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET helm-gtags RET}
+\end{itemize}\vspc{-0.50zw}
+helm-gtags は gtags.el の機能を基本的に踏襲している。
+そのため、helm-gtags を利用するのであれば gtags.el は必要ない。
+gtags.el のコマンドとの対応は表\ref{helm-gtags コマンドと gtags コマンドの対応}にまとめておく。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{helm-gtags コマンドと gtags コマンドの対応\label{helm-gtags コマンドと gtags コマンドの対応}} \\[-1.30zw] \toprule
+  \textgt{コマンド名}             & \textgt{対応コマンド}      \\ \midrule\midrule
+  \texttt{helm-gtags-find-tag}    & \texttt{gtags-find-tag}    \\ \midrule
+  \texttt{helm-gtags-find-rtag}   & \texttt{gtags-find-frag}   \\ \midrule
+  \texttt{helm-gtags-find-symbol} & \texttt{gtags-find-symbol} \\ \midrule
+  \texttt{helm-gtags-find-files}  & \texttt{gtags-find-files}  \\ \midrule
+  \texttt{helm-gtags-pop-stack}   & \texttt{gtags-pop-stack}   \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+設定は次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(custom-set-variables
+ '(helm-gtags-suggested-key-mapping t)
+ '(helm-gtags-auto-update t))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+helm-gtags を利用するとタグの検索が更に便利になるため、Helm を利用している者には利用を推奨する。
+%%
+%% 節：プロジェクトベースの編集：projectile
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{プロジェクトベースの編集：projectile}
+例えば、Rails のようなフレームワークを用いた開発プロジェクトを複数抱えている場合、同名のファイルが幾つも存在するため、Helm などを利用してファイルを検索すると複数のファイルがヒットする。
+しかし、Emacs がプロジェクト毎にスコープを持っていれば、現在開発を行っているプロジェクトのみを対象にしてファイルの検索などを行うことが可能となる。
+%%
+%% 項：projectile によるプロジェクト管理
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{projectile によるプロジェクト管理}
+Emacs では projectile という拡張機能によって、主にリポジトリを対象としたプロジェクトスコープを作成することが可能である。
+Emacs 内でプロジェクトを切り替えることが可能で、同名のファイルが存在していても現在編集中のプロジェクトに対してのみにファイル検索対象を絞り込むことが可能となる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+projectile は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET projectile RET}
+\end{itemize}\vspc{-0.50zw}
+次の設定を init.el に追記すると Emacs でファイルを開いた際、自動的に projectile によるプロジェクト管理が開始される。
+\vspc{-0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; projectile を利用するための設定
+(when (require 'projectile nil t)
+  ;; 自動的にプロジェクト管理を開始する
+  (projectile-mode)
+  ;; プロジェクト管理から除外するディレクトリを指定する
+  (add-to-list
+   'projectile-globally-ignored-directories
+   "node_modules")
+  ;; プロジェクト情報をキャッシュする
+  (setq projectile-enable-caching t))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：projectile を利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{projectile を利用する}
+projectile はプロジェクトというスコープを用いて、これまで紹介してきた Emacs の標準的な機能である「検索や置換」「ファイルの切り替え」「コマンドの実行」など、様々な操作が行うことが可能となっている。
+代表的な機能を表\ref{projectile による代表的なコマンド一覧}に示す。\enlargethispage{1.00zw}
+\vspc{-1.50zw}\begin{longtable}{@{}lclp{15zw}@{}}
+  \caption[]{projectile による代表的なコマンド一覧\label{projectile による代表的なコマンド一覧}}                                                            \\[-1.30zw]\toprule
+  \textgt{キー}    & \textgt{Helm} & \textgt{コマンド名}                                 & \textgt{説明}                                                    \\ \midrule\midrule
+  \verb|C-c p f|   & ○            & {projectile-find-file}                              & \small{編集中のプロジェクトのファイル一覧を表示する。}           \\ \midrule
+  \verb|C-c p F|   & ○            & {projectile-find-file-in-known-projects}            & \small{開いたことがあるプロジェクトのファイル一覧を表示する。}   \\ \midrule
+  \verb|C-c p d|   & ○            & {projectile-find-dir}                               & \small{編集中のプロジェクトのディレクトリ一覧を表示する。}       \\ \midrule
+  \verb|C-c p s g| & ○            & {projectile-grep}                                   & \small{プロジェクト内で grep を実行する。}                       \\ \midrule
+  \verb|C-c p v|   & －            & {projectile-vc}                                     & \small{\texttt{vc-dir} コマンドをプロジェクトルートで実行する。} \\ \midrule
+  \verb|C-c p b|   & ○            & {projectile-switch-to-buffer}                       & \small{プロジェクトで現在開いているファイル一覧を表示する。}     \\ \midrule
+  \verb|C-c p r|   & －            & {projectile-replace}                                & \small{プロジェクトに M-\%(query-replace) を実行する。}          \\ \midrule
+  \verb|C-c p R|   & －            & {projectile-regenerate-tags}                        & \small{プロジェクトのタグファイルを再生成する。}                 \\ \midrule
+  \verb|C-c p j|   & －            & {projectile-find-tag}                               & \small{カーソル位置の関数の定義元へ移動する。}                   \\ \midrule
+  \verb|C-c p k|   & －            & {projectile-kill-buffers}                           & \small{プロジェクトで開いているファイルを全て閉じる。}           \\ \midrule
+  \verb|C-c p D|   & －            & {projectile-dired}                                  & \small{プロジェクトルートで Dired を開く。}                      \\ \midrule
+  \verb|C-c p e|   & ○            & {projectile-recentf}                                & \small{プロジェクトで最近開いたファイル一覧を表示する。}         \\ \midrule
+  \verb|C-c p !|   & －            & {projectile-run-shell-command-in-root}              & \small{プロジェクトルートでシェルコマンドを実行する。}           \\ \midrule
+  \verb|C-c p c|   & －            & {projectile-compile-project}                        & \small{プロジェクトの標準ビルドコマンドを実行する。}             \\ \midrule
+  \verb|C-c p P|   & －            & {projectile-test-project}                           & \small{プロジェクトの標準テストコマンドを実行する。}             \\ \midrule
+  \verb|C-c p t|   & －            & {projectile-toggle-between-implementation-and-test} & \small{対応するソースファイルとテストファイルを切り替える。}     \\ \midrule
+  \verb|C-c p p|   & ○            & {projectile-switch-project}                         & \small{開いたことのあるプロジェクトを切り替える。}               \\ \midrule
+  \verb|C-c p ESC| & －            & {projectile-project-buffers-other-buffer}           & \small{プロジェクトで最も開いたファイルに切り替える。}           \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+尚、projectile のキーバインドは \texttt{C-c p} というプレフィックスキーが設定されている。
+このプレフィックスキーは次の設定から変更可能になっているので、好みに応じて変更可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; projectile のプレフィックスキーを s-p に変更する。
+(define-key projectile-mode-map (kbd "s-p") 'projectile-mode-map)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：Helm を用いて利用する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Helm を用いて利用する}
+helm-projectile を利用することで、Helm インタフェースを用いて projectile の一部のコマンドを利用することができる。
+helm-projectile は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET helm-projectile RET}
+\end{itemize}\vspc{-0.50zw}
+次の設定を init.el に追記すると projectile-find-file など一部のコマンドのキーバインドが helm-projectile-find-file などの Helm インタフェースを用いたものに置き換えられる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Fuzzy マッチを無効化する。
+(setq helm-project-fuzzy-match nil)
+(when (require 'helm-projectile nil t)
+  (setq projectile-completion-system 'helm))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+helm-projectile は標準で、完全一致しなくても曖昧検索を行う Fuzzy マッチを利用する。
+この機能が不要な場合は、helm-projectile を読み込む前に helm-projectile-fuzzy-match に nil を設定して無効化すればよい。
+%%
+%% 款：Rails サポートを利用して編集するファイルを切り替える
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Rails サポートを利用して編集するファイルを切り替える}
+projectile-rails は Rails サポートを強化する。
+これによって複数の Rails プロジェクトの開発を行っている場合でも、他のプロジェクトのファイルと区別した上で、モデルやコントローラなど特定の種類のファイルに絞って切り替えることが可能となる。
+projectile-rails は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET projectile-rails RET}
+\end{itemize}\vspc{-0.50zw}
+利用するためには、次の設定を init.el に追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; projectile-rails のプレフィックスキーを s-r に変更する
+(setq projectile-rails-keymap-prefix (kbd "s-r"))
+(when (require 'projectile-rails nil t)
+  (projectile-rails-global-mode))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+代表的なコマンドを表\ref{projectile-rails による代表的なコマンド一覧}に記す。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{projectile-rails による代表的なコマンド一覧\label{projectile-rails による代表的なコマンド一覧}} \\[-1.30zw]\toprule
+  \textgt{キー}      & \textgt{コマンド名}                        & \textgt{説明}                            \\ \midrule\midrule
+  \texttt{C-c r m}   & {projectile-rails-find-model}              & モデル一覧を表示する。                   \\ \midrule
+  \texttt{C-c r M}   & {projectile-rails-find-current-model}      & 対応するモデルに移動する。               \\ \midrule
+  \texttt{C-c r c}   & {projectile-rails-find-controller}         & コントローラ一覧を表示する。             \\ \midrule
+  \texttt{C-c r C}   & {projectile-rails-find-current-controller} & 対応するコントローラに移動する。         \\ \midrule
+  \texttt{C-c r v}   & {projectile-rails-find-view}               & ビュー一覧を開く。                       \\ \midrule
+  \texttt{C-c r V}   & {projectile-rails-find-current-view}       & 対応するビューに移動する。               \\ \midrule
+  \texttt{C-c r p}   & {projectile-rails-find-spec}               & スペック一覧を表示する。                 \\ \midrule
+  \texttt{C-c r P}   & {projectile-rails-find-current-spec}       & 対応するスペックに移動する。             \\ \midrule
+  \texttt{C-c r g r} & {projectile-rails-goto-routes}             & config/routes.rb ファイルを開く。        \\ \midrule
+  \texttt{C-c r g s} & {projectile-rails-goto-seeds}              & db/seeds.rb ファイルを開く。             \\ \bottomrule
+\end{longtable}\vspc{-1.00zw}
+helm-projectile を導入していて init.el に設定を追記している場合は、こちらも Helm インタフェースを利用する。
+また、プレフィックスキーも projectile 同様に変更可能となっている。
+%%
+%% 節：特殊な文字の入力補助
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{特殊な文字の入力補助}
+この世には様々な文字が存在する。
+身近なものであればアルファベット／記号／ひらがな／カタカナ／漢字などがあるが、携帯電話（スマートフォン）の普及によって一般化した絵文字は Emacs ではどのように入力すればよいのだろうか？
+本節では、このような特殊文字の入力を助けてくれる機能を紹介する。
+%%
+%% 項：絵文字の入力補助：ac-emoji
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{絵文字の入力補助：ac-emoji}
+代表的な文字コードである Unicode のバージョン 6 から導入された絵文字は、今や日本だけでなく世界中の Web サービスで広く利用されている。
+その中でも GitHub で採用されている \texttt{:smile:} のように記述する絵文字のマークアップは Slack や Qiita などでも採用されているため、多くのエンジニアに馴染みがある。
+そんな絵文字マークアップの入力を auto-complete を利用して手助けしてくれるのが ac-emoji である。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ac-emoji は ELPA からインストールすることが可能である。\enlargethispage{0.50zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET ac-emoji RET}
+\end{itemize}\vspc{-0.50zw}
+ac-emoji は auto-complete が利用可能な状態で \texttt{M-x ac-emoji-setup} を実行することで利用可能となる。
+そのため、text-mode や markdown-mode において ac-emoji を利用したい場合は、次のような設定を init.el に追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (require 'ac-emoji nil t)
+  ;; text-mode と markdown-mode で auto-complete を有効化する
+  (add-to-list 'ac-modes 'text-mode)
+  (add-to-list 'ac-modes 'markdown-mode)
+  ;; text-mode と markdown-mode で ac-emoji を有効化する
+  (add-hook 'text-mode-hook 'ac-emoji-setup)
+  (add-hook 'markdown-mode-hook 'ac-emoji-setup))
+\end{verbatim}
+\end{mdframed}\vspc{-0.00zw}
+%%
+%% 款：絵文字を入力する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{絵文字を入力する}
+入力は通常の auto-complete によって補完されるため\phantom{.}:（コロン）から絵文字コードの一部を入力すると、補完候補が表示される。
+%%
+%% 節：差分とマージ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{差分とマージ}
+コマンドラインツールに慣れ親しんだ UNIX 系 OS ユーザであれば diff/patch コマンドは必須コマンドであろう。
+diff コマンドを利用して 2 つのファイルを比較したり、パッチを作成したり、patch コマンドで差分を適用する際に差分を確認しながら編集したい場合は Emacs の diff 機能を利用することを推奨する。\\
+
+Emacs には diff コマンドを Emacs 上で実行するだけでなく、異なっている部分を自由自在にジャンプする機能や、2 つのファイルを比較しながらマージする機能など様々な機能が備わっている。\\
+
+Emacs 標準の diff 機能はシンプルな diff と高機能な Ediff の 2 つが存在する。
+%%
+%% 項：diff による差分表示：M-x diff
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{diff による差分表示：M-x diff}
+\texttt{M-x diff} は diff コマンドを Emacs バッファに表示させるためのコマンドである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x diff \textasciitilde{}/tmp/example1.txt RET \textasciitilde{}/tmp/sample2.txt RET}
+\end{itemize}\vspc{-0.50zw}
+という形で 2 つのファイルを指定すると、コマンドラインで、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{\$ diff -u \textasciitilde{}/tmp/example2.txt \textasciitilde{}/tmp/sample1.txt}
+\end{itemize}\vspc{-0.50zw}
+と実行した場合と同じ結果が *Diff* バッファに出力される。
+修正後ファイルと修正前ファイルを指定すると順番がコマンドラインと逆で、diff コマンドでは修正後ファイルの方が先に表示される点に注意すること。\\
+
+*Diff* を \texttt{C-x C-w (write-file)} コマンドで名前を付けて保存するとパッチとして利用することも可能だが、パッチを作成する場合は次に紹介する \texttt{M-x ediff} を利用する方がよいだろう。
+%%
+%% 項：Ediff による差分表示：M-x ediff
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Ediff による差分表示：M-x ediff}
+Ediff では単に diff コマンドの結果を出力するのではなく、ウィンドウを分割して差分を視覚的に比較することができる。
+また、Ediff は 3 つファイルを同時に比較することも可能である。
+%%
+%% 款：ファイルを比較する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ファイルを比較する}
+Ediff の使い方は diff と似ており、2 つのファイルを比較する場合、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x ediff RET \textasciitilde{}/tmp/example2.txt RET \textasciitilde{}/tmp/sample1.txt RET}
+\end{itemize}\vspc{-0.50zw}
+のように用いる。
+ファイルの指定順が \texttt{M-x diff} とは逆順で diff コマンドと同じである。
+この順番は、ファイルを比較するだけの場合は関係ないのだが、パッチを出力する際に意味を持ってくる。
+Ediff  を実行するとウィンドウが分割され、ファイルを指定した順番に A、B とバッファに対して識別子が割り振られてモードラインの一番左端に表示される。
+これは後述するキー操作によって操作する際に利用する。\\
+
+ターミナル以外の環境の Emacs の場合は標準では小さなフレームが右上に表示され、ターミナルの場合はモードラインのすぐ上に *Ediff Control Panel* というコントロールパネルフレームが表示される。
+Ediff では、このバッファがアクティブ（すなわちカレントバッファ）になっている状態で操作を行う。
+「Type\hphantom{.}? for help」と表示されている通り\hphantom{.}? を押すとキーバインド一覧が説明付きで表示される。
+%%
+%% 款：同一フレーム内にコントロールパネルを表示する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{同一フレーム内にコントロールパネルを表示する}
+右上にコントロールパネルフレームが表示される形式が好みでない場合、次の設定を init.el に追記しておくとターミナルと同じようにモードラインの上にコントロールパネルが表示されるようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ediff コントロールパネルを別フレームにしない
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：キーバインドの一覧
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{キーバインドの一覧}
+Ediff の操作はコマンドが多く一見難しそうに見えるが、実際に利用するのは一部なのでそれほど難しくはない。
+主に n、p で差分を移動、$\|$ でウィンドウ分割の縦と横を切り替え、wd で差分ファイルに出力（パッチを作成）くらいを覚えておけば十分活用することが可能である。
+主な操作を表\ref{Ediff の操作一覧}にまとめておく。
+\vspc{-0.50zw}\begin{longtable}{lp{38zw}}
+  \caption[]{Ediff の操作一覧\label{Ediff の操作一覧}}                                                                                                                    \\[-1.30zw]\toprule
+  \textgt{キー}   & \textgt{説明}                                                                                                                                         \\ \midrule\midrule
+  \texttt{?}      & ヘルプの表示／非表示を切り替える。                                                                                                                    \\ \midrule
+  \texttt{p, DEL} & 前の差分へ移動する。                                                                                                                                  \\ \midrule
+  \texttt{n, SPC} & 次の差分へ移動する。                                                                                                                                  \\ \midrule
+  \texttt{|}      & ウィンドウ分割の縦横を切り替える。                                                                                                                    \\ \midrule
+  \texttt{A, B}   & 指定した識別子のバッファを読み取り専用にする／または解除する。読み取り専用になるとモードラインの改行コードの表示付近に「\texttt{\%\%}」が表示される。 \\ \midrule
+  \texttt{a, b}   & カーソル位置の差分を他方へコピーする。                                                                                                                \\ \midrule
+  \texttt{ra, rb} & \texttt{r} に続いてタイプした識別子のバッファを元の状態に戻す。                                                                                      \\ \midrule
+  \texttt{wa, wb} & \texttt{w} に続いてタイプした識別子のバッファを保存する。                                                                                             \\ \midrule
+  \texttt{wd}     & 差分を保存する。                                                                                                                                      \\ \midrule
+  \texttt{q}      & Ediff を終了する。                                                                                                                                    \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：Ediff によるパッチの適用：M-x epatch
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Ediff によるパッチの適用：M-x epatch}
+Ediff を用いて差分をファイルに保存することでパッチを作成することができる。
+先程と同じように、
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x ediff RET \textasciitilde{}/tmp/example2.txt RET \textasciitilde{}/tmp/sample1.txt RET}
+\end{itemize}\vspc{-0.50zw}
+を実行し Ediff を起動する。
+そして wd とタイプするとミニバッファに「Saving diff output \ldots」と表示された後「File to save in:」と問われるので、ここでは example.patch と入力してパッチを作成する。\\
+
+このようにして作成したパッチの適用も、Emacs 上で行うことができる。
+例えば、example2.txt に適用するとする。
+パッチを適用するコマンドは \texttt{M-x epatch} である。
+このコマンドを実行すると、先ずミニバッファで「Is the patch already in a buffer? (y or n)」と問われる。
+パッチはまだ Emacs のバッファ上には存在せずファイルを指定する必要があるので n とタイプする。
+すると今度は「Patch is in File:」と問われるので、ここで先程作成したパッチファイル \textasciitilde{}/tmp/example.patch と入力する。
+ウィンドウが分割されパッチファイルの内容が表示され「File to patch (directory, if multifile patch):」とパッチを適用したいファイルを問われるので \textasciitilde{}/tmp/example2.txt と入力すると example2.txt にパッチが適用される。
+パッチが適用されると自動的にファイルの末尾に.orig が付けられたパッチアップファイルが作成され、Ediff による差分比較になる。
+ここで再びパッチを適用する前のファイルの内容に戻すことも可能となるが、その必要がなければ q で Ediff を終了する。
+%%
+%% 項：Ediff によるマージ：M-x ediff-merge
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Ediff によるマージ：M-x ediff-merge}
+最後に Ediff の機能を用いて 2 つのファイルの差分から新しいファイルを作成する機能を紹介する。
+\texttt{M-x ediff-merge} コマンドを実行すると Ediff と同じく比較する 2 つのファイルを問われるが、ウィンドウが 3 分割される。
+3 つ目のウィンドウは *ediff-merge* バッファで、2 つのファイルのどちらか指定した方の差分を採用しマージして、最後に保存することで新しいファイルを作成することができる。\\
+
+ediff-merge の操作は基本的に Ediff と同じである。
+n、p で差分を移動し a、b によって採用する差分を選択する。
+また、選択後に r をタイプすることで元に戻すことも可能である。
+マージが完了したら q をタイプして ediff-merge を終了し、\texttt{C-x C-w} によって名前を付けて保存するか *ediff-merge* バッファは C という識別子が与えられているで ediff-merge 終了前に wc とタイプしてそのまま保存することも可能である。
+%%
+%% 節：Emacs からデータベースを操作する
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{Emacs からデータベースを操作する}
+データベース操作には、MySQL であれば phpMyAdmin といった便利なインタフェースが存在する。
+これらを利用すれば SQL を覚えていなくてもデータベースを操作することができる。
+また、最近のフレームワークも標準で用意されたモデルやメソッドを活用することによって 1 行も SQL 文を記述することなくデータベースを利用可能となっている。\\
+
+しかし実際には、SQL の知識を持たずに開発を行うと不要なクエリを発行して重くて使い物にならないアプリケーションを作ってしまうことがあるため、必要最低限の SQL は学習しておくべきである。
+SQL を学ぶには自身で SQL を書いて実行するのが一番である。
+通常ターミナルから対話的に操作を行うが、SQL 文を頻繁に書かない者にとって SQL を覚えるのはなかなか苦労する。\\
+
+そこで Emacs の登場である。
+Emacs は代表的なデータベースサーバに接続し、操作する機能を標準で備えている。
+Emacs はエディタなので SQL 文もターミナルよりも楽に記述することができる。
+また、SQL 文をファイルに保存することで一度利用した SQL 文を繰り返し利用することが可能となる。
+生の SQL に触れながら楽に SQL を覚えることができ、実用性にも富む Emacs からデータベース操作を覚えておくとよいだろう。
+%%
+%% 項：データベースへの接続
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{データベースへの接続}
+Emacs からデータベースへ接続するには、\texttt{M-x sql-mysql} のように「\texttt{M-x sql-データベース名}」というコマンドを用いる。
+次の通り、標準で多くのデータベースに対応している。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item MySQL
+\item PostgreSQL
+\item SQLite
+\item Oralce
+\item Microsoft SQL Server
+\item DB2
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：MySQL へ接続する：sql-interactive-mode
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{MySQL へ接続する：sql-interactive-mode}
+例として MySQL へ接続してみることにする。
+\texttt{M-x sql-mysql} コマンドを実行するとミニバッファで「ユーザ名」「パスワード」「データベース名」「ホスト名」を問われるので、それぞれ適切に入力する。
+すると、ターミナルから SQL シェルを実行した場合と同じ画面が Emacs の *SQL* バッファに表示される。\\
+
+この *SQL* バッファは sql-interactive-mode という Emacs 上から SQL シェルを操作するメジャーモードである。
+毎回同じデータベースに接続する場合は init.el に初期設定を記述しておくことで入力を省略することができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; SQL サーバへ接続するためのデフォルト情報
+(setq sql-user     "root"          ; デフォルトユーザ名
+      sql-detabase "database_name" ; データベース名
+      sql-server   "localhost"     ; ホスト名
+      sql-product  'mysql)         ; データベースの種類
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+sql-interactive-mode によりターミナルのシェルから SQL を発行する必要はなくなったが、これだけでは Emacs から SQL を利用可能となっただけに過ぎない。\\
+
+次に紹介する sql-mode と連携することで、格段に便利で学習効率の良い SQL 操作を実現することが可能となる。
+%%
+%% 項：sql-mode との連携
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{sql-mode との連携}
+次に \texttt{C-x C-f example.sql} としてファイルを作成する。
+拡張子が sql のファイルを開くと自動的に sql-mode というメジャーモードが選択されるので、再び sql-interactive-mode を利用してデータベースに接続する。
+そして example.sql ファイルに show-tables; と記述して \texttt{C-c C-c} を実行すると、example.sql に記述した SQL 文が *SQL* バッファ上で実行される。\\
+
+sql-mode では \texttt{C-c C-c} に sql-send-paragraph というコマンドが割り当てられている。
+sql-send-paragraph はその名の通り、段落文を Emacs 上の SQL シェルへと送信する。
+すなわち、sql-mode と sql-interactive-mode を組み合わせることで、テキストファイルから直接 SQL サーバへクエリを送信し処理することが可能となる。\\
+
+SQL シェルは手軽な反面、複雑な SQL 文を実行するのは少々面倒である。
+しかし、Emacs のテキスト編集機能がフル活用できていれば、長い SQL 文でも楽に編集することができるはずである。
+そして、SQL 文を記述しているのはシェル上ではなくテキストファイルである。
+そのため、ファイルに保存しておくことで一度記述した SQL 文を複製することも可能となる。\\
+
+データベース毎に SQL ファイルを作成し、よく利用する SQL 文を保存しておくことでデータベースのメンテナンスや集計など全てサーバ上の Emacs から行えるようになるのが理想である。
+%%
+%% 節：バージョン管理
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{バージョン管理}
+開発の現場において、今や必須なのがバージョン管理システムである。
+作業履歴を管理し、過去のコードを遡ることを可能にしてくれるバージョン管理システムは、コードを書く全ての者が使うべきツールである。
+勿論、全ての機能を使いこなすためにはそれ相応の学習コストがかかるが、それ以上の恩恵を受けることができる。
+バージョン管理システム本体はコマンドラインツールだが、敷居を下げるために様々なフロントエンドツールが存在する。
+例えば、ファイラに統合されたフロントエンドツールや専用のアプリケーションも多数存在する。\\
+
+Emacs は標準で殆どのバージョン管理システムに対応している。
+また、拡張機能を導入することで更に簡単にバージョン管理システムの機能を利用することが可能となる。
+まずは Emacs 標準で搭載されているバージョン管理システムの機能を解説し、その後で代表的なバージョン管理システム向けの拡張機能を紹介することにする。
+%%
+%% 項：Emacs 標準のバージョン管理機能
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Emacs 標準のバージョン管理機能}
+Emacs が標準で搭載するバージョン管理システム用のインタフェースは VC と呼ばれる。
+この VC は vc- から始まるコマンド群で構成されている。
+コードがどのバージョン管理システムで管理されているのかを自動判別し、違いを意識する必要がないように設計されている。
+尚、Emacs から Git などを利用するにはシステムにインストールした上で第 5 章「パスの設定」で解説した exec-path 変数に各種バージョン管理ツールのコマンドパスを設定しておく必要がある。\\
+
+バージョン管理システムで管理されているファイルを開くと、モードラインに各バージョン管理システム固有のインジケータが表示され、VC コマンドが利用可能となる。
+VC の代表的なコマンドは表\ref{代表的な VC コマンド}の通りである。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{代表的な VC コマンド\label{代表的な VC コマンド}}                                               \\[-1.30zw]\toprule
+  \textgt{キー}                  & \textgt{コマンド名}        & \textgt{説明}                                \\ \midrule\midrule
+  \texttt{C-x v v}               & {vc-next-action}           & 次に行うべき操作を実行する。                 \\ \midrule
+  \texttt{C-x v i}               & {vc-register}              & ファイルを追加する。                         \\ \midrule
+  \texttt{C-x v m}               & {vc-merge}                 & ファイルをマージする。                       \\ \midrule
+  \texttt{C-x v =}               & {vc-diff}                  & 最新のチェックインとの差分を表示する。       \\ \midrule
+  \texttt{C-x v l}               & {vc-print-log}             & ログを表示する。                             \\ \midrule
+  \texttt{C-x v d}               & {vc-directory}             & VC 用ディレクトリエディタ。                  \\ \midrule
+  \texttt{C-x v g}               & {vc-annotate}              & チェンジログを表示する。                     \\ \midrule
+  \texttt{C-x v u}               & {vc-revert}                & 編集中のファイルを差し戻す。                 \\ \midrule
+  \texttt{C-x v \textasciitilde} & {vc-revision-other-window} & 編集中のファイルの指定バージョンを表示する。 \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+覚えておきたいコマンドは、次に行うべき操作を自動的に判断して実行してくれる \texttt{C-x v v (vc-next-action)} である。
+ファイルの追加、コミットというバージョン管理システムを利用する際のフローを自動化してくれる。\\
+
+標準の VC も十分に便利なのだが、各バージョン管理システム専用に開発されたフロントエンド拡張機能を導入することで Emacs からバージョン管理システムが更に利用し易くなる。
+本稿では、広く普及している Subversion と、最近最も人気の高いバージョン管理システムである Git のフロントエンド拡張機能を紹介する。
+%%
+%% 項：Subversion フロントエンド：psvn
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Subversion フロントエンド：psvn}
+Git などの分散型バージョン管理システムが誕生する以前は、バージョン管理システムのスタンダードと言えば Subversion であった。
+Subversion は集中型バージョン管理システムであり、開発者はソースコードを中央リポジトリに対してコミット／チェックアウトすることによって開発を進めて行く。\\
+
+最近ではあまり見かけなくなってきたが、古くから存在するプロジェクトで Subversion を採用している場合もある。
+また、Subversion は十分に枯れたソフトウェアであるため、Subversion を便利に扱う安定したソフトウェアが多く存在する。
+その中でも Emacs から Subversion を便利に利用するための拡張機能として人気の高い psvn を紹介する。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+psvn は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET psvn RET}
+\end{itemize}\vspc{-0.50zw}
+インストールが完了すると、直ちに psvn が提供するコマンドが利用可能となる。
+%%
+%% 款：操作する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{操作する}
+Subversion で管理されているファイルを編集し \texttt{M-x svn-status} を実行すると、ミニバッファでステータスを確認したいディレクトリを問われる。
+デフォルトで編集中のファイルのディレクトリが設定されているので、そのまま RET する。\\
+
+すると、指定したディレクトリ以下に存在するファイル一覧が *svn-status* バッファに表示される。
+psvn の操作は Dired ライクになっており、n、p でファイルを移動、a でファイルを追加、m でマーク、u でアンマーク、そして c でコミットメッセージ入力のバッファとなり、\texttt{C-c C-c} でコミットを完了する。\\
+
+U で svn up を実行することも可能であり、およそ Subversion で必要な機能は全てそろっている。
+詳しい操作については表\ref{psvn のコマンド一覧}に記す。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{psvn のコマンド一覧\label{psvn のコマンド一覧}}                              \\[-1.30zw]\toprule
+  \textgt{キー} & \textgt{コマンド名}              & \textgt{説明}                        \\ \midrule\midrule
+  \texttt{g}    & {svn-status-update}              & 状態を更新する。                     \\ \midrule
+  \texttt{U}    & {svn-status-update-cmd}          & ファイルを更新する。                 \\ \midrule
+  \texttt{a}    & {svn-status-add-file}            & ファイルを追加する。                 \\ \midrule
+  \texttt{m}    & {svn-status-set-user-mark}       & ファイルをマークする。               \\ \midrule
+  \texttt{u}    & {svn-status-unset-user-mark}     & ファイルをアンマークする。           \\ \midrule
+  \texttt{c}    & {svn-status-commit}              & マークしたファイルをコミットする。   \\ \midrule
+  \texttt{r}    & {svn-status-revert}              & マークしたファイルを取り消す。       \\ \midrule
+  \texttt{=}    & {svn-status-show-svn-diff}       & 差分を見る。                         \\ \midrule
+  \texttt{E}    & {svn-status-ediff-with-revision} & ediff で差分を見る。                 \\ \midrule
+  \texttt{l}    & {svn-status-show-svn-log}        & ログを見る。                         \\ \midrule
+  \texttt{?}    & {svn-status-toggle-hide-unknown} & 管理外のファイルを表示をトグルする。 \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：Git フロントエンド：Magit
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Git フロントエンド：Magit}
+Git は CVS、Subversion などの集中型とは異なり、中央サーバ不要の分散型バージョン管理システムである。
+Linux カーネルの開発や GitHub などの Web サービスに牽引され、現在最も普及しているバージョン管理システムと言える。\\
+
+Git は使い方が難しいバージョン管理システムと言われることがあるが、それは恐らく Subversion などから移行した者が設計哲学が全く異なるために苦戦を強いられたり、Git があらゆる自体に対応可能であるように柔軟に設計されているため、できることの幅が広過ぎるためだと思われる。
+基本概念さえしっかり理解してしまえば、とてもパワフルで使いやすく信頼性の高い大変優れたツールである。
+Git を Emacs から快適に利用可能にする拡張機能の 1 つが Magit である。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+Magit は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET magit RET}
+\end{itemize}\vspc{-0.50zw}
+インストールが完了したら、直ちに Magit が提供するコマンドが利用可能となる。
+%%
+%% 款：操作する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{操作する}
+Magit からは Git が提供する殆ど全ての機能を利用可能だが、全てを覚える必要はない。
+まずは表\ref{Magit の基本コマンド一覧}の基本コマンドを覚えればよい。
+\vspc{-1.50zw}\begin{longtable}{ll}
+  \caption[]{Magit の基本コマンド一覧\label{Magit の基本コマンド一覧}} \\[-1.30zw]\toprule
+  \textgt{コマンド名}   & \textgt{説明}                                \\ \midrule\midrule
+  \texttt{magit-status} & git-status 相当の情報を表示する。            \\ \midrule
+  \texttt{magit-diff}   & git-diff 相当の情報を表示する。              \\ \midrule
+  \texttt{magit-log}    & git-log 相当の情報を表示する。               \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+これから解説する操作は主にこれら基本コマンドから操作することになるが、この基本コマンドを実行すると Magit による Git 操作専用のモード（以下、magit-mode と記す）が起動される。
+Magit は、この magit-mode からの対話的操作とミニバッファからコマンドを直接実行する直接的操作の 2 つに分かれている。\\
+
+magit-mode の操作は（当然ながら）全てキーボードから行うことになるが、機能が多いため覚えるのが大変である。
+そこで表\ref{Magit の基本コマンド一覧}で挙げた基本コマンドを実行中にメニューを表示する表\ref{Magit ポップアップメニュー}のコマンドを覚えておくとよい。\\
+
+尚、Magit による操作中は q を押すことで操作をキャンセルすることができるので、こちらも合わせて覚えておくとよいだろう。
+\vspc{-1.50zw}\begin{longtable}{ll}
+  \caption[]{Magit ポップアップメニュー\label{Magit ポップアップメニュー}} \\[-1.30zw]\toprule
+  \textgt{キー} & \textgt{説明}                                            \\ \midrule\midrule
+  \texttt{c}    & コミットポップアップメニューを表示する。                 \\ \midrule
+  \texttt{l}    & ログポップアップメニューを表示する。                     \\ \midrule
+  \texttt{f}    & フェッチポップアップメニューを表示する。                 \\ \midrule
+  \texttt{F}    & プルポップアップメニューを表示する。                     \\ \midrule
+  \texttt{b}    & ブランチポップアップメニューを表示する。                 \\ \midrule
+  \texttt{P}    & プッシュポップアップメニューを表示する。                 \\ \midrule
+  \texttt{m}    & マージポップアップメニューを表示する。                   \\ \midrule
+  \texttt{z}    & スタッシュポップアップメニューを表示する。               \\ \midrule
+  \texttt{M}    & リモートポップアップメニューを表示する。                 \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 款：コミットする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{コミットする}
+Magit でコミットするには、まずコミット対象となるファイルをステージングするため \texttt{M-x magit-status} を実行する。
+すると git status を実行した際に表示される画面に似た画面が表示され、そこから対話的にステージングを行うことができる。
+この画面では、p、n で上下に移動可能となっている。
+ステージングしたいファイルの行で s を入力すると、そのファイルがステージングされる。
+また、ステージングされたファイルの行で u を入力するとアンステージすることができる。
+全てのファイルを一括でステージングしたい場合は、S を入力すると現在アンステージとなっているファイル全てがステージングされる。\\
+
+Git ではファイルではなく特定の編集箇所だけをステージング（すなわちコミット）することができる。
+これを部分ステージングと呼ぶが、これも Magit から行うことが可能である。
+部分的にステージングしたいファイルで TAB を押すとファイル名の表示から変更差分が展開表示される。
+この表示でも、p、n によって差分ブロックを移動することが可能であり、先程のステージングを行う際と同様に変更ブロックで s を入力するとファイルの一部分だけがステージングされる。
+ステージングされた箇所の表示も TAB を押すことで展開して確認することが可能である。\\
+
+ステージングが完了し、コミットする場合は c を入力する。
+するとコミットポップアップメニューが開くので、更に c を入力する。
+次にコミットログを入力する画面が表示されるので、これにコミットログを記述して \texttt{C-c C-c} を実行する。
+これで Git リポジトリへのコミットが完了する。
+この際、\texttt{C-c C-k} を実行するとコミットをキャンセルすることができる。
+%%
+%% 項：差分の表示：git-gutter
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{差分の表示：git-gutter}
+Git で管理しているファイルを編集している際、変更状態を確認したくなることがある。
+そのような場合は基本的には git diff コマンドを用いるが、毎回実行するのは少々面倒である。
+git-gutter は Git と連携して変更差分を各行に表示してくれる拡張機能である。
+これを利用することで git diff を実行せずとも変更されているかどうかが直ちに分かるようになる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+git-gutter は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET git-gutter RET}
+\end{itemize}\vspc{-0.50zw}
+次の設定を init.el に追記することで、自動的に git-gutter が有効化される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (require 'git-gutter nil t)
+  (global-git-gutter-mode t)
+  ;; linum-mode を利用している場合は次の設定も追加する
+  (git-gutter:linum-setup))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：差分を視覚的に表示する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{差分を視覚的に表示する}
+git-gutter が有効な状態で Git 管理されているファイルを編集すると、画面左端に変更状態を示す記号が表示されるようになる。
+初期状態では変更された行には「\texttt{=}」、追加された行には「\texttt{+}」、削除された行には「\texttt{-}」が表示されるようになっている。
+これらの記号は次のような設定によって変更可能である。\enlargethispage{0.50zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(custoum-set-variables
+ '(git-gutter:modified-sign "*")
+ '(git-gutter:added-sign    ">")
+ '(git-gutter:deleted-sign  "x"))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、変更行へと移動する \texttt{M-x git-gutter:next-hunk} や \texttt{M-x git-gutter:previous-hunk} などのコマンドも用意されているため、頻繁に利用したい者は次のような設定でキーバインドに登録しておくとよいだろう。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
+(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+\end{verbatim}
+\end{mdframed}\vspc{-0.50zw}
+%%
+%% 節：シェルの利用
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{シェルの利用}
+開発者にとってシェルはなくてはならない大事なツールである。
+GUI が全盛の現在においてもその事実は変わらない。
+ターミナルを利用したことのない者からすれば、難しそうなシェルが使われ続ける理由がよく分からないかもしれないが、ターミナルが使われ続ける理由の 1 つに GUI よりもできることの幅が広いことが挙げられる。\\
+
+アプリケーションは小さなコマンドの集合で構成されており、その小さなコマンドを組み合わせて無数の機能を提供している。
+その組み合わせをアプリケーションの垣根で限定せず、ほぼ全てのコマンドを組み合わせて利用可能なのがシェルである。
+自身の目的に合うアプリケーションが存在していなくても、シェルを用いてコマンドを組み合わせることで実現可能となることが多くある。\\
+
+このような素晴らしいシェルを利用するためには通常ターミナルを利用する必要があるのだが、ターミナルと Emacs を行ったり来たりするのは面倒であるし、思考の中断にも繋がる。
+実は、Emacs にはシェルを利用する方法が多数用意されている。
+本節では、簡単なコマンドを実行したい場合から、ガッツリとターミナルとにらめっこしたい場合などのケースに合わせて Emacs のシェル機能の使い方を紹介する。
+%%
+%% 項：シェルコマンドの実行：M-!
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{シェルコマンドの実行：M-!}
+Emacs には \texttt{M-!\hspc{-0.75zw} (shell-command)} という機能が用意されている。
+これはミニバッファからシェルコマンドを実行するためのコマンドで、カレントバッファが保存されるディレクトリ（存在しなければ Emacs を起動したディレクトリ）をカレントディレクトリとしてシェルコマンドを実行する。
+例えば、\texttt{M-!\hphantom{.}date RET} とタイプすると現在時刻がミニバッファに表示される。
+勿論、TAB による補完もできて簡単なコマンドを手軽に実行したい場合に最適である。\\
+
+尚、実行結果の標準出力は *Shell Command Output* バッファへも出力されており、ミニバッファの表示を見逃してもバッファを切り替えて確認することができる。
+しかし、このバッファはコマンド実行の度に上書きされてしまうため、ログを確認する用途には向かない。
+%%
+%% 款：カレントファイルへ結果を出力する：C-u M-!
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{カレントファイルへ結果を出力する：C-u M-!}
+\texttt{C-u M-!} のように前置引数を付けると、出力先が *Shell Command Output* バッファからカレントバッファ（カーソル位置）に変更される。
+コマンドの出力結果をファイルに挿入したい場合などに非常に便利なので、覚えておくとよいだろう。
+%%
+%% 款：バッファの内容を標準入力として利用する：M-|
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{バッファの内容を標準入力として利用する：M-|}
+バッファ上のテキストをコマンドの標準入力にしたい場合、\texttt{M-| (shell-command-on-region)} を利用する。
+リージョン選択範囲を標準入力に使用してコマンドを実行する。
+また、こちらも \texttt{C-u M-|} のように前置引数を付けて実行するとリージョンが出力結果で置換される。
+一時ファイルを作成したければ Dired やファイラで操作するよりも Emacs から cp コマンドを実行した方が確実に速い。
+ちょっとしたコマンドを 1 回実行して結果を利用したい場合は \texttt{M-!} と \texttt{M-|} で殆ど実現可能なので、うまく活用するとよいだろう。
+%%
+%% 項：ターミナルの利用：multi-term
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ターミナルの利用：multi-term}
+Emacs はエディタではなく環境、あるいは OS であると言われている。
+それは Emacs からテキストエディタの枠を超えた機能を利用できるからに他ならない。
+そして、Emacs 内蔵のターミナルエミュレータもその一例として挙げられる機能である。
+Emacs では単にコマンドを実行するだけではなく、本格的なターミナルとしてシェルを利用することも可能なのである。\\
+
+Emacs のターミナルエミュレータは \texttt{M-x shell}、\texttt{M-x term (M-x ansi-term)}、\texttt{M-x eshell} の 3 つが代表的であり、全て標準で本体に同梱されている。
+この中でも本物のターミナルとの違いが少ない ansi-term が人気でよく名前が挙げられるが、ansi-term は Emacs 標準のキーバインドを奪ってしまうため、ansi-term をベースにチューニングを施した multi-term の導入を推奨する。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+multi-term は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET multi-term RET}
+\end{itemize}\vspc{-0.50zw}
+インストールが済んだら、require と使用するシェルを init.el に記述するだけで設定が完了する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; multi-term の設定
+(when (require 'multi-term nil t)
+  ;; 使用するシェルを指定する
+  (setq multi-term-program "/usr/local/bin/bash"))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：ターミナルを起動する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ターミナルを起動する}
+\texttt{M-x multi-term} を実行すると *terminal<1>* と表示されたバッファが表示され、Emacs がターミナルに変身する。
+multi-term はその名の通り Emacs 上に幾つものターミナルを作成することも可能である。
+GNU Screen を利用している者であれば、Emacs が GNU Screen になったかのように思えるかもしれない。
+ターミナルを閉じたければ exit コマンドで終了することができる。
+%%
+%% 節：TRAMP によるサーバ接続
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{TRAMP によるサーバ接続}
+サーバ上のファイルを編集するには幾つかの方法が考えられるが、基本的な手段としては「ローカル環境へダウンロードして編集する」または「サーバへログインして編集する」の 2 通りであろう。
+前者の場合、自身の Emacs で編集することが可能であるため作業効率は上がるが、ファイルをアップロードし直すのが面倒である。
+後者の場合、サーバのファイルを取得する手間は省けるが、自身の環境とは異なる環境で作業することになるため作業効率が低下する。\\
+
+そこで第 3 の選択肢として覚えておきたいのが、Emacs でサーバへログインして直接ファイルを編集する方法である。
+標準で本体に同梱されている TRAMP という拡張機能を用いることでサーバ上のファイルを直接を編集することが可能となる。
+方法は簡単で、例えば SSH が利用可能な環境であれば \texttt{C-x C-f (find-file)} から「\texttt{/sshx:ユーザ名@ホスト名:}」と入力していくと、そのままサーバへ接続してローカルファイルのように扱うことができる。
+%%
+%% 項：sudo、su による編集
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{sudo、su による編集}
+TRAMP の機能を利用すると、Emacs から直接 su、sudo を用いてファイルを開くことができる。
+利用方法は ssh の場合と同様で \texttt{C-x C-f (find-file)} から「\texttt{/su:}」もしくは「\texttt{/sudo:}」でファイルを開くだけである。
+%%
+%% 項：バックアップファイルを作成しない
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{バックアップファイルを作成しない}
+TRAMP を利用して SSH や su、sudo を用いたファイル編集を行っている際はバックアップファイルを作成したくないと考えるかもしれない。
+TRAMP はそのような要望に応えられるように設計されている。
+次の設定を追記すればよい。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; TRAMP でバックアップファイルを作成しないための設定
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 節：ドキュメント閲覧・検索
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ドキュメント閲覧・検索}
+開発者が困った際に頼りになるのは man などのドキュメントである。
+本節では Emacs から man などのドキュメントを閲覧・検索するための方法を解説する。\\
+
+ドキュメントの多くは英語で記述されているため読むのに抵抗を感じるかもしれないが、ドキュメントは先人の叡智の結晶であり検索エンジンで探すよりも素早く問題を解決してくれる。
+もし、まだドキュメントを読むことに抵抗感がある者は、これを機会にドキュメントを読むことに挑戦することを推奨する。
+%%
+%% 項：Emacs 版 man ビューア（WoMan）の利用
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Emacs 版 man ビューア（WoMan）の利用}
+man は非常によく利用されるコマンドだが、ターミナル上で man を読むのは意外と不便である。
+Emacs を利用しているのであれば Emacs から man を読む癖を付けるとよいだろう。
+man 間の移動も容易であるし、いちいち man を閉じる必要もなくなりコマンドのコピーなども簡単に行うことが可能である。\\
+
+Emacs には man コマンドの結果を Emacs 上に読み込む \texttt{M-x man} と Emacs 独自の man ビューアを利用する WoMan（Without Man）の 2 種類が存在する。
+\texttt{M-x man} も十分便利なのだが、WoMan の方が文字コードの扱いやキー操作の面で優れているため WoMan を推奨する。\\
+
+WoMan を利用するには \texttt{M-x woman RET コマンド名 RET} という形式でコマンドを実行する（man は \texttt{M-x man RET コマンド名 RET} である）。
+WoMan の場合は、環境に同一コマンドの man ファイルが複数存在する場合、どちらを利用するかを追加で問われる。
+Woman を利用する際に覚えておきたいキーバインドは \texttt{M-p (WoMan-previous-manpage)} と \texttt{M-n (WoMan-next-manpage)} である。
+この 2 つのキーバインドによって、ブラウザの戻る／進むのように移動することが可能となる。
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+WoMan で設定しなければならない項目は特にないのだが、知っておきたい設定を紹介しておく。
+1 つ目はキャッシュの設定である。
+woman-cache-filename 変数にキャッシュファイル名を設定しておくと、man のパスと man で検索可能なコマンド名をキャッシュとして保存し、次回起動時の動作を高速化することができる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; WoMan でキャッシュを作成するための設定
+(setq woman-cache-filename "~/.emacs.d/.wmncash.el")
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+このキャッシュは \texttt{C-u M-x woman RET} という形で前置引数を付加して起動することで更新することができる。\\
+
+2 つ目は man のパス設定である。
+正しく man が検索できない際はパスの設定がうまくいっていない可能性が考えられるため、woman-manpath 変数に man のパスのリストを設定する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; man のパスを設定する
+(setq woman-manpath '("/usr/share/man"
+                      "/usr/local/share/man"
+                      "/usr/local/share/mam/ja"))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：Helm による man 検索
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{Helm による man 検索}
+検索と言えばやはり Helm である。
+Helm には標準で \texttt{M-x helm-man-woman} というコマンドが定義されている。
+これは helm-source-man-pages という man を一覧表示するためのソースを利用している。
+これを用いて Emacs 上で様々なドキュメントを串刺し検索するコマンドを作成してみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; 既存のソースを読み込む
+(require 'helm-elisp)
+(require 'helm-man)
+;; 基本となるソースを定義する
+(setq helm-for-document-sources
+      '(helm-source-info-elisp
+        helm-source-info-cl
+        helm-source-info-pages
+        helm-source-man-pages))
+;; helm-for-document コマンドを定義する
+(defun helm-for-document ()
+  "Preconfigured `helm' for helm-for-document."
+  (interactive)
+  (let ((default (thing-at-point 'symbol)))
+    (helm :sources
+          (nconc
+           (mapcar (lambda (func)
+                     (funcall func default))
+                   helm-apropos-function-list)
+           helm-for-document-sources)
+          :buffer "*helm for document*")))
+\end{verbatim}
+\end{mdframed}\vspc{-0.00zw}
+この新しく定義された \texttt{M-x helm-for-document} というコマンドは man や info、apropos の結果を同時に検索して一覧にしてくれる。
+コマンドを実行した時のカーソル位置にあるワードを拾い上げるようになっているため、検索したいワードの上で実行し RET するだけでドキュメントを閲覧することができる。
+%%
+%% 節：テスティングフレームワークとの連携
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{テスティングフレームワークとの連携}
+最後は、Emacs とテスティングフレームワークとの連携について解説する。
+最近では TDD（\emph{Test Driven Development、テスト駆動開発}）もかなり浸透してきているが、テストコードを記述する者にとって開発中にテストを実行する回数は、コミットを行うより多いことだろう。
+そこで Emacs からテストを実行してその結果を得られるようになれば、開発がより効率的に行えるようになるだろう。
+Emacs は各言語のテスティングフレームワークと連携することが可能だが、本稿では PHP と Ruby の例を紹介する。
+%%
+%% 項：phpunit.el
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{phpunit.el}
+phpunit.el は PHPUnit を Emacs から利用するための拡張機能である。
+プロジェクト全体やファイル単体だけでなく、カーソル付近のクラスのみを実行することも可能である。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+phpunit.el は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET phpunit RET}
+\end{itemize}\vspc{-0.50zw}
+インストールが完了すると、直ちに phpunit.el が提供するコマンドが利用可能となる。
+%%
+%% 款：テストを実行する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{テストを実行する}
+代表的なコマンドを表\ref{代表的な phpunit.el コマンド}にまとめる。
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{代表的な phpunit.el コマンド\label{代表的な phpunit.el コマンド}}          \\[-1.30zw]\toprule
+  \textgt{コマンド名}              & \textgt{説明}                                      \\ \midrule\midrule
+  \texttt{phpunit-current-project} & 全てのユニットテストを実行する。                   \\ \midrule
+  \texttt{phpunit-current-test}    & カレントバッファのユニットを実行する。             \\ \midrule
+  \texttt{phpunit-current-class}   & カーソル行付近のクラスのユニットテストを実行する。 \\ \bottomrule
+\end{longtable}\vspc{-0.50zw}
+PHPUnit が利用可能な環境で \texttt{M-x phpunit-current-project} を実行すると *compilation* バッファにテスト結果が表示される。
+もし、これらのコマンドをキーバインドから実行したい場合は、次のような設定を init.el に追記すればよい。\enlargethispage{1.00zw}
+\vspc{-0.30zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; web-mode にキーバインドを追加する。
+(define-key php-mode-map (kbd "C-t t") 'phpunit-current-test)
+(define-key php-mode-map (kbd "C-t c") 'phpunit-current-class)
+(define-key php-mode-map (kbd "C-t p") 'phpunit-current-project)
+\end{verbatim}
+\end{mdframed}\vspc{-0.00zw}
+%%
+%% 項：rspec-mode
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{rspec-mode}
+rspec-mode は Rails などでよく利用される RSpec を Emacs から利用するための拡張機能である。
+プロジェクト全体やファイル単体だけでなく、カーソル行付近の spec（RSpec ではテストコードのことを spec と呼ぶ） のみを実行することも可能である。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+rspec-mode は ELPA からインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET rspec-mode RET}
+\end{itemize}\vspc{-0.50zw}
+インストールが完了すると、直ちに rspec-mode が提供するコマンドが利用可能となる。
+環境によっては、direnv などを利用して.envrc から環境変数を読み込まなければアプリケーションが起動できないようになっている場合がある。
+そのような場合は、direnv をインストールして設定を追記しておくことで対応する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET direnv RET}
+\end{itemize}\vspc{-0.50zw}
+設定は次のようなものになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; direnv の設定
+(when (require 'direnv nil t)
+  (setq direnv-always-show-summry t)
+  (direnv-mode))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+尚、rspec-mode にはテストの実行に spring を利用したり Docker を利用したりなど、環境に合わせた設定が用意されている。
+必要があれば、環境に応じて設定を追記することが必要となる。
+%%
+%% 款：テストを実行する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{テストを実行する}
+代表的なコマンドを表\ref{rspec-mode による代表的なコマンド一覧}にまとめておく。
+恐らく、開発中に主に利用するコマンドは \texttt{M-x rspec-verify} か \texttt{M-x rspec-verify-single} になるだろう。
+\vspc{-0.50zw}\begin{longtable}{lll}
+  \caption[]{rspec-mode による代表的なコマンド一覧\label{rspec-mode による代表的なコマンド一覧}}   \\[-1.30zw]\toprule
+  \textgt{キー}  & \textgt{コマンド名}              & \textgt{説明}                                \\ \midrule\midrule
+  \verb|C-c , a| & \texttt{rspec-verify-all}        & プロジェクト全体の spec を実行する。         \\ \midrule
+  \verb|C-c , v| & \texttt{rspec-verify}            & カレントバッファの spec を実行する。         \\ \midrule
+  \verb|C-c , s| & \texttt{rspec-verify-single}     & カーソル行付近の spec を実行する。           \\ \midrule
+  \verb|C-c , r| & \texttt{rspec-rerun}             & 最後に実行した spec を再実行する。           \\ \midrule
+  \verb|C-c , f| & \texttt{rspec-run-last-failed}   & 最後に失敗した spec を実行する。             \\ \midrule
+  \verb|C-c , y| & \texttt{rspec-yank-last-command} & 最後に spec を実行したコマンドをコピーする。 \\ \bottomrule
+\end{longtable}\vspc{-1.00zw}
+spec を実行するとウィンドウが分割され、テスト結果が *rspec-completion* バッファに表示される。

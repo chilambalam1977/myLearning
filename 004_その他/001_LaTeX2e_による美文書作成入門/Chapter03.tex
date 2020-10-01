@@ -1,0 +1,923 @@
+%%
+%% 章：LaTeX2e の基本
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{\LaTeX2e{}の基本}
+本章では、\LaTeX（\LaTeXe、\pLaTeXe）の基本を一通り説明し、併せて\upLaTeX、\XeLaTeX、\LuaLaTeX{}にも触れる。
+%%
+%% 節：LaTeX2e の入力・印刷の完全な例
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{\LaTeX2e{}の入力・印刷の完全な例}
+エディタで次のようなテキストファイルを作成する。
+ファイル名の拡張子は tex とする。
+ここではファイル名を test.tex としておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+「何人ものニュートンがいた（There were several Newtons）」
+と言ったのは、科学史家ハイルブロンである。同様にコーヘンは
+「ニュートンは常に２つの貌を持っていた（Newton was always ambivalent）」と語っている。
+
+近代物理学史上でもっとも傑出しもっとも影響の大きな人物が
+ニュートンであることは、誰しも頷くことであろう。
+しかしハイルブロンやコーヘンの言うようにニュートンは様々な、ときには相矛盾した顔を持ち、
+その影響もまた時代とともに大きく変っていった。
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+保存したら\LaTeX（\pLaTeXe）で処理し、画面もしくはプリンタに出力する。\\
+
+次のように出力できただろうか？
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+　「何人ものニュートンがいた（There were several Newtons）」と言ったのは、科学史家ハイルブロンである。同様にコーヘンは
+「ニュートンは常に２つの貌を持っていた（Newton was always ambivalent）」と語っている。
+
+　近代物理学史上でもっとも傑出しもっとも影響の大きな人物がニュートンであることは、誰しも頷くことであろう。
+しかし、ハイルブロンやコーヘンの言うようにニュートンは様々な、ときには相矛盾した顔を持ち、
+その影響もまた時代とともに大きく変っていった。
+\end{mdframed}\vspc{-0.70zw}
+上の入力例のように、途中で適当に Enter キーで改行するのが、昔からの\TeX{}流の方法である。
+\TeX{}では、ほとんどの改行は無視されるだけである。
+但し、改行を 2 回続けて打つと（すなわち、空行があると）段落の区切りと解釈される。\\
+
+段落の頭に全角スペースを入れなくても、自動的に段落の頭は 1 文字分だけ字下げされる。\\
+
+\verb'\'（バックスラッシュ）で始まる文字列は、\verb'\' も含めていわゆる半角文字で入力する。
+Windows の和文フォントでは \verb'\' が\textyen{}と表示されるので注意を要する。
+本文の英語部分も半角文字で入力するが、日本語の句読点や括弧は全角文字を用いる。\\
+
+PDF に埋め込まれる日本語のフォント（和文フォント）は、デフォルトでは IPAex またはヒラギノになっていると思われる。
+これを変更する方法は第 13 章を参照のこと。
+一方、英語のフォント（欧文フォント）は、標準では Computer Modern という書体となる。
+これを Times にするには、2 行目に次のような 1 行を追加する。\\
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\usepackage{newtxtext} % ←本文を Times、見出しを Helvetica に
+\begin{document}
+...
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、Palatino フォントにするには、次のようにする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\usepackage{newpxtext} % ←本文を Palatino、見出しを Helvetica に
+\begin{document}
+...
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これらのフォントでエラーが起こるようなら、\TeX{}のシステムが古いか、インストールがうまくいっていない可能性がある。\\
+
+標準フォント（Computer Modern）と Times、Palatino では次のような違いがある。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{7.30zw}%\setlength{\labelsep}{+1.00zw}
+\item[標準     フォント：] {\fontfamily{cmr} \selectfont There were several Newtons. Newton was always ambivalent.}
+\item[Times    フォント：] {\fontfamily{qtm} \selectfont There were several Newtons. Newton was always ambivalent.}
+\item[Palatino フォント：] {\fontfamily{pplx}\selectfont There were several Newtons. Newton was always ambivalent.}
+\end{itemize}\vspc{-0.50zw}
+より多くの欧文フォントの例と設定方法については第 12 章を参照のこと。
+%%
+%% 節：最低限のルール
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{最低限のルール}
+文書ファイルを作成する際に、とりあえず次のルールさえ知っていれば、ベタの文章なら間違いなく作成することができる。
+個々のルールについては後述する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item 文書ファイル名の拡張子は tex とする。日本語のファイル名や空白や記号類はうまく扱えないことがあるので、英語のアルファベット・数字・アンダースコア（アンダーバー）に限るのが安全である。
+\item 文書の最初に半角で次のように記述する。\\ \hspc{+1.00zw}\verb'\documentclass{jsarticle}'\\ これは、文書を jsarticle という名前の書式（ドキュメントクラス）で組版することを意味する。ドキュメントクラスは、\TeX{}以外のソフトウェアで「スタイル」もしくは「テンプレート」と呼ばれるものに相当する。jsarticle は比較的新しいドキュメントクラスの１つである。これがインストールされていない場合は、\\ \hspc{+1.00zw}\verb'\documentclass{jarticle}'\\ のように jarticle クラスを指定する。用紙が A4 判でない場合は、\\ \hspc{+1.00zw} \verb'\documentclass[a5paper]{jsarticle}'\\ のように a5paper、b4paper、b5paper のいずれかを \verb'[ ]' に囲んで指定する。
+\item 標準フォントで飽き足りない場合には、例えば次のようなフォント指定を行う（両方指定することはできない）。\\ \hspc{+1.00zw} \verb'\usepackage{newtxtext}'\hspc{+10.0pt}\verb'%'\hspc{+10.0pt}$\leftarrow$ Times、\hspc{+7.70pt}Helvetica を使う。\\ \hspc{+1.00zw} \verb'\usepackage{newpxtext}'\hspc{+10.0pt}\verb'%'\hspc{+10.0pt}$\leftarrow$ Palatino、Helvetica を使う。
+\item 次に、これから文書が始まることを意味する次の命令を記述する。\\ \hspc{+1.00zw} \verb'\begin{document}'
+\item 文書の最後には、次の命令を記述する。\\ \hspc{+1.00zw} \verb'\end{document}'
+\item これらの命令は全て半角の \verb'\' で始まるが、Windows の和文フォントでは半角の円記号\textyen{}として表示される。\enlargethispage{+0.50zw}
+\item 入力しやすいように、適当に Enter キーで改行して構わない。但し、Enter キーを 2 回続けて打つ（空の行を作る）と、そこが段落の区切りと見なされる。段落の頭では、自動的に全角 1 文字分の字下げ（インデント）が行われる。字下げしたくない段落には \verb'\noindent' を付加する。
+\item 以下の半角文字は、そのままでは出力することができない。これらの文字を出力する方法は後述する。\\ \hspc{+1.00zw} \verb'# $ % & _ \ ^ ~ < > |'
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 節：半角カナや機種依存文字を使うには
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{半角カナや機種依存文字を使うには}
+今までの\pLaTeX{}の解説書には、次のようなことが記載されていた。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item いわゆる半角カナは使わず、全角カナを使うこと。
+\item 機種依存文字（JIS 第 1・第 2 水準外の文字）は、そのままでは文字抜け・文字化けする可能性がある。
+\end{itemize}\vspc{-0.50zw}
+しかし、今日では、この制限を取り払う方法がいくつも存在する。
+一番簡単なのは\pLaTeX{}の代わりに\upLaTeX{}を使う方法である。
+\upLaTeX{}を使うには \verb'\documentclass[uplatex]{jsarticle}' のように uplatex オプション、または autodetect-engine オプションを付加する。
+また、文書ファイルは必ず文字コードを UTF-8 にして保存する。\\
+
+タイプセットのコマンドは platex ではなく uplatex とする\footnote{uplatex と dvipdfmx を順に起動する ptex2pdf -u -l というコマンドも存在する。} 。
+dvipdfmx による処理は今まで通りである。
+%%
+%% 節：ドキュメントクラス
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ドキュメントクラス}
+\LaTeXe{}の文書ファイルの最初の \verb'\documentclass{...}' のような行は、ドキュメント（文書）のクラス（種類）を指定するものである。
+この中括弧 \verb'{ }' の中には、次のいずれかを指定する。
+頭に u が付くものは \upLaTeX{}用のドキュメントクラスである。
+\vspc{-0.50zw}\begin{longtable}{l|llll}
+  用途           & 欧文             & 和文（旧・横）       & 和文（旧・縦）       & 和文（新・横）     \\ \hline
+  論文・レポート & \texttt{article} & \texttt{(u)jarticle} & \texttt{(u)tarticle} & \texttt{jsarticle} \\
+  長い報告書     & \texttt{report}  & \texttt{(u)jreport}  & \texttt{(u)treport}  & \texttt{-}         \\
+  本             & \texttt{book}    & \texttt{(u)jbook}    & \texttt{(u)tbook}    & \texttt{jsbook}    \\
+\end{longtable}\vspc{-1.00zw}
+article の類は、論文やレポートなど、いくつかの節（section）からなる文章のためのクラスである。
+book や report の類は、書籍などいくつかの章（chapter）からなる文書のためのクラスである。
+jsarticle、jsbook が本稿で推奨する新しい横書きドキュメントクラスである。
+jsreport は用意されていないが \verb'\documentclass[report]{jsbook}' とすれば jsreport 相当となる。\\
+
+これら以外にも、いろいろなドキュメントクラスが出版社や学会などにより提供されている。
+用途にあったものを使用すればよい。\\
+
+\verb'\documentclass[a5paper]{jsarticle}' のような角括弧 \verb'[ ]' の中は、ドキュメントクラスのオプションといい、必要に応じて次のような指定を行う。「デフォルト」と記述したものは無指定でそのようになるので、特に指定する必要はない。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{10pt}：本文の欧文文字サイズを 10 ポイントにする（デフォルト）。
+\item \texttt{11pt}：本文の欧文文字サイズを 11 ポイントにする。
+\item \texttt{12pt}：本文の欧文文字サイズを 12 ポイントにする。
+\end{itemize}\vspc{-0.50zw}
+複数のオプションを指定する際には、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass[b5paper,12pt,papersize]{jsarticle}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように、半角のコンマで区切る（順不同）。\\
+
+次に示すのは用紙サイズのオプションである。デフォルトでは A4 版になる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{a4paper}\hspc{+1.10zw}：A4 判（210\,mm $\times$ 297\,mm）
+\item \texttt{a5paper}\hspc{+1.10zw}：A5 判（148\,mm $\times$ 210\,mm）
+\item \texttt{b4paper}\hspc{+1.10zw}：B4 判（257\,mm $\times$ 364\,mm）
+\item \texttt{b5paper}\hspc{+1.10zw}：B5 版（182\,mm $\times$ 257\,mm）
+\item \texttt{papersize}：出力 PDF サイズを用紙サイズに合わせる。
+\end{itemize}\vspc{-0.50zw}
+残りは組み方のオプションである。\enlargethispage{+0.70zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{twocolumn}：二段組にする。
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 節：プリアンブル
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{プリアンブル}
+\LaTeXe{}の文書ファイルは通常、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+  （本文）
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように記述するが、\verb'\documentclass{...}' と \verb'\begin{document}' の間に更に細かい設定を記述することができる。
+この部分のことをプリアンブル（preamble、前口上）という。\\
+
+例えば、ページ番号を振りたくない場合は、プリアンブルに \verb'\pagestyle{empty}' と記述する。
+すなわち、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\pagestyle{empty}
+\begin{document}
+  （本文）
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように記述することになる。\\
+
+文書全体についてのフォント指定もプリアンブルで行う。
+例えば、欧文や数字を Times 系のフォントにするには、
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{newtxtext}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述する。このように記述することを「newtxtext パッケージを使う」と表現する。
+%%
+%% 節：文章の構造
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{文章の構造}
+文書はタイトル、著者名、章の見出し、節の見出し、段落、$\ldots$ のような構造を持っている。
+\LaTeX{}で文書ファイル中に書き込むのは、このような文書の構造である。
+これに対して、いわゆるワープロソフトは文書の構造とレイアウト（文字サイズや書体）などが明確に分かれていない。\\
+
+Web ページを制作するための HTML についても、\LaTeX{}と同様のことが言える。
+HTML で表すのは文書の構造である。
+これを実際のレイアウトに結びつけているのは、CSS（スタイルシート）である。
+\LaTeX{}において CSS に相当するものが、ドキュメントクラスやスタイルファイルである。\\
+
+現在の多くのワープロソフトでは、スタイル指定により文書の構造とレイアウトを対応付けることができる。
+しかし、スタイルから逸脱することがあまりにも容易にできてしまうため、よほど注意しなければ不統一なレイアウトになってしまう恐れがある。\\
+
+例えば、次の文書を考えてみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \setcounter{chapter}{1}
+  \setcounter{section}{0}
+  \section*{1 \ \ \ 序章}
+  \subsection*{1.1 \ \ \ チャーチルのメモ}
+  　1940 年、潰滅の危機に瀕した英国の宰相の座についたウィンストン・チャーチルは、政府各部局の長に次のようなメモを送った。
+  \begin{quotation}
+    　われわれの職務を遂行するには大量の書類を読まねばならぬ。
+    その書類のほとんどすべてが長すぎる。時間が無駄だし、
+    要点を見つけるのに手間がかかる。
+
+    　同僚諸兄とその部下の方々に、
+    報告書をもっと短くするようにご配慮願いたい。
+  \end{quotation}
+  \setcounter{chapter}{3}
+  \setcounter{section}{6}
+\end{mdframed}\vspc{-0.70zw}
+この文書で「1 ~序章」は章の見出し、「1.1 ~チャーチルのメモ」は節の見出しである。
+また、この文書は 3 つの段落から成るが、最後の 2 つの段落は地の文書ではなく、引用した文書である。\\
+
+\LaTeX{}に入力する文書ファイルでは、これらを次のように表現する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+\section{序章}
+\subsection{チャーチルのメモ}
+1940 年、潰滅の危機に瀕した英国の宰相の座についたウィンストン・チャーチルは、政府各部局の長に次のようなメモを送った。
+\begin{quotation}
+  われわれの職務を遂行するには大量の書類を読まねばならぬ。
+  その書類のほとんどすべてが長すぎる。時間が無駄だし、
+  要点を見つけるのに手間がかかる。
+
+  同僚諸兄とその部下の方々に、
+  報告書をもっと短くするようにご配慮願いたい。
+\end{quotation}
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この例では、文書の構造を記述するために次のような命令が使われている。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\section{...}'    \hspc{+4.85zw}セクション（節）の見出し
+\item \verb`\subsection{...}` \hspc{+3.20zw}サブセクション（小節）の見出し
+\item \verb`\begin{quotation}`\hspc{+3.00zw}引用の始まり
+\item \verb`\end{quotation}`  \hspc{+3.85zw}引用の終わり
+\end{itemize}\vspc{-0.50zw}
+この他に必要に応じて次のような命令で文書の構造を明示する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\part{...}'         \hspc{+7.85zw}第何部という部見出し
+\item \verb'\chapter{...}'      \hspc{+6.15zw}章見出し（report、book、jreport、jbook、jsbook のみ）
+\item \verb'\subsubsection{...}'\hspc{+3.00zw}サブサブセクション（小々節）の見出し
+\item \verb'\subparagraph{...}' \hspc{+3.30zw}サブパラグラフ（小段落）の見出し
+\item \verb'\begin{quote}'      \hspc{+6.15zw}短い引用の始まり（quotation 環境と違って段落の頭を字下げしない）
+\item \verb'\end{quote}'        \hspc{+7.30zw}短い引用の終わり
+\end{itemize}\vspc{-0.50zw}
+段落も文書構造の 1 つである。
+段落の区切りは空行によって表される\footnote{強制改行のコマンド \verb'\\' を段落の区切りに使うべきではない。}。
+%%
+%% 節：タイトルと概要
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{タイトルと概要}
+タイトルを出力するためには次の 4 つの命令を用いる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\title{...}' \hspc{+3.30zw}文書名の指定
+\item \verb'\author{...}'\hspc{+3.00zw}著者名の指定
+\item \verb'\date{...}'  \hspc{+3.90zw}日付の指定
+\item \verb'\maketitle'  \hspc{+3.90zw}文書名・著者名・日付の出力
+\end{itemize}\vspc{-0.50zw}
+\verb'\title'、\verb'\author'、\verb'\date' は \verb'\maketitle' の前ならどこに記述しても構わない。
+また、この 3 つの順序もどれが先でも構わない。
+実際にタイトルを出力するのは \verb'\maketitle' である。\\
+
+タイトル、著者名、日付が長い場合は \verb'\\' で区切れば、そこで改行される。\enlargethispage{+2.00zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\title{非常に長いタイトルを \\ 二行に分ける是非について}
+\author{寿限無寿限無五劫の擦り切れ \\ 海砂利水魚の水行末}
+\date{2016年07年08日投稿 \\ 2016年09日10日受理}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+例えば、次のように記述する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass{jsarticle}
+\begin{document}
+\title{理科系の作文技術}
+\author{木下 是雄}
+\date{1981年09月25日}
+\maketitle
+
+\section{序章}
+\subsection{チャーチルのメモ}
+1940 年、潰滅の危機に瀕した英国の……
+\end{document}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、著者が複数人存在する場合は次のように \verb'\and' で区切る。
+\verb'\and' の直後には半角空白を入れなければならない。
+\verb'\and' の直前の半角空白は無視される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\author{アルファ \and ベーテ \and ガモフ}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+タイトルや著者名に脚注を付ける場合は \verb'\thanks' という命令で、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\author{湯川秀樹\thanks{京都大} \and 朝永振一郎\thanks{東京大}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のようにする。
+なぜ、\verb'\thanks' なのかというと、研究費を援助してくれた機関を著者名の脚注で記述するのが慣習となっているからである。\\
+
+\verb'\date' 指定を省略すれば、文書ファイルを\LaTeX{}で処理した日付を出力する。
+article、jarticle、jsarticle クラスでは、タイトルは本文第 1 ページの上部に出力される。
+もし、タイトルのページを独立に 1 ページ取りたいなら、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\documentclass[titlepage]{jsarticle}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のようにドキュメントクラスのオプションとして titlepage を指定する。\\
+
+また、\verb'\maketitle' の直後に \verb'\begin{abstract}' と \verb'\end{abstract}' で囲んで論文の要約（概要・梗概）を書いておけば、タイトルと本文の間に出力される（titlepage オプションを指定した場合は独立のページに出力される）。
+%%
+%% 節：入力ファイルに書ける文字
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{入力ファイルに書ける文字}
+以上の説明で、数式や表などを含まない文章なら大抵扱えると思われる。
+ここでは、また最初に戻って、1 つ 1 つの文字について更に詳しく述べることにする。\\
+
+\TeX{}で文書中に書いてそのまま出力することができる「安全な」欧文文字は、次の通りである。
+\begin{quote}
+\begin{verbatim}
+! ' ( ) * + , - . / : ; = ? @ [ ] `
+0 1 2 3 4 5 6 7 8 9
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+a b c d e f g h i j k l m n o p q r s t u v w x y z
+\end{verbatim}
+\end{quote}
+これら以外に欧文用のスペース（いわゆる半角空白）が存在する。
+本来は見えない文字だが、本稿では便宜上 \textvisiblespace\ と書くことがある。
+また、キーボード上には存在するが、入力してもそのまま出力されない欧文用文字には次のものがあり、それぞれ\TeX{}では特別な意味を持っている。
+\begin{quote}
+\begin{verbatim}
+# $ % & _ { } \ ^ ~
+\end{verbatim}
+\end{quote}
+次の 3 文字は\TeX{}のデフォルトの状態では数式モードでしか出力することができない。
+\begin{quote}
+\begin{verbatim}
+< > |
+\end{verbatim}
+\end{quote}
+これら以外に次の「文字」も存在する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{+1.00zw}\setlength{\labelsep}{+0.40zw}
+\item[\textbf{タブ}：] Tab キーを押して入力される文字である。これは半角空白と同じ意味となる。
+\item[\textbf{改行}：] Enter キーを押して入力される文字である。欧文では半角空白と同じ意味となり、和文では無視される。2 回続けて打つと段落の区切りとして扱われる。
+\end{itemize}\vspc{-0.50zw}
+これら以外の文字は \verb'\' で始まる命令で表す。
+例えば、\ae という文字は \verb'\ae' と記述することで出力することができる。
+この種の命令については後述する。\\
+
+\pTeX{}では上記の他に、和文の文字（いわゆる全角文字）を扱うことができる。
+%%
+%% 節：打ち込んだ通りに出力する方法
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{打ち込んだ通りに出力する方法}
+半角文字の \verb'# $ % & _ { } \ ^ ~ < > |' はそのままではうまく出力することができない。
+笑顔のつもりで \verb'(^_^)' などと書けばエラーとなってしまう。
+また、改行は無視され、半角のスペースは何個並べても 1 個分のスペースしか出力されない（これらのルールについては後述する）。\\
+
+次のように \verb'\begin{verbatim}'、\verb'\end{verbatim}' で囲んだ部分は、入力画面の通りに出力される。
+この ``verbatim''（ヴァー\textbf{\.{ベ}}イティム）は「文字通りに」という意味の英語である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+  \verb'\documentcclass{jsarticle}' \\
+  \verb'\begin{document}'           \\
+  \verb'メールで用いられる記号類'   \\
+  \verb'\begin{verbatim}'           \\
+  \verb'    :-)      元祖スマイル'  \\
+  \verb'    ^^;      冷や汗'        \\
+  \verb'\end{verbatim}'             \\
+  \verb'\end{document}'
+\end{mdframed}\vspc{-0.70zw}
+これを出力すると、次のようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  メールで用いられる記号類       \\
+  \verb'  :-)      元祖スマイル' \\
+  \verb'  ^^;      冷や汗'
+\end{mdframed}\vspc{-0.70zw}
+半角文字は幅一定の \texttt{typewriter} 書体となるが、半角文字と全角文字の幅の比は一般に 1：2 にはならない。
+この verbatim 環境はコンピュータのプログラムを出力する際に便利である。\\
+
+verbatim 環境は行単位だが、数文字なら \verb'\verb|...|' という書き方を用いる。
+例えば、\verb'(^_^)' と出力したいなら \verb'\verb|(^_^)|' と記述する。
+区切りは縦棒 \verb'|' に限らず、両側が同じなら \verb'\verb/(^_^)/' でも \verb'\verb"(^_^)"'でも \verb'\verb@(^_^)@' でも構わない。\\
+
+\verb'\begin{verbatim*}...\end{verbatim*}' や \verb'\verb*|...|' のように \verb'*' 印を付けると、半角文字が \verb*' ' という文字で出力される。
+なお、\verb'\chapter{...}' や \verb'\section{...}' のような \verb'\何々{...}' 型の命令の \verb'{ }' の中では \verb'\verb' 命令は大抵使えないので、特殊文字を出力するためには他の方法に依らなければならない。
+これは後述する \verb'\何々[...]' 型の命令の \verb'[ ]' の中でも同様である。
+%%
+%% 節：改行の扱い
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{改行の扱い}
+ここでいう改行とは Enter キーを打つことである。
+%%
+%% 項：改行は無視される（行末が和文文字の場合）
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{改行は無視される（行末が和文文字の場合）}
+InDesign などの DTP ソフトと異なり、\TeX{}は通常は改行を無視するので、\TeX{}用の入力ファイルにはポエムのように改行を多量に入れる人が多いようである。
+その方が、Git などのバージョン管理システムで変更点がよくわかって便利である。\\
+
+但し、空の行（何も入力していない行、Enter だけの行）があると、\TeX{}はそこを段落の区切りと解釈する。
+すなわち、Enter キーを 1 度だけ打っても\TeX{}はそれを無視するが、2 度続けて Enter を打てば、空行ができるので、そこで段落が改まり、通常の設定では次の行の頭に 1 文字分の空白（字下げ、インデント）が入る（全角下がり）。\\
+
+以下の例でこの点をよく理解しておくこと。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'改行は'        \\
+  \    & \verb'無視される。'  \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & 　改行は無視される。 \\
+\end{longtable}\vspc{-0.50zw}
+
+\vspc{-0.80zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'空行があると'   \\
+  \    &                       \\
+  \    & \verb'段落が改まる。' \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & 　空行があると        \\
+  \    & 　段落が改まる。      \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：改行は空白になる（行末が欧文文字の場合）
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{改行は空白になる（行末が欧文文字の場合）}
+入力ファイルの改行は（空行でない限り）無視されると前述したが、これは和文文字の場合だけである。
+詳述すると、行の最後の文字が和文の文字（かな・漢字などのいわゆる全角文字）であれば、その直後に打った Enter キーは無視される。\\
+
+ところが、行の最後の文字が半角文字（欧文文字）であれば、その直後に打った Enter キーは半角空白と同じ意味になる。
+少々ややこしいが、実際に欧文を入力してみれば、ごく自然なルールであることが理解できる。\\
+
+次の例では半角文字 a の直後の Enter が空白になる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb`Here's a`        \\
+  \    & \verb'good example.'   \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & Here's a good example. \\
+\end{longtable}\vspc{-1.25zw}
+なお、欧文の場合でも、空行があると\TeX{}はそこを段落の区切りであると解釈する。
+%%
+%% 節：注釈（コメント）
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{注釈（コメント）}
+欧文では改行は空白となるが、場合によっては改行を単に無視してほしいこともある。
+このような場合は、最後の文字の直後に \texttt{\%} を記述する。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'Supercalifragilistic'\texttt{\%} \\
+  \    & \verb'expialidocious!'                 \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & Supercalifragilisticexpialidocious! \\
+\end{longtable}\vspc{-1.25zw}
+この \texttt{\%} は、その行のそれ以降を\TeX{}に無視させる特殊な命令である。
+この文字から後は改行文字 Enter も含めて全て無視されるので、注釈（コメント）を記述するのに便利である。
+%%
+%% 節：空白の扱い
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{空白の扱い}
+空白（スペース）には全角空白と半角空白が存在する。
+本稿では、紛らわしい場合には半角空白を \textvisiblespace\ と表記している。\\
+
+エディタの画面上では半角文字 2 個 \textvisiblespace\textvisiblespace\ と全角空白 1 個とは区別がつきにくいが、\TeX{}にとってはこれらの意味は全く異なる。
+全角空白を並べれば、単にその個数分の全角空白が出力されるだけである。\\
+
+半角空白 \textvisiblespace\ は、欧文の単語間のスペース（欧文フォントによって異なるが全角の $1/4$ から $1/3$ 程度の空白）を出力するが、ページの右端を揃えるためにかなり伸び縮みする。
+また、半角空白は何個並べても 1 個分の空白しか出力しない。\\
+
+半角空白をいくつも出力するためには \verb'\' で区切る。\\
+
+途中で改行されると困る場合は \verb'~'（チルダ）を用いる。
+\verb'~' は空白文字 \textvisiblespace\ と同じ幅の空白を出力するが、\verb'~' で空けた空白では改行が起こらない。
+但し、あまり長い空白に対して途中の改行を禁止すると、\TeX{}が最適な改行位置を見つけられなくなる場合がある。\\
+
+なお、行頭・行末の半角空白 \textvisiblespace\ は何個あっても無視される。
+%%
+%% 節：地の文と命令
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{地の文と命令}
+\TeX{}の入力ファイルには、\ruby{地}{じ}の文と組版命令が入り混ざっている。
+組版命令には様々なものが存在し、自前の命令を定義することもできる。\\
+
+\LaTeX{}という組文字を出力する命令は \verb'\LaTeX' である。
+このような命令は、一般に \verb'\LaTeX'\textvisiblespace\ のように、直後に半角空白 \textvisiblespace\ を付けて使うのが安全である。
+この半角空白は、命令と地の文の区切りの意味しか持たないため、空白は出力されない。\\
+
+もし、半角空白を入れずに ``\verb|この本は\LaTeXで書きました|'' と書いてしまうと「\verb|\LaTeXで書きました|」の部分が命令と解釈されてしまい、エラー（誤り）となってしまう。\\
+
+エラーにしないためには、次のいずれかの書き方とする必要がある。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'この本は\LaTeX'\textvisiblespace\hspc{-02pt}\verb'で書きました。'$\leftarrow$ 半角空白を入れる。
+\item \verb'この本は\LaTeX'\hspc{+01zw}                                      $\leftarrow$ 改行する。\\\verb'で書きました。'
+\item \verb'この本は\LaTeX{}で書きました。'                                  $\leftarrow$ \verb'{}' を付ける。
+\item \verb'この本は{\LaTeX}で書きました。'                                  $\leftarrow$ \verb'{}' で囲む。
+\end{itemize}\vspc{-0.50zw}
+例外として、命令の前後の文字が（半角・全角と問わず）句読点・括弧の類（いわゆる\ruby{約物}{やくもの}）であれば、半角空白や \verb'{}' は省略しても構わない。
+例えば、
+\begin{quote}
+  \verb'\LaTeX, がんばれ！'
+\end{quote}
+のよう書いてもエラーにはならない。
+尚、\verb'\LaTeX'\textvisiblespace\ の半角空白 \textvisiblespace\ は区切りの意味しか持たないので、
+\begin{quote}
+  \verb'\LaTeX'\textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace\verb'is'\textvisiblespace\verb'awesome!' $\hspc{+5.00pt}\rightarrow\hspc{+5.00pt}$ \LaTeX{}is awesome!
+\end{quote}
+のように書いても、上記の通りスペースは出力されない。スペースを増やしても同じである。\\
+
+このような場合は、スペースを入れる命令 \verb'\'\textvisiblespace\ を使うか、\verb'{}' で区切る。\enlargethispage{+2.00zw}
+\begin{quote}
+  \verb'\LaTeX\'\textvisiblespace\verb'is'\textvisiblespace\verb'awesome!'  $\hspc{+10.0pt}\rightarrow\hspc{+5.00pt}$ \LaTeX\  is awesome! \\
+  \verb'\LaTeX{}'\textvisiblespace\verb'is'\textvisiblespace\verb'awesome!' $\hspc{+5.00pt}\rightarrow\hspc{+5.00pt}$ \LaTeX{} is awesome! \\
+  \verb'{\LaTeX}'\textvisiblespace\verb'is'\textvisiblespace\verb'awesome!' $\hspc{+5.00pt}\rightarrow\hspc{+5.00pt}$ {\LaTeX} is awesome! \\
+\end{quote}\vspc{-3.00zw}
+%%
+%% 節：区切りのいらない命令
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{区切りのいらない命令}
+\verb'$' は\TeX{}において数式モードの区切りという特別な意味を持っている。「29ドル」という意味で \$29 と書きたい場合は、\verb'\' 印を付けて \verb'\$29' と記述する。\\
+
+\verb'\$' も \verb'\' で始まるので\TeX{}の命令の一種だが、\verb'\' にアルファベットではない記号・数字が付いてできた命令は \verb'\LaTeX' のような命令と少し違った性質を持つ。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item これらの命令は \verb'\' の後ろに 1 文字しか付かない。例えば、\verb'\$' という命令は存在するが \verb'\$#' や \verb'\$foo' といった命令は存在しない。
+\item \verb'\$' のような命令は \verb'\$'\textvisiblespace\verb'29' のように空白で区切る必要はない。単に \verb'\$29' のように書く。もし、\verb'\$'\textvisiblespace\verb'29' のように空白を付けると、\$ 29 のように実際に空白が出力されてしまう。
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 節：特殊文字
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{特殊文字}
+\verb'\LaTeX' という命令で\LaTeX{}と出力され、\verb'\$' という命令で \$ と出力された。
+この類の特殊記号・特殊文字を出力する命令の一部を以下に列挙しておく。\\
+
+前述の通り、例えば \AA{}ngstr\o{}m を \verb'\AAngstr\om' と書いたのでは、\LaTeX{}は「\verb'\AAngstr' という命令は存在しない」「\verb'\om' という命令は存在しない」というエラーメッセージを吐くだけである。
+区切りの中括弧 \verb'{}' を用いて、
+\begin{quote}
+  \verb'\AA{}ngstr\o{}m'\hspc{+5.00pt} もしくは\hspc{+5.00pt} \verb'{\AA}ngstr{\o}m'
+\end{quote}
+と書くか、半角空白で \verb'\AA'\textvisiblespace\verb'ngstr\o'\textvisiblespace\verb'm' のように区切る。
+\vspc{-0.50zw}\begin{longtable}{@{}cccccccc@{}}
+    入力         & 出力    & 入力              & 出力         & 入力      & 出力 & 入力                    & 出力              \\ \toprule
+    \verb'\#'    & \#      & \verb'\copyright' & \copyright{} & \verb'\L' & \L{}  & \verb|''\,'|           & ''\,'             \\
+    \verb'\$'    & \$      & \verb'\pounds'    & \pounds{}    & \verb'ss' & \ss{} & \verb|'\,''|           & '\,''             \\
+    \verb'\%'    & \%      & \verb'\oe'        & \oe{}        & \verb|?`| & {}?`  & \verb'-'               & {}-               \\
+    \verb'\&'    & \&      & \verb'\OE'        & \OE{}        & \verb|!`| & {}!`  & \verb'--'              & {}--              \\
+    \verb'\_'    & \_      & \verb'\ae'        & \ae{}        & \verb'\i' & \i    & \verb'---'             & ---               \\
+    \verb'\{'    & \{      & \verb'\AE'        & \AE{}        & \verb'\j' & \j    & \verb'\texttrgistered' & \textregistered{} \\
+    \verb'\}'    & \}      & \verb'\aa'        & \aa{}        & \verb|`|  & `     & \verb'\texttrademark'  & \texttrademark{}  \\
+    \verb'\S'    & \S      & \verb'\AA'        & \AA{}        & \verb|'|  & '     & \verb'\textasciitilde' & \textasciitilde{} \\
+    \verb'\P'    & \P      & \verb'\o'         & \o{}         & \verb|``| & ``    & \verb'\TeX'            & \TeX{}            \\
+    \verb'\dag'  & \dag{}  & \verb'\O'         & \O{}         & \verb|''| & ''    & \verb'\LaTeX'          & \LaTeX{}          \\
+    \verb'\ddag' & \ddag{} & \verb'\l'         & \l{}         & \verb|*|  & *     & \verb'\LaTeXe'         & \LaTeXe{}         \\
+\end{longtable}\vspc{-0.50zw}
+\verb'\&' のような記号で終わる命令には区切りは不要である（半角空白はそのまま出力される）。
+記号類は \verb'\&' などと書く代わりに全角（和文）文字を用いても構わない（デザインは少々異なる）。\\
+
+アスタリスク \textasteriskcentered\ を入力すると、標準では * のように上寄りに出力されるが、\verb'$*$' のように \verb'$' で挟むと $*$ のように中央に出力される。\\
+
+\verb'---' は --- のような欧文用のエムダッシュ（通常 1 [em] の長さのダッシュ）を出力する命令である。
+これは文中で間を置いて読むべきところ --- 例えば、説明的な部分の区切り --- に用いられる。
+\begin{quote}
+  Remember, even if you with the rat race --- you're still a rat.
+\end{quote}
+以上の他に、特殊文字ではないが、今日の日付を出力する命令 \verb'\today' は便利である。
+これは \verb'\date' を省略した際の \verb'\maketitle' と同様に、日付を出力する。
+%%
+%% 節：アクセント類
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{アクセント類}
+以下に、欧文で使用する種々のアクセント類を出力する命令を示す。\enlargethispage{+3.00zw}
+\vspc{-0.50zw}\begin{longtable}{@{}cccccccc@{}}
+    入力         & 出力  & 入力          & 出力   & 入力          & 出力   & 入力         & 出力  \\ \toprule
+    \verb|\'{o}| & \'{o} & \verb|\~{o}|  & \~{o}  & \verb|\v{o}|  & \v{o}  & \verb|\d{o}| & \d{o} \\
+    \verb|\'{o}| & \'{o} & \verb|\={o}|  & \={o}  & \verb|\H{o}|  & \H{o}  & \verb|\b{o}| & \b{o} \\
+    \verb|\^{o}| & \^{o} & \verb|\.{o}|  & \.{o}  & \verb|\t{oo}| & \t{oo} & \verb|\r{a}| & \r{a} \\
+    \verb|\"{o}| & \"{o} & \verb|\u{o}|  & \u{o}  & \verb|\c{o}|  & \c{o}  & \verb|\k{a}| & \k{a} \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{itemize}\setlength{\leftskip}{0.20zw}%\setlength{\labelsep}{+1.00zw}
+\item[例：] \verb|Schr\"{o}dinger| $\hspc{+05pt}\rightarrow\hspc{+05pt}$ Schr\"{o}dinger、\verb|al-Khw\={a}rizm\={\i}| $\hspc{+05pt}\rightarrow\hspc{+05pt}$ al-Khw\={a}rizm\={\i}
+\end{itemize}\vspc{-0.50zw}
+数式モードを用いれば、更に多くのアクセント記号を出力することができる。
+数式モードについては第 5 章を参照のこと。
+%%
+%% 節：書体を変える命令
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{書体を変える命令}
+前述した通り、\LaTeX{}ではなるべく文書の構造を指定する命令のみを使い、書体や文字サイズを直接指定する命令を使うことは避けるべきである。
+しかし、とりあえずワープロ代わりに使いたい場合もあるであろうから、書体や文字サイズを変更する方法についても説明しておくことにする。
+%%
+%% 項：和文書体
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{和文書体}
+和文書体については第 13 章で詳述するが、ここではとりあえず\textgt{ゴシック体}に変える命令 \verb'\textgt{...}' について挙げておく。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'\textgt{ゴシック体}は見出しなどに用いる。'
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & \textgt{ゴシック体}は見出しなどに用いる。
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：欧文書体
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{欧文書体}
+欧文書体については第 12 章で詳述するが、\LaTeX{}でよく用いられる 7 書体について、簡単な指定方法を挙げておく。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\textrm{Roman}'     \hspc{+5.30zw}\textrm{Roman}     \hspc{+5.35zw}本文（デフォルト）
+\item \verb'\textbf{Boldface}'  \hspc{+3.65zw}\textbf{Boldface}  \hspc{+4.40zw}見出し
+\item \verb'\textit{Italic}'    \hspc{+5.00zw}\textit{Italic}    \hspc{+6.00zw}強調、書名
+\item \verb'\textsl{Slanted}'   \hspc{+4.40zw}\textsl{Slanted}   \hspc{+5.25zw}\textit{Italic} の代用
+\item \verb'\textsl{Sans Serif}'\hspc{+3.00zw}\textsf{Sans Serif}\hspc{+4.10zw}見出し
+\item \verb'\texttt{Typewriter}'\hspc{+3.00zw}\texttt{Typewriter}\hspc{+3.00zw}コンピュータの入力例
+\item \verb'\textsc{Small Caps}'\hspc{+3.00zw}\textsc{Small Caps}\hspc{+3.20zw}見出し
+\end{itemize}\vspc{-0.50zw}
+これらの内、Roman 体はデフォルトなので \verb'\textrm{...}' を使う機会はほとんど無い。
+\verb'\textit{...}' の代わりに \verb'\emph{...}' という命令も使うことができる。
+この方が強調（emphasis）していることがわかりやすい名前である。
+この \verb'\emph{...}' は、周囲がイタリック体であれば逆にローマン体に戻すはたらきを持つ。\\
+
+\textsl{Slanted} はローマン体を機械的に斜めにしたもので、一般にはイタリック体であれば \verb'\textit{...}' を用いるべきである。
+%%
+%% 節：文字サイズを変える命令
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{文字サイズを変える命令}
+文字の大きさについても第 12 章で詳述するが、よく使われるのは次のように標準から相対的な大きさを指定する命令である。
+欧文フォントが 10 ポイントの場合の実サイズと共に挙げておく。
+\vspc{-0.75zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\tiny'        \hspc{+7.25zw}  5.00 ポイント        \hspc{+4.80zw} {\tiny{}         見本 Sample}
+\item \verb'\scriptsize'  \hspc{+3.85zw}  7.00 ポイント        \hspc{+4.80zw} {\scriptsize{}   見本 Sample}
+\item \verb'\footnotesize'\hspc{+3.00zw}  8.00 ポイント        \hspc{+4.80zw} {\footnotesize{} 見本 Sample}
+\item \verb'\small'       \hspc{+6.70zw}  9.00 ポイント        \hspc{+4.80zw} {\small{}        見本 Sample}
+\item \verb'\normalsize'  \hspc{+3.35zw} 10.00 ポイント（標準）\hspc{+1.00zw} {\normalsize{}   見本 Sample}
+\item \verb'\large'       \hspc{+6.20zw} 12.00 ポイント        \hspc{+4.80zw} {\large{}        見本 Sample}
+\item \verb'\Large'       \hspc{+6.20zw} 14.40 ポイント        \hspc{+4.80zw} {\Large{}        見本 Sample}
+\item \verb'\LARGE'       \hspc{+6.20zw} 17.28 ポイント        \hspc{+4.80zw} {\LARGE{}        見本 Sample}
+\item \verb'\huge'        \hspc{+6.80zw} 20.74 ポイント        \hspc{+4.80zw} {\huge{}         見本 Sample}
+\item \verb'\HUGE'        \hspc{+6.80zw} 24.88 ポイント        \hspc{+4.80zw} {\HUGE{}         見本 Sample}
+\end{itemize}\vspc{-0.50zw}
+この内、\verb'\normalsize' は標準の大きさなので特に指定する必要はない。\enlargethispage{+1.00zw}
+これらの命令は、\verb'{\small'\textvisiblespace\verb'小さな文字}' のように、命令の区切りに半角空白を入れ、適用範囲を \verb'{}' で囲む。
+%%
+%% 節：環境
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{環境}
+\verb'\begin{'\textcolor{blue}{\texttt{何々}}\verb'} ... \end{'\textcolor{blue}{\texttt{何々}}\verb'}' のように対になった命令を環境（environment）という。
+例えば、\verb'\begin{quote} ... '\\\verb'\end{quote}' なら quote 環境という。
+環境の内側は一種の別天地であり、様々な設定が環境の外側とは異なる。
+例えば quote 環境なら左マージン（左余白）が周囲より広くなる。
+環境の中で書体などを変えても、環境の外には影響が及ぶことはない。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb'ここは環境の外。'                                      \\
+  \    & \verb'\begin{quote}'                                         \\
+  \    & \verb'  ここは環境の中。ここで\small 文字サイズを変えても…' \\
+  \    & \verb'\end{quote}'                                           \\
+  \    & \verb'環境の外では元の書体に戻る。'                          \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-1.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  出力 & ここは環境の外。                                                    \\
+  \    & \hspc{+3.00zw}ここは環境の中。ここで{\small 文字サイズを変えても…} \\
+  \    & 環境の外では元の書体に戻る。                                        \\
+\end{longtable}\vspc{-1.25zw}
+quote 以外によく使われる環境は次の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item flashleft 環境 \hspc{+3.40zw}左寄せ
+\item flushright 環境\hspc{+3.00zw}右寄せ
+\item center 環境    \hspc{+4.25zw}センタリング（中央寄せ）
+\end{itemize}\vspc{-0.50zw}
+これらの環境の中で改行するには \verb'\\' を用いる。
+%%
+%% 節：箇条書き
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{箇条書き}
+環境の例として、色々な箇条書きの方法を説明する。
+%%
+%% 項：itemize 環境
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{itemize 環境}
+頭に $\bullet$ などの記号を付けた箇条書きである。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}ll@{}}
+  入力                            & 出力                                           \\ \toprule
+  \verb'\LaTeX には、'            & \LaTeX{}には、                                 \\
+  \verb'\begin{itemize}'          &                                                \\
+  \verb'\item 記号付き箇条書き'   & \hspc{+2.00zw}\labelitemi{} 記号付き箇条書き   \\
+  \verb'\item 番号付き箇条書き'   & \hspc{+2.00zw}\labelitemi{} 番号付き箇条書き   \\
+  \verb'\item 見出し付き箇条書き' & \hspc{+2.00zw}\labelitemi{} 見出し付き箇条書き \\
+  \verb'\end{itemize}'            &                                                \\
+  \verb'の機能が存在する。'       & の機能が存在する。                             \\
+\end{longtable}\vspc{-1.25zw}
+入れ子にすると、標準の設定では次のように記号が変化する。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}ll@{}}
+  入力                                     & 出力                                           \\ \toprule
+  \verb'\begin{itemize}'                   &                                                \\
+  \verb'\item 第 1 レベルの箇条書き'       & \hspc{+2.00zw}$\bullet$\ 第 1 レベルの箇条書き \\
+  \verb'  \begin{itemize}'                 &                                                \\
+  \verb'  \item 第 2 レベルの箇条書き'     & \hspc{+4.00zw}$-      $\ 第 2 レベルの箇条書き \\
+  \verb'    \begin{itemize}'               &                                                \\
+  \verb'    \item 第 3 レベルの箇条書き'   & \hspc{+6.00zw}$*      $\ 第 3 レベルの箇条書き \\
+  \verb'      \begin{itemize}'             &                                                \\
+  \verb'      \item 第 4 レベルの箇条書き' & \hspc{+8.00zw}$\cdot  $\ 第 4 レベルの箇条書き \\
+  \verb'      \end{itemize}'               &                                                \\
+  \verb'    \end{itemize}'                 &                                                \\
+  \verb'  \end{itemize}'                   &                                                \\
+  \verb'\end{itemize}'                     &                                                \\
+\end{longtable}\vspc{-1.25zw}
+また、\verb'\item[★]' のようにすると、その部分だけ記号を変えることができる。
+%%
+%% 項：enumerate 環境
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{enumerate 環境}
+頭に番号を付けた箇条書きである。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}ll@{}}
+  入力                            & 出力                                 \\ \toprule
+  \verb'\LaTeX には、'            & \LaTeX{}には、                       \\
+  \verb'\begin{enumerate}'        &                                      \\
+  \verb'\item 記号付き箇条書き'   & \hspc{+2.00zw}1.\ 記号付き箇条書き   \\
+  \verb'\item 番号付き箇条書き'   & \hspc{+2.00zw}2.\ 番号付き箇条書き   \\
+  \verb'\item 見出し付き箇条書き' & \hspc{+2.00zw}3.\ 見出し付き箇条書き \\
+  \verb'\end{enumerate}'          &                                      \\
+  \verb'の機能が存在する。'       & の機能が存在する。                   \\
+\end{longtable}\vspc{-1.25zw}
+入れ子にすると、標準の設定では次のように番号の付け方が変化する。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}ll@{}}
+  入力                                     & 出力                                      \\ \toprule
+  \verb'\begin{enumerate}'                 &                                           \\
+  \verb'\item 第 1 レベルの箇条書き'       & \hspc{+2.00zw} 1.\ 第 1 レベルの箇条書き  \\
+  \verb'  \begin{enumerate}'               &                                           \\
+  \verb'  \item 第 2 レベルの箇条書き'     & \hspc{+4.00zw} (a)\ 第 2 レベルの箇条書き \\
+  \verb'    \begin{enumerate}'             &                                           \\
+  \verb'    \item 第 3 レベルの箇条書き'   & \hspc{+6.00zw} i.\ 第 3 レベルの箇条書き  \\
+  \verb'      \begin{enumerate}'           &                                           \\
+  \verb'      \item 第 4 レベルの箇条書き' & \hspc{+8.00zw} A.\ 第 4 レベルの箇条書き  \\
+  \verb'      \end{enumerate}'             &                                           \\
+  \verb'    \end{enumerate}'               &                                           \\
+  \verb'  \end{enumerate}'                 &                                           \\
+  \verb'\end{enumerate}'                   &                                           \\
+\end{longtable}\vspc{-2.25zw}
+%%
+%% 項：description 環境
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{description 環境}
+左寄せ太字で見出しを付けた箇条書きである。
+例えば、次のような入力を用意すると、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{center}
+  \large 第7回\LaTeX 勉強会の開催について（案内）
+\end{center}
+下記の通り行いますので、
+万障お繰り合わせの上、ご参集下さい。
+\begin{center} 記 \end{center}
+\begin{description}
+\item[日時] 2017年01月24日 午後3時
+\item[場所] 当社2階会議室
+\item[用意するもの] 技術評論社『\LaTeX 美文書作成入門』（特に第3章をよく読んでおいて下さい）
+\end{description}
+\begin{flushright} 以上 \end{flushright}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+次のような出力が得られる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  \begin{center}
+    \large 第7回\LaTeX{}勉強会の開催について（案内）
+  \end{center}
+  下記の通り行いますので、
+  万障お繰り合わせの上、ご参集下さい。
+  \begin{center} 記 \end{center}
+  \begin{description}
+  \item[日時] 2017年01月24日 午後3時
+  \item[場所] 当社2階会議室
+  \item[用意するもの] 技術評論社『\LaTeXe{}美文書作成入門』（特に第3章をよく読んでおいて下さい）
+  \end{description}
+  \begin{flushright} 以上 \end{flushright}
+\end{mdframed}\vspc{-0.25zw}
+このように \verb'\begin{description} ... \end{description}' を用いる。
+それぞれの箇条の頭には \verb'\item['\textcolor{blue}{見出し}\verb']' を付加する。
+見出しの直後で改行したい場合は、単に強制改行 \verb'\\' を入れてもうまくいかない。
+次のように \verb'\mbox{}' という見えない箱を入れることでうまくいくようになる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{description}
+\item[日時] \mbox{} \\
+  2017年01月24日 午後3時
+\item[場所] \mbox{} \\
+  当社2階会議室
+\end{description}
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：長さの単位
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{長さの単位}
+\TeX{}で使用することができる長さの単位には次のものが存在する。最後の 4 つは\pTeX、\upTeX{}のみで使用可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{+1.00zw}\setlength{\labelsep}{+1.00zw}
+  \item[\texttt{cm}] センチメートル（1\,cm = 10\,mm）
+  \item[\texttt{mm}] ミリメートル
+  \item[\texttt{in}] インチ（1\,in = 2.54\,cm）
+  \item[\texttt{pt}] ポイント（72.27\,pt = 1\,in）
+  \item[\texttt{pc}] パイカ（1\,pc = 12\,pt）
+  \item[\texttt{bp}] ビックポイント（72\,bp = 1\,in、DTP ポイント）
+  \item[\texttt{sp}] スケールドポイント（65536\,sp = 1\,pt）
+  \item[\texttt{em}] 文字サイズの公称値（元来は ``M'' の幅）
+  \item[\texttt{ex}] 現在の欧文フォントの ``x'' の高さ（公称値）
+  \item[\texttt{zw}] 現在の和文フォントのボディの幅（ベタ組み時の字送り量）
+  \item[\texttt{zh}] 現在の和文フォントの高さ（使わない方がいい）
+  \item[\texttt{Q}]  級（1\,Q = 0.25\,mm）
+  \item[\texttt{H}]  歯（1\,H = 0.25\,mm）
+\end{itemize}\vspc{-0.50zw}
+印刷関係ではポイント（point、pt、ポ）という単位をよく用いる。
+ポイントの定義は国によって若干の違いはあるが、\TeX{}では 1 ポイントを $1/72.27$ インチと定義している。
+日本工業規格（JIS）の 1 ポイント = 0.3514\,mm と実質的には同じである。
+DTP ソフトや Word などでは、1 ポイントを $1/72$ インチ（\TeX{}でいうところのビックポイント）としている。
+写植機で使われてきた級数（歯数）は和製の単位で、1 級（Q）= 1 歯（H）= 0.25\,mm である。
+1\,mm の $1/4$（Quarter）なので Q という。
+文字の大きさには級を、送りの指定には歯を用いる慣習となっている。\\
+
+欧文の書籍では 10 ポイントの文字を使うことが多く、\LaTeX{}でも欧文 10 ポイントが標準となっている。
+この 10 ポイントというのは、活版印刷では活字の上下幅、すなわち詰めものをしないで活字を詰めた場合の行送り量である。\\
+
+コンピュータのフォントでは、どの長さが 10 ポイントなのかはっきりしないのだが、\TeX{}標準付属の Computer Modern Roman 体の 10 ポイント（cmr10）では、括弧 (\hspc{+1.00pt}) の上下幅がちょうど 10 ポイントになっている（ベースラインから上 7.5\,pt、下 2.5\,pt）。
+また、たまたま cmr10 の数字 2 文字分の幅も 10 ポイントになっている（cmr9 の数字 2 文字分の幅は 9 ポイントではない）。\\
+
+この 10 ポイントの欧文に合わせる和文の文字として jsarticle 等では 13\,Q（約 9.2469\,pt）、jarticle 等では 9.62216\,pt（約 13.527\,Q）と定義されている。\enlargethispage{+1.00zw}
+すなわち、jsarticle 等では 1\,zw は 9.2469\,pt、jarticle 等では 1\,zw は 9.62216\,pt である。\\
+
+zw が全角の幅（width）であるのに対して、zh は元来は全角の高さ（height）だが、歴史的な理由により、伝統的なp\TeX{}の和文フォントメトリックでは 1\,zh は 1\,zw よりわずかに小さい値になっている（ほぼ 1\,zw = 1.05\,zh）。
+現在では 1\,zh の値には特に意味がないので使わない方がよいだろう。
+なお、otf パッケージの新しいフォントメトリックでは正方形（正確に 1\,zw = 1\,zh）となっている。
+%%
+%% 節：空白を出力する命令
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{空白を出力する命令}
+以下で長さを書いた部分は 1zw や 12.3mm など\TeX{}で使うことのできる単位を付けた数を書き込む。\\
+
+左右に空白（スペース）を入れるには次のどちらかの命令を用いる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\hspace{長さ}' \hspc{+2.30zw}行末・行頭では出力されない。
+\item \verb'\hspace*{長さ}'\hspc{+2.00zw}行末・行頭でも出力される。\verb'\hspace*{1zw}' は全角空白を 1 つ入れることと同値である。
+\end{itemize}\vspc{-0.50zw}
+段落間などに空白（スペース）を入れるには次のどちらかの命令を用いる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\vspace{長さ}' \hspc{+2.30zw}ページ頭・ページ末では出力されない。段落間に余分の空白を入れる際によく用いられる。
+\item \verb'\vspace*{長さ}'\hspc{+2.00zw}ページ頭・ページ末でも出力される。図を貼り込むスペースを空ける際などに用いられる。
+\end{itemize}\vspc{-0.50zw}
+例えば、0.5 行分のアキを入れるには \verb'\vspace{0.5\baselineskip}' とする。
+%%
+%% 節：脚注への書き込み
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{脚注への書き込み}
+このページの下\footnote{これが脚注である。}にあるような脚注を出力するには \verb'\footnote{...}' という命令を用いて、次のように記述する。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim*}
+このページの下\footnote{これが脚注である。} にあるような脚注…
+\end{verbatim*}
+\end{mdframed}\vspc{-0.70zw}
+本稿では \verb'\footnote{...}' の直後に上の例のように半角空白 \textvisiblespace\ を入れるか、あるいは、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+このページの下\footnote{これが脚注である。}\
+にあるような脚注…
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように行末に \verb'\' を入れる方式を推奨している。
+行末の \verb'\' は半角空白と同じ意味となる。
+行末に \verb'\' を入れないと、その直前が全角文字なので空白は出力されない。\\
+
+欧文では、文の途中の \verb'\footnote' は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+Gee\footnote{Note.}'\textvisiblespace\verb'whiz.
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように単語に密着し、後ろは空白 \textvisiblespace\ あるいは改行にする。
+和文の場合は、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+かくかく\footnote{脚注。}。しかじか
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように句読点の直前に \verb'\footnote' を入れるのが一般的である。
+%%
+%% 節：罫線の類
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{罫線の類}
+\LaTeX{}標準の下線・枠線などを引く機能を挙げておく。\enlargethispage{1.00zw}
+より複雑な効果は第 7 章などを参照のこと。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \verb'\underline{...}' で下線を引くことができる。例えば、\underline{ほげ}（\verb'\underline{ほげ}'）となる。\LaTeX{}標準の下線では途中で改行することができない。別の方法については後述する。
+\item \verb'\hrulefill' で水平の罫線を引くことができる。例えば、\\
+  \hrulefill{} \\
+  のようになる。
+\item \verb'\dotfill' で水平の点線を引くことができる。例えば、\\
+  \dotfill{} \\
+  のようになる。
+\item \verb'\fbox{...}' で囲み枠を描くことができる。例えば、\verb'\fbox{ABC}' で \fbox{ABC} となる。
+\item \verb'\framebox['$w$\verb']{...}' で幅 $w$ の囲み枠を描くことができる。例えば、\verb'\framebox[2cm]{ABC}' で \framebox[2cm]{ABC} となる。同様に、\verb'\framebox[2cm][l]{ABC}' で左揃え \framebox[2cm][l]{ABC}、\verb'\framebox[2cm][r]{ABC}' で右揃え \framebox[2cm][r]{ABC} となる。
+\item \verb'\rule['$d$\verb']{'$w$\verb'}{'$h$\verb'}' で中身の詰まった長方形を描くことができる。$w$ は幅、$h$ は下端からの高さで、オプションの $d$ はベースラインから下端までの距離である。$d$、$w$、$h$ を調節して任意の太さの縦罫・横罫を引くことができる。また、しばしば $w=0$ として見えない縦罫の支柱を作り、行送りを微調整するために用いられる。
+\end{itemize}\vspc{-0.50zw}
+\verb'\fbox' や \verb'\framebox' の枠と中身の隙間は \verb'\fboxsep' という長さで決まる。
+この長さはデフォルトでは 3\,pt だが、例えば \verb'\setlength{\fboxsep}{0mm}'\setlength{\fboxsep}{0mm} とすれば \fbox{ほげ}\setlength{\fboxsep}{3pt} のように隙間が無くなる。
+また、\verb'\fbox' や \verb'\framebox' の枠の太さは \verb'\fboxrule' という長さで決まるが、この長さはデフォルトでは 0.4\,pt である。
+例えば \verb'\setlength{\fboxrule}{0.8pt}'\setlength{\fboxrule}{0.8pt} とすれば \fbox{ほげ}\setlength{\fboxrule}{0.4pt} のように太くなる。

@@ -1,0 +1,1045 @@
+%%
+%% 章：テキスト編集を更に効率化する拡張機能
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{テキスト編集を更に効率化する拡張機能}
+%%
+%% 節：Elisp のインストール
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{Elisp のインストール}
+これまで何度も触れてきたが、Emacs は Elisp によって自由自在に拡張することが可能となっている。
+自分で Elisp を記述して拡張するのもよいが、まずは世界中のハッカー達によって書かれた Elisp をインストールすることで Emacs を別のアプリケーションように進化させてみよう。\\
+
+本章では、Elisp のインストール方法について解説した後、代表的な拡張機能のインストールと設定について詳述する。
+%%
+%% 項：インストール方法の種類
+%%--------------------------------------------------------------------------------------------------------------------%%
+\subsection{インストール方法の種類}
+Emacs~24 以降から Elisp のインストールは基本的に package.el というパッケージマネージャを用いて行う。
+この機能が搭載されるまでは、手動で Elisp をダウンロードしてロードパスに追加されているディレクトリに配置する必要があった。
+本節では、それぞれのインストール方法の違いについて解説した後、手動インストールと package.el によるインストールの両方を解説する。
+%%
+%% 款：手動インストール
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{手動インストール}
+手動インストールはロードパスに追加されている（パスの通った）ディレクトリに el ファイルを配置するというシンプルで簡単な方法である。
+現在、多くの Elisp が ELPA からインストール可能となっているが、もしインストールしたい Elisp が ELPA に対応していない場合はこちらの方法を用いてインストールすることになる。
+package.el が使えれば自動的にインストール可能なのだが、覚えておいて損はない。
+%%
+%% 款：package.el によるインストール
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{package.el によるインストール}
+package.el は Red Hat Linux の yum や Mac の Homebrew または Node.js の npm（\emph{node Package Manager}）などのように拡張機能のインストールや削除などを行ってくれるツールである。
+package.el を用いた Elisp のインストールは ELPA（\emph{Emacs Lisp Package Archive}：エルパと読む）という専用のパッケージリポジトリを通じて行われる。
+必要に応じてリポジトリの追加を行うことで、多くのパッケージをインストールすることが可能である。
+また、インストールしたい Elisp が他の Elisp の機能に依存している場合は依存元の Elisp も合わせてインストールしてくれる。\\
+
+Elisp を最新バージョンに更新したい場合も package.el によって行うことが可能である。
+リポジトリをチェックしてインストールされているパッケージからの更新があれば簡単にアップデートが行える。
+とても便利な package.el なのだが、1 つだけ大きな欠点が存在する。
+それはバージョンを管理する機能が用意されていないという点である。
+すなわち、ELPA を通じてインストールされる Elisp は常に最新バージョンとなってしまうため、もし最新バージョンの Elisp に何らかの問題があってもダウングレードすることができないという点である。
+頻繁に発生する問題ではないと思われるが、こういった事態に対処したい場合は自分自身で Git などを利用して ELPA からインストールされる ELisp をバージョン管理する必要がある。
+%%
+%% 項：手動インストール
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{手動インストール}
+本項では手動インストールについて解説する。
+まずは Elisp ファイルの配置について解説した後、配置されたファイルのバイトコンパイルについて解説する。
+%%
+%% 款：Elisp を配置する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{Elisp を配置する}
+インストールしたい Elisp をロードパスに追加されているディレクトリに配置する。
+ここでは例としてアンドゥを強化する undo-tree.el をインストールしてみることにする。
+この拡張機能は ELPA からインストール可能となっているが、ここでは解説のために手動でインストールしてみることにする。\\
+
+Linux や Mac の場合、ターミナルから次のようにコマンドを実行するのが簡単である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+$ cd ~/.emacs.d/elisp
+$ curl -0 http://www.dr-qubit.org/undo-tree/undo-tree.el
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\textasciitilde{}/.emacs.d/elisp を設定によってロードパスへ追加している場合、これだけで拡張機能のインストールは完了である。
+Windows の場合はブラウザなどからファイルをダウンロードして \textasciitilde{}/.emacs.d/elisp フォルダへコピーする。
+後は、第 4 章で解説した設定を init.el へ追記し、起動と同時に利用可能としておく。
+%%
+%% 款：バイトコンパイルする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{バイトコンパイルする}
+バイトコンパイルとは Elisp の読み込みを速くするために el ファイルをバイトコードと呼ばれる特別な形式に変換して elc ファイルというファイルを出力する処理のことである。
+拡張機能の中にはバイトコンパイルが必須のものも存在し、インストールした拡張機能はバイトコンパイルしておくのが一般的である。
+package.el を用いてインストールされた Elisp は自動的にバイトコンパイルされるため、この処理は不要となる。\\
+
+elc ファイルが作成されると、同名の el ファイルが存在したとしても load 関数も require 関数も elc ファイルのみを読み込む。
+従って、バイトコンパイル済みの el ファイルを編集した場合は必ず再度バイトコンパイルする必要がある。\\
+
+注意点として、Emacs~22 と 23 では内部文字コードが大きく変更されたため、23 でバイトコンパイルしたファイルは 22 以前では読み込むことができない。
+逆に 22 でバイトコンパイルしたファイルは 23 以降でも読み込み可能となっている。
+Emacs 22 と 23 を併用する場合は、とりあえず 22 でバイトコンパイルしておくか、拡張機能のインストール先を分ける必要がある。
+%%
+%% 款：byte-compile-file コマンド
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{byte-compile-file コマンド}
+今回手動でインストールした undo-tree.el はまだバイトコンパイルされていないため、これをバイトコンパイルしてみる。
+Emacs を起動した状態で \texttt{M-x byte-compile-file RET} を実行するとミニバッファでファイル名を問われるので \textasciitilde{}/.emacs.d/elisp/undo-tree.el を指定する。
+すると、undo-tree.el ファイルがバイトコンパイルされ同じディレクトリに undo-tree.elc ファイルが生成される。
+%%
+%% 款：シェルからバイトコンパイルする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{シェルからバイトコンパイルする}
+Emacs にはエディタとしての利用法以外に、フレームを描画せず Perl や Ruby のように Elisp を処理するためのバッチモードという機能が備わっている。
+これを利用してシェルからコマンドラインによって Elisp ファイルをバイトコンパイルすることも可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!090,linewidth=0.50pt,backgroundcolor=gray!90]\color{gray!10}
+\begin{verbatim}
+バージョンを指定する方法
+$ emacs-25.2 -batch -f batch-byte-compile ~/.emacs.d/elisp/undo-tree.el
+Emacs.app を利用する方法（Mac 専用）
+$ /Application/Emacs.app/Contents/MacOS/
+   Emacs -batch -f batch-byte-compile ~/.emacs.d/elisp/undo-tree.el
+emacs.exe を利用する方法（Windows 専用）
+> \emacs\bin\emacs.exe -batch -f atch-byte-compile ~/.emacs.d/elisp/undo-tree.el
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：package.el によるインストール
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{package.el によるインストール}
+次に package.el によるインストール方法を解説する。
+まずパッケージリポジトリの追加について解説した後、実際のインストール方法を解説する。
+初回のみ少々設定が必要となるが、その後は基本的に設定なしで利用可能である。
+%%
+%% 款：ELPA リポジトリを追加する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ELPA リポジトリを追加する}
+package.el は ELPA リポジトリを通じて Elisp のインストールを行うが、この ELPA は 1 つではない。
+代表的な ELPA リポジトリは以下の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-0.40zw}%\setlength{\labelsep}{+1.00zw}
+\item GNU ELPA： \hspc{0.00pt}http://elpa.gnu.org/
+\item marmalade：\hspc{6.00pt}https://marmalade-repo.org/
+\item MELPA：    \hspc{15.0pt}https://melpa.org/
+\end{itemize}\vspc{-0.50zw}
+GNU ELPA は Emacs の開発元である GNU プロジェクトが管理しているリポジトリであり、本家本元の ELPA である。
+FSF（Free Software Foundation）が著作権を保護している Elisp のみが登録されている。\\
+
+他の 2 つは ELPA 互換リポジトリである。
+GNU ELPA は著作権を FSF へ譲渡する必要があるが、こちらのリポジトリではその必要はない。
+誰もが気軽に Elisp の登録が行えるようになっており、GNU ELPA よりもかなり多くの Elisp が登録されている。
+その為、package.el を利用して Elisp をインストールする場合には、このどちらかのリポジトリを追加することになる。\\
+
+尚、これ以外にも ELPA 互換リポジトリ（以下、特に区別を必要としない場合は単に ELPA と記述する）は存在するので、詳しく知りたい者は Emacs Wiki の ELPA のページ\footnote{https://www.emacswiki.org/emacs/ELPA}を参照すること。\\
+
+それでは ELPA を追加してみる。
+初期状態では GNU ELPA のみがリポジトリとして登録されているため、それ以外の ELPA を追加する場合は次の設定を追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(require 'package) ; package.el を有効化する。
+;; パッケージリポジトリに Marmalade と MELPA を追加する。
+(add-to-list
+ 'package-archives
+ '("marmalade" . "https://marmalade.org/packages/"))
+(add-to-list
+ 'package-archives
+ '("melpa" . "https://melpa.org/packages/#/"))
+(package-initialize) ; インストール済みの Elisp を読み込む。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+最後の package-initialize 関数は package.el によってインストールされた Elisp を読み込むためのコマンドである。
+この設定を追記しておくことで、今後インストールした Elisp のほとんどが特に設定を必要とすることなく利用可能となる。\\
+
+これで ELPA から Elisp をインストールする準備が整ったので、実際のインストールへ進む。
+%%
+%% 款：パッケージ一覧を取得する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{パッケージ一覧を取得する}
+それでは ELPA に登録されているパッケージを実際にインストールしてみる。
+初めに、パッケージ一覧を取得するコマンドを実行する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x list-packages}
+\end{itemize}\vspc{-0.50zw}
+表示に少々時間がかかるかもしれないが、ELPA に登録されているパッケージ一覧が表示される。\enlargethispage{1.50zw}
+パッケージ一覧が表示されているバッファは package-menu-mode というメジャーモードになっており、操作は表\ref{package-mode-menu の操作一覧}の通りである。
+\vspc{-0.75zw}\begin{longtable}{ll}
+  \caption[]{package-mode-menu の操作一覧\label{package-mode-menu の操作一覧}} \\[-1.30zw]\toprule
+  \textgt{キー}   & \textgt{説明}                                              \\ \midrule\midrule
+  \texttt{h}      & ミニバッファに操作ヘルプを表示する。                       \\ \midrule
+  \texttt{p}      & 前の行へ。                                                 \\ \midrule
+  \texttt{n}      & 次の行へ。                                                 \\ \midrule
+  \texttt{?, RET} & パッケージの説明を取得する。                               \\ \midrule
+  \texttt{i}      & インストール候補としてマークする。                         \\ \midrule
+  \texttt{U}      & アップデート可能なパッケージを全てマークする。             \\ \midrule
+  \texttt{d}      & 削除候補としてマークする。                                 \\ \midrule
+  \texttt{DEL}    & 1 行上のマークを外す。                                     \\ \midrule
+  \texttt{u}      & 現在行のマークを外す。                                     \\ \midrule
+  \texttt{x}      & マークしたパッケージをインストール／削除する。             \\ \midrule
+  \texttt{r}      & パッケージ一覧をリフレッシュする。                         \\ \midrule
+  \texttt{q}      & ウィンドウを閉じる。                                       \\ \midrule
+  \texttt{f}      & フィルタで絞り込む（\texttt{g} または \texttt{q} で解除）。\\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 款：パッケージ一覧から選択してインストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{パッケージ一覧から選択してインストールする}
+例として Emacs のバッファを表示通りに HTML 化する htmlize という拡張機能をインストールしたい場合、htmlize の行で i を押す。
+すると htmlize がインストール候補としてマークされる。
+そして x を押すと、ミニバッファに実行確認の yes/no が問われるので、\texttt{yes RET} と答えるとパッケージのインストールが開始される。\\
+
+インストール先はデフォルトで \textasciitilde{}/.emacs.d/elpa 以下となっている。
+パッケージのダウンロードからバイトコンパイルの順序で進行していき、バイトコンパイルが開始される際、Emacs 上で開いている全ての未保存ファイルを保存するか問われる。
+バイトコンパイルが終了するとインストール完了である。\\
+
+尚、インストールされた拡張機能は手動インストールの際とは異なり、直ちに利用可能にはなっていない。
+利用するためには ELPA からインストールした拡張機能を読み込むためのコマンドを実行する必要がある。
+そのコマンドが package-initialize なのである。
+init.el への記述は Emacs 起動時に一度だけ実行されるだけなので、Emacs の再起動をすることなく拡張機能を読み込むためには次のコマンドを実行する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-initialize}
+\end{itemize}\vspc{-0.50zw}
+これで先程インストールした htmlize の機能が利用可能となる。\\
+
+package.el を用いてインストールした拡張機能には初期設定ファイルが同梱されており、基本的には init.el に設定を記述することなく利用可能となっている（但し、全てではない）。
+詳しくは後述の「インストール先のディレクトリ構成と設定の仕組み」で解説する。
+%%
+%% 款：コマンドから直接インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{コマンドから直接インストールする}
+次はコマンドからインストールする方法を解説する。
+例として、Emacs をターミナルとして利用可能とする multi-term という拡張機能をインストールしてみる。
+\texttt{M-x list-packages} によって一度パッケージリストを取得している場合は次のコマンドによってインストールすることが可能である。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET multi-term RET}
+\end{itemize}\vspc{-0.50zw}
+これは次の S 式を評価するのと同じである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{(package-install `multi-term)}
+\end{itemize}\vspc{-0.50zw}
+先程と同様に \texttt{M-x Package-initiliza} を実行すると、直ちに multi-term の機能が利用可能となる。
+multi-term については第 7 章で解説する。
+%%
+%% 款：ファイルやバッファからインストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ファイルやバッファからインストールする}
+package.el には、ダウンロードしたファイルやバッファに記述されているコードからインストールする機能も用意されている。
+次のコマンドを実行すると、指定した Elisp ファイルをインストールする。\enlargethispage{0.20zw}
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install-file RET Elispファイルのパス名 RET}
+\end{itemize}\vspc{-0.50zw}
+また、インストールしたい Elisp コードを表示した状態で \texttt{M-x package-install-from-buffer} を実行すると、バッファから Elisp をインストールすることが可能である。
+%%
+%% 款：インストール先のディレクトリ構成と設定の仕組み
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストール先のディレクトリ構成と設定の仕組み}
+手動インストールの場合とは異なり、Elisp パッケージマネージャを利用してインストールした拡張機能は、基本的に init.el に設定を記述する必要はない。
+package-initialize を実行するだけで設定が済むようになっている。
+どのような仕組みで実現されているか理解するために、以下で解説する。\\
+
+package.el によってインストールされる拡張機能は \textasciitilde{}/.emacs.d/elpa 以下へとインストールされ、ELPA からインストールされる拡張機能は「パッケージ名-バージョン」という形式のディレクトリ以下にインストールされる。
+そして、拡張機能本体以外に「パッケージ名-pkg.el」と「パッケージ名-autoloads.el」という 2 つのファイルも併せてインストールされる。
+設定の自動化は「パッケージ名-autoloads.el」によって実現されている。
+「パッケージ名-autoloads.el」の正体は、その名の通りパッケージのコマンドを自動的に読み込む設定であり、autoload 関数を利用する方法で記述されている。
+「パッケージ名-pkg.el」はパッケージのバージョンが定義されているファイルで、package.el がパッケージのバージョンを管理するために利用される。
+%%
+%% 節：テーマ
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{テーマ}
+第 5 章において装飾を変更するフェイスについて解説したが、Emacs には背景色や文字色などの装飾を設定したテーマと呼ばれる仕組みが用意されている。
+%%
+%% 項：テーマの変更
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{テーマの変更：load-theme}
+テーマを変更するには、\texttt{M-x load-theme RET} を実行する。
+すると、ミニバッファで「Load custom theme:」と問われるので、利用したいテーマ名を入力する。
+勿論、TAB による補完入力と候補一覧も利用可能である。
+テーマ名を入力して RET を押すと、直ちにテーマが適用され Emacs の見た目が変化する。
+テーマを解除したい場合には \texttt{M-x disable-theme RET 解除したいテーマ名 RET} を実行する。
+解除したいテーマ名の入力において TAB を押すと現在適用されているテーマが補完される。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+デフォルトで用意されている意外のテーマを利用したい場合には、ELPA からインストールすることが可能である。
+テーマを探す際は「Emacs Themes」\footnote{https://emacsthemes.com}を参考にするとよいだろう。\\
+
+例えば、Emacs で人気のある zenburn-theme\footnote{https://spacemacs.org} をインストールするには次のコマンドを利用する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET zenburn-theme RET}
+\end{itemize}\vspc{-0.50zw}
+外部からインストールしたテーマを load-theme コマンドから適用しようとした場合、読み込み確認と次回から確認なしに読み込みを行うかどうか問われる。
+特に問題がなければ、両方とも yes と答えればよいだろう。
+但し、2 回目の問いで yes と答えても次回のコマンド実行時に読み込みの確認が行われないだけで、Emacs を再起動するとテーマが適用されていない状態で起動する。
+%%
+%% 款：テーマ選択を保存する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{テーマ選択を保存する}
+次回からも同じテーマを利用したい場合には、次の設定を init.el に追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; zenburn テーマを利用する。
+(load-theme `zenburn t)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+これで Emacs の起動時に自動的にテーマが適用されるようになる。
+%%
+%% 節：統一したインタフェースでの操作
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{統一したインタフェースでの操作}
+Emacs は様々な操作が可能であり、その全てを覚えるには相当な学習コストが必要となる。\enlargethispage{1.60zw}
+ファイルを開く、バッファを選択するなど似たようなアクションを同じ操作で実現することができれば、学習コストを下げることが可能となる。
+最近の Emacs では Helm を利用することによって統一されたインタフェースによる操作が行えるようになっている。
+%%
+%% 項：候補選択型インタフェース：Helm
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{候補選択型インタフェース：Helm}
+Helm はさまざまな操作を 1 つのインタフェースで実現してしまう便利な拡張機能で、その操作性も極めてシンプルである。
+Helm が提供する機能は次の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{+0.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[\ajMaru{1}] \textgt{ソースと呼ばれる情報源に基づいた候補のリストアップ}
+\item[\ajMaru{2}] \textgt{インクリメンタルな候補の絞り込み}
+\item[\ajMaru{3}] \textgt{アクションの実行}
+\end{itemize}\vspc{-0.50zw}
+これらの一連の操作は、さまざまな Emacs の操作に応用が効く。
+例えば、バッファを切り替える際、コマンドを実行する際、ドキュメントを検索する際など、通常の操作に比べて視認性に優れ、また多くのケースでタイプ数を節約することが可能となる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+MELPA リポジトリを追加している状態の Emacs であれば、Helm のインストールは非常に簡単である。
+次のようにコマンドを実行すると Helm がインストールされる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET helm RET}
+\end{itemize}\vspc{-0.50zw}
+Helm は Helm 本体以外に Helm extensions（以下 Helm 拡張と記す）と呼ばれるパッケージによって機能追加を行うことが可能となっている。
+\texttt{M-x list-packages} から興味のある Helm 拡張が存在すればインストールしてみるとよいだろう。
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+Helm を利用するための設定は非常にシンプルである。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; Helm を利用可能にする。
+(require `helm-config)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+基本的には、これのみで Helm の利用を開始することができる。
+%%
+%% 款：ファイルを開く・バッファを切り替える
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{ファイルを開く・バッファを切り替える}
+Emacs 上でファイルとバッファの違いは、現実的には Emacs で開いているかどうかでしかなく（開いているものがバッファ、開いていないものがファイル）ファイルを開くことも、バッファを切り替えることも表示をアクティブにしたいという意味では同じである。\\
+
+まずは、次のコマンドを実行してみる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x helm-for-files}
+\end{itemize}\vspc{-0.50zw}
+すると、バッファのリストと最近開いたファイルのリスト、そしてカレントディレクトリのファイルリストが表示される。
+helm-for-files を実行した状態で文字をタイプすると、その文字にマッチするファイルとバッファのみが絞り込まれる。
+\texttt{<up>}、\texttt{<down>} もしくは \texttt{C-n}、\texttt{C-p} によって行を移動することができ、RET を押すと選択中のファイルもしくはバッファがカレントバッファとなる。\\
+
+Helm 実行中に TAB もしくは \texttt{C-i} を実行すると、アクションというコンテキストメニュー（右クリックメニュー）のようなメニュー選択でき、デフォルト以外の処理（例えば、バッファを閉じる）を選択できるようになる。
+また、Helm 実行中に \texttt{C-SPC} を実行すると現在行をマークすることができる。
+これを活用することで、一度に複数の項目を処理の対象にすることが可能となる。
+%%
+%% 款：キーバインドを一覧表示する：helm-descbinds
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{キーバインドを一覧表示する：helm-descbinds}
+ここからは、バッファやファイルを操作する以外の便利な Helm 拡張を紹介していく。\\
+
+helm-descbinds をインストールした上で (helm-descbinds-mode) という設定を追加していると、\texttt{C-h b} によるキーバインド一覧表示が Helm インタフェースに置き換わる。
+関数名やキーバインドから絞り込むことができ、表示がとても見易いのが特徴である。
+helm-descbinds を起動して、例えば「mark」と入力すると、コマンド名に「mark」を含むキーバインドだけを見つけることができる。
+そのまま選択してコマンドを実行することも可能である。
+%%
+%% 款：過去の履歴からペーストする：helm-show-kill-ring
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{過去の履歴からペーストする：helm-show-kill-ring}
+Emacs は過去に \texttt{C-k} や \texttt{C-w} で消去した文字をキルリングと呼ばれる場所に保存している。
+\texttt{M-x helm-show-kill-ring} を利用すると、キルリングを一覧表示することができるため、標準の \texttt{C-y}、\texttt{M-y} よりも格段に使い勝手に優れる。\\
+
+helm-show-kill-ring が気に入ったのであれば、次の設定を追記ればよい。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; M-y に helm-show-kill-ring を割り当てる。
+(define-key global-map (kbd "M-y") `helm-show-kill-ring)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：moccur を利用する：helm-c-moccur
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{moccur を利用する：helm-c-moccur}
+helm-c-moccur をインストールして、以下のように設定すると \texttt{C-M-o} を実行することで helm-c-moccur-by-moccur というコマンドが実行される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (require 'helm-c-moccur nil t)
+  (setq
+   helm-idle-delay 0.1
+   ;; helm-c-moccur 用 'helm-idle-delay'
+   helm-c-moccur-helm-idle-delay 0.1
+   ;; バッファ情報をハイライトする。
+   helm-c-moccur-highlight-info-line-flag t
+   ;; 現在選択中の候補の位置を他の Window に表示する。
+   helm-c-moccur-enable-auto-look-flag t
+   ;; 起動時にポイント位置の単語を初期パターンにする。
+   helm-c-moccur-enable-initial-pattern t)
+   ;; C-M-o に helm-c-moccur-occur-by-moccur を割り当てる。
+   (global-set-key (kbd "C-M-o") 'helm-c-moccur-occur-by-moccur))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+コマンドを実行するとミニバッファに入力を求められるので、検索したい文字列をタイプすることでマッチする行がリストアップされる。
+尚、この検索には正規表現も用いることができる。
+%%
+%% 節：入力の効率化
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{入力の効率化}
+昨今ではブラウザ上でテキスト入力を行うことが増えてきたが、最もテキストを入力するソフトウェアはテキストエディタであろう。
+だからこそ、入力を効率化するための準備はしておきたい。
+%%
+%% 項：補完入力の強化
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{補完入力の強化：Auto Complete Mode}
+エディタを使いこなす上で検索・置換と双璧を成す機能と言えば、補完機能であろう。
+Emacs の補完機能には以前から略語展開という機能が備わっていたが、ここ数年で IDE を超える高機能な補完機能を追加する Auto Complete Mode（以下、auto-complete と記す）という拡張機能が登場した。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+これも ELPA からインストール可能である。
+\texttt{M-x package-install RET auto-complete RET} でインストールする。
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+auto-complete はマイナーモードをオンにして使用するため、ELPA でインストールした場合も利用には次の設定が必要となる。\enlargethispage{0.90zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; auto-complete の設定
+(when (require 'auto-complete-config nil t)
+  (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+  (ac-config-default)
+  (setq ac-use-menu-map t)
+  (setq ac-ignore-case nil))
+\end{verbatim}
+\end{mdframed}\vspc{-0.10zw}
+auto-complete-config.el を読み込むことで auto-complete も併せて読み込まれる。
+また、ac-config-default 関数を実行することによってサンプル設定が有効化される。
+%%
+%% 款：補完候補をポップアップ＆絞り込む
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{補完候補をポップアップ＆絞り込む}
+auto-complete は特殊な操作を必要としない。
+文字を入力すると自動的に補完候補が表示されるので、自然な流れで利用することができる。
+補完候補が表示されている状態で \texttt{C-s} を押すと、Emacs のインクリメンタル検索による候補の絞り込みが利用可能となる。
+この機能は候補が非常に多い場合に非常に有用である。
+%%
+%% 節：検索と置換の拡張
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{検索と置換の拡張}
+どんなエディタでも検索は頻繁に利用する機能である。
+Emacs には標準の iserach とは異なった形の便利な検索機能を提供する Elisp が多数存在する。
+%%
+%% 項：検索結果のリストアップ
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{検索結果のリストアップ：color-moccur}
+Emacs には標準で occur という検索にマッチした行を一覧表示するコマンドが用意されている。
+Emacs では検索に grep も利用可能だが、grep はファイルを検索するのに対して occur はファイルとして保存されていないバッファに対しても検索を行うことが可能である。
+その occur をマルチバッファ対応、操作性や可読性の向上などあらゆる面で利用し易くなるよう開発されたのが color-moccur\footnote{http://www.emacswiki.org/emacs/color-moccur.el} である。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から \texttt{M-x package-install RET color-moccur RET} でインストール可能である。
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+color-moccur を require 関数で読み込む設定を init.el に追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; color-mocuur を利用するための設定
+(when (require 'color-moccur nil t)
+  ;; M-o に occur-by-moccur を割り当てる。
+  (define-key global-map (kbd "M-o") 'occur-by-moccur)
+  ;; スペース区切りで AND 検索する。
+  (setq moccur-split-word t)
+  ;; ディレクトリ検索のときに除外するファイルを指定する。
+  (add-to-list 'dmoccur-exclusion-mask "\\.DS_Store")
+  (add-to-list 'dmoccur-exclusion-mask "^#.+#$"))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：代表的なコマンド
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{代表的なコマンド}
+color-moccur に関する代表的なコマンドは表\ref{color-moccur に関する代表的なコマンド}の通りである。\enlargethispage{1.45zw}
+\vspc{-0.50zw}\begin{longtable}{ll}
+  \caption[]{color-moccur に関する代表的なコマンド\label{color-moccur に関する代表的なコマンド}} \\[-1.30zw]\toprule
+  \textgt{名前}             & \textgt{説明}                                                      \\ \midrule\midrule
+  \texttt{occur-by-moccur}  & カレントバッファで moccur を実行する。                             \\ \midrule
+  \texttt{moccur}           & 全てのバッファで moccur を実行する。                               \\ \midrule
+  \texttt{dmoccur}          & 指定ディレクトリに対して moccur を実行する。                       \\ \midrule
+  \texttt{moccur-grep}      & moccur を用いた grep 検索を行う。                                  \\ \midrule
+  \texttt{moccur-grep-find} & moccur を用いた grep-find を実行する。                             \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 款：マルチバッファを検索し結果をリストアップする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{マルチバッファを検索し結果をリストアップする}
+\texttt{M-o} に割り当てた occur-by-moccur はカレントバッファのみを検索対象とする occur を color-moccur の機能で実現する機能である。
+*Moccur* 上で行移動すると、分割されたバッファに対応する行の周辺が表示され、RET を押すとその行へジャンプする。
+moccur を中断するには q を押す。
+%%
+%% 項：moccur の結果を直接編集する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{moccur の結果を直接編集する：moccur-edit}
+moccur は検索にマッチした行のみをバッファにリストアップする。
+その結果を直接編集することが可能なら、大量の置換も面倒ではなくなるだろう。
+そんな要望に応える機能が moccur-edit である。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET moccur-edit RET}
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+color-moccur をインストールした状態で mocccur-edit を読み込む。
+\vspc{+0.25zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; moccur-edit を利用するための設定
+(require 'moccur-edit nil t)
+\end{verbatim}
+\end{mdframed}\vspc{-1.75zw}
+%%
+%% 款：moccur の結果を編集する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{moccur の結果を編集する}
+moccur による検索を実行した後、*Moccur* バッファ上で r を押すことで検索結果を直接編集可能となる moccur-edit モードとなる。
+moccur-edit モードでは \texttt{C-c C-u}、\texttt{C-x k}、\texttt{C-c C-k (moccur-edit-kill-all-change)} を用いて編集を破棄することが可能である。\\
+
+望みの場所を編集した後に \texttt{C-c C-c} もしくは \texttt{C-x C-s (moccur-edit-finish-edit)} を押すと、編集箇所がバッファへと反映される。
+この状態ではまだ編集されたファイルは保存されていないので、編集をファイルに反映させるために \texttt{C-x s (save-some-buffers)} などを用いて保存する。
+%%
+%% 款：編集を終了した際にファイルに自動保存する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{編集を終了した際にファイルに自動保存する}
+次の設定を init.el へ追記することで編集の終了と同時にファイルへ保存することが可能となる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; moccur-edit-finsh-edit と同時にバッファをファイルに保存する
+(defadvice moccur-edit-change-file
+    (after save-after-moccur-edit-buffer activate)
+  (save-buffer))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：grep の結果を直接編集する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{grep の結果を直接編集する：wgrep}
+大量のファイルを検索する場合、moccur よりも高速に検索を行うことが可能な grep を利用する。
+こちらの検索結果も moccur-edit と同様に編集したいと思うかもしれない。
+そのような場合は wgrep\footnote{http://www.emacswiki.org/emacs/wgrep/el} を用いる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET wgrep RET}
+\end{itemize}\vspc{-1.70zw}
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+package-initialize では wgrep を読み込まないので、wgrep を読み込む設定を init.el へ追記する必要がある。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; wgrep を利用するための設定
+(require 'wgrep nil t)
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：grep の結果を直接編集する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{grep の結果を直接編集する}
+\texttt{M-x grep}、\texttt{M-x rgrep}、\texttt{M-x lgrep} などの grep コマンドから検索すると *grep* バッファに検索結果が表示される。
+そこで \texttt{C-c C-p (wgrep-change-to-wgrep-mode)} を実行すると、*grep* バッファを編集可能な wgrep-mode になる。
+後の操作は moccur-edit とほぼ同様となっており、\texttt{C-c C-k (wgrep-abort-changes)} で編集を破棄、\texttt{C-c C-c (wgrep-finish-edit)} で編集をバッファへ反映させる。
+moccur-edit と同様に編集内容はファイルに保存されないため、別途保存する必要があるが、\texttt{M-x wgrep-save-all-buffers RET} で wgrep によって編集したファイルを一括保存するコマンドが用意されているので、これを利用する。
+%%
+%% 節：さまざまな履歴管理
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{さまざまな履歴管理}
+PC を使って作業する際、前の状態に戻る処理で最もよく利用されるのはアンドゥ（Undo）であろう。
+アンドゥはアプリケーションの世界で標準的な機能として広く普及しており、なくてはならない機能である。
+本節では、履歴をより効率的に活用することが可能な拡張機能を幾つか紹介する。
+%%
+%% 項：編集履歴の記憶：undolist
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{編集履歴の記憶：undohist}
+エディタでアンドゥを利用すると編集履歴を遡って編集を取り消すことができるのだが、大抵の場合、ファイルを閉じたりエディタを終了してしまうと編集履歴はリセットされてしまう。
+すなわち、もはや元に戻したいと思ったファイルが既に閉じられてしまった後では、もはやアンドゥを用いても元に戻せなくなる。
+この問題を解消する拡張機能が undohist である。
+undohist を導入すると編集履歴をバッファ保存のタイミングで \textasciitilde{}/.emacs.d/undohist ディレクトリ以下に保存し続ける。
+そしてファイルを開く際に編集履歴を読み込み、ファイルを閉じても Emacs を再起動してもアンドゥを利用し続けることが可能となる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET undohist RET}
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+undohist を読み込んだ後に undohist-initialize 関数で呼び出す設定を init.el に追記する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; undohist を利用するための設定
+(when (require 'undohist nil t)
+  (undohist-initialize))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 項：アンドゥの分岐履歴：undo-tree
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{アンドゥの分岐履歴：undo-tree}
+例えば、編集の途中でアンドゥして編集を再開したが、やはりアンドゥする前の状態に戻りたくなった場合、通常のアンドゥでは戻ることはできない。
+undo-tree はアンドゥの分岐管情報を記憶し、樹形図で視覚化することにより解り易いアンドゥを提供し、リドゥを実現可能とする。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET undo-tree RET}
+\end{itemize}\vspc{-1.60zw}
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+undo-tree を読み込んだ後に global-undo-tree-mode によって undo-tree-mode を有効化する。
+また、リドゥをキーバインドで割り当てたい場合は undo-tree-redo をキーバインドに登録する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+(when (require 'undo-tree nil t)
+  ;; C-.にリドゥを割り当てる。
+  ;; (define-key global-map (kbd "C-.") 'undo-tree-redo)
+  (global-undo-tree-mode))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 款：樹形図を見ながらアンドゥする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{樹形図を見ながらアンドゥする}
+\texttt{C-x u (undo-tree-visualize)} コマンドを実行すると、アンドゥの履歴を視覚化したバッファが表示される。
+使い方も直感的で、樹形図を移動するとバッファがアンドゥされていくので、戻りたいポイントに来た際に q で抜ければよい。
+t で樹形図を時間表示と切り替えることも可能である。
+%%
+%% 項：カーソルの移動履歴：point-undo
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{カーソルの移動履歴：point-undo}
+エディタの操作は文字の入力だけではない。
+カーソル移動も\ruby{歴}{れっき}とした操作である。
+行数の多いファイルを編集している際、検索や誤ってバッファ先頭や終端まで移動してしまったりとカーソルが自分の意図しない場所へ行ってしまい、先程まで編集していた場所を探すのに苦労したことはないだろうか？
+そういったエディタ内迷子も point-undo を利用することで解決することが可能である。
+point-undo を利用すると、編集中のバッファ内で行われたカーソル移動をメモリに記録し、編集と同じ感覚でカーソル移動をアンドゥ、リドゥすることが可能となる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET point-undo RET}
+\end{itemize}\vspc{-1.70zw}
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+point-undo を読み込んだ後、キーバインドを割り当てる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; point-undo を利用するための設定
+(when (require 'point-undo nil t)
+  (define-key global-map (kbd "M-[") 'point-undo)
+  (define-key global-map (kbd "M-]") 'point-redo))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+%%
+%% 款：カーソル位置を戻す／やり直す
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{カーソル位置を戻す／やり直す}
+point-undo を割り当てたキーバインドを実行すると、カーソル位置を 1 つ前の場所に戻すことができる。
+また、point-redo によってその操作をやり直すことも可能である。
+%%
+%% 節：ウィンドウ管理
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{ウィンドウ管理}
+第 3 章で解説したが、Emacs には 1 つの画面（フレーム）を横や縦に分割してフレーム中に複数のウィンドウを作成することができる。
+それによって画面を切り替えることなく、ファイルを見比べたりすることが可能となっていた。
+この分割状態を維持したまま別の作業をしたいと思った際、新たにフレームを作成することで一応実現可能だが、フレームの数が増えていくと切り替えに時間がかかり、1 つ 1 つのフレームが小さくなり作業効率が低下する。
+%%
+%% 項：分割状態を維持する
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{分割状態を維持する：ElScreen}
+ウィンドウの分割をしたいがフレーム数は増やしたくないといった要望や、同じバッファの 10 行目付近を表示しているウィンドウと 1,000 行目付近を表示しているウィンドウを交互に切り替えたいなどといった要望を叶えるためには、ウィンドウの状態を保持しておく拡張機能があれば実現できそうである。\\
+
+ターミナル環境に慣れている者にとって、そういった画面の状態を保持したい場合に真っ先に思いつくのが GNU Screen という仮想端末ソフトウェアであろう。
+この Screen のような機能を提供してくれる拡張機能が ElScreen である。
+ElScreen を導入するとウィンドウとフレームの間にスクリーンと呼ばれる仮想フレームのようなものが作成可能となり、ウィンドウ状態を保持したまま切り替えることが可能となる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET elscreen RET}
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+ElScreen を読み込むことで利用可能となる。
+標準では \texttt{C-z} にプレフィックスキーが割り当てられているため、変更したい場合は elscreen-prefix-key に別のキーを割り当てる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; ElScreen のプレフィックスキーを変更する（初期値は C-z）
+;; (setq elscreen-prefix-key (kbd "C-t"))
+(when (require 'elscreen nil t)
+  (elscreen-start)
+  ;; C-z C-z をタイプした場合にはデフォルトの C-z を利用する
+  (if window-system
+      (define-key elscreen-map (kbd "C-z") 'iconfig-or-deiconfy-frame)
+    (defun-key elscreen-map (kbd "C-z") 'suspend-emacs)))
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：スクリーンを作成する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{スクリーンを作成する}
+ElScreen という名前の通り Screen の動作を参考にして作成されたこの拡張機能は、操作方法も Screen ライクになっている。
+Screen を利用したことがある者は違和感なく利用できるようになっている。\\
+
+標準の状態では \texttt{C-z} が ElScreen の各種コマンドを利用するためのプレフィックスキーとなっている。
+ElScreen を読み込んだ段階で、既に 0 番目のスクリーンが 1 枚作成されている状態となっている。
+\texttt{C-z c (elscreen-create)} を実行すると、番号 1 番の新しいスクリーンが作成されて新しいスクリーンに移動する。
+もう 1 度 \texttt{C-z c} を実行すると番号 2 番のスクリーンが作成され移動する。
+%%
+%% 款：スクリーンを移動する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{スクリーンを移動する}
+番号 2 番のスクリーンにいる状態で \texttt{C-z p (elscreen-previous)} を実行すると、番号 1 番のスクリーンへ移動する。
+\texttt{C-z n (elscreen-next)} を実行すると今度は番号 2 番のスクリーンへ移動する。
+もう 1 度 \texttt{C-z n} を実行すると、まだ番号 3 番のスクリーンが存在しないため番号０番のスクリーンへ移動する。
+ElScreen における代表的なキーバインドを表\ref{Elscreen に関する代表的なコマンド}にまとめておく。
+\vspc{-1.50zw}\begin{longtable}{ll}
+  \caption[]{Elscreen に関する代表的なコマンド\label{Elscreen に関する代表的なコマンド}} \\[-1.30zw]\toprule
+  \textgt{キー}                      & \textgt{説明}                                     \\ \midrule\midrule
+  \texttt{C-z c}                     & 新規スクリーンを作成して移動する。                \\ \midrule
+  \texttt{C-z k}                     & 現在のスクリーンを閉じる。                        \\ \midrule
+  \texttt{C-z p}                     & 前のスクリーンへ移動する。                        \\ \midrule
+  \texttt{C-z n}                     & 次のスクリーンへ移動する。                        \\ \midrule
+  \texttt{C-z a}                     & 前と次のスクリーンをトグルする。                  \\ \midrule
+  \texttt{C-z 0, C-z 1,\ldots,C-z 9} & 番号のスクリーンへ移動する。                      \\ \midrule
+  \texttt{C-z\hphantom{.}?}          & ヘルプを表示する。                                \\ \bottomrule
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：メモ・情報整理
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{メモ・情報整理}
+Emacs はコードを書くためだけのツールではない。
+テキスト編集全般を強力にサポートするための機能が幾つも備わっている。
+さて、プログラミング以外で PC に向かって文章を書くのはどういった場合だろうか？
+メモを取るため、ブログの記事を書くため、スケジュール管理をするため、簡単な計算をするためなどが考えられる。
+これらの文書を書く際、導入しておくと便利なのが（ファイル名や記述スタイルなどの）フォーマットである。
+予め決められたフォーマットに従ってマークアップ（意味付け）をしておくだけで、様々な恩恵を受けることができる。
+%%
+%% 項：メモ書き・TODO 管理
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{メモ書き・TODO 管理：howm}
+howm (\emph{Hitori Otegaru Wiki Modoki}) は作者の紹介によると次のようなツールである。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.0pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+  Emacs で断片的なメモをどんどんとるための環境です。
+  分類機能はあえてつけていません。
+  かわりに、全文検索とメモ間リンクが手軽にできるようにしました。
+  自由形式なので改宗も不要 \verb|:-)|\\
+  ―\hspc{-1.00pt}―「howm:Hitori Otegaru Wiki Modoki（http://howm.sourceforge.jp/index-j.html）」
+\end{mdframed}\vspc{-0.70zw}
+howm を利用すると通常のテキストに次の機能を追加することが可能となる。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \textgt{Wiki のようなリンク機能}
+\item \textgt{TODO リスト機能}
+\end{itemize}\vspc{-0.50zw}
+主な機能としてはこれだが、これらの機能を組み合わせて便利にメモを取ることが可能となる。
+%%
+%% 款：インストールする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{インストールする}
+ELPA から次のようにしてインストールする。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[] \texttt{M-x package-install RET howm RET}
+\end{itemize}\vspc{-1.50zw}
+%%
+%% 款：利用可能とする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能とする}
+howm を使い始めるための設定は次のとおりである。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; hown メモ保存の場所を指定する。
+(setq hown-directory (concat user-emacs-directory "howm"))
+;; howm-menu の言語に日本語を設定する。
+(setq howm-menu-lang 'ja)
+;; howm メモを 1 日 1 ファイルにする。
+(setq howm-file-name-format "%Y/%m/%Y-%m-%d.howm")
+;; howm-mode を読み込む。
+(when (require 'howm-mode nil t)
+  ;; C-c,, で howm-menu を起動する。
+  (define-key global-map (kbd "C-c ,,") 'howm-menu))
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+howm-directory は howm がメモを保存するディレクトリである。
+標準では \textasciitilde{}/howm となっているが \textasciitilde{}/.emacs.d 以下に集約した方がバックアップしやすいだろう。
+%%
+%% 款：howm-menu を起動する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{howm-menu を起動する}
+howm の利用方法は極めてシンプルである。
+メモを取りたい際に howm-menu を起動して、好きなだけメモを取るというスタイルである。
+\texttt{M-x howm-menu} もしくは \texttt{C-c\hphantom{.},\hphantom{.},} を実行すると howm-menu と呼ばれるバッファが表示される。
+メニューの最上段にはショートカットキーが表示されているので、すぐに使い方を覚えることができるだろう。
+c を押すと新規のメモを作成することができる。
+%%
+%% 款：メモを書く
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{メモを書く}
+例えば、init.el を編集中にメモファイルを作成すると、次のようなテキストが自動的に挿入される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+=
+[2020-2-17 21:13] >>> ~/.emacs.d/init.el
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\verb'=' から始まる行は howm 内でメモのタイトルとして使用される。
+\verb'>>> ~/.emacs.d/init.el' の部分はファイルへのリンクとなっており、RET を押すことで *howmS* バッファが開き、移動可能なファイル一覧が表示される。
+この場合は、\verb'>>> ~/.emacs.d/init.el' を含むメモと init.el が対象となる。\\
+
+実際にメモを書いてみると以下のようになる。\enlargethispage{0.50zw}
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+= howm に関する設定を追加してみた
+[2020-2-17 21-26] >>> ~/.emacs.d/init.el
+
+http://www.bookshelf.jp/soft/meadow_38.html#SEC563
+こちらの記事が大変参考になりました。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+という形でメモを取って保存した後に、再び \texttt{C-c\hphantom{.},\hphantom{.},} で howm-menu を起動すると「最近のメモ」という項目に先頬のメモが追加される。
+%%
+%% 款：保存と同時に閉じる
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{保存と同時に閉じる}
+頻繁にメモを取るようになると「作業→メモを取る→作業に戻る」という具合に、流れるようにメモを取りたくなる。
+メモを取った後、保存と同時にメモを閉じられると便利である。
+次の設定を追記することで、それを実現することが可能となる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; howm メモを保存と同時に閉じる。
+(defun howm-save-buffer-and-kill ()
+  ; howm メモを保存と同時に閉じる。
+  (interactive)
+  (when (and (buffer-file-name)
+             (howm-buffer-p))
+  (save-buffer)
+  (kill-buffer nil)))
+;; C-c C-c でメモの保存と同時にバッファを閉じる。
+(define-key howm-mode-map (kbd "C-c C-c") 'howm-save-buffer-and-kill)
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+howm には通常のメモ以外にも予定表や TODO 管理機能などさまざまな機能が用意されているので、より詳しく知りたい者は公式サイト\footnote{http://howm.sourceforge.jp/index-j.html}のドキュメントを参照すること。
+%%
+%% 項：アウトラインエディタ
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{アウトラインエディタ：org-mode}
+org-mode は Emacs~23 から同梱されたアウトラインエディタである。
+簡単な入力規則に従って記述することで、豊富な機能を提供してくれる。
+org-mode は Emacs に標準で同梱されているため、インストールの必要はない。
+拡張子 org のファイルを開くと自動的に org-mode となる。
+%%
+%% 款：アウトライン編集機能
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{アウトライン編集機能}
+まずは memo.org のようなファイルを作成してみる。
+すると Emacs は自動的に org-mode となる。
+org-mode 上では、次のような様々なアウトライン編集機能が利用可能である。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+* 見出し 1
+** 見出し 2
+*** 見出し 3
+**** 見出し 4
+### 箇条書きなどを入力する
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+見出しの上で TAB を押すと、見出しの中を折り畳むことができる。
+\texttt{-} や \texttt{+} そして \texttt{1.} などの番号を行頭に付加するとリストとなる。
+リストを続けて入力する際、\texttt{M-RET (org-insert-heading)} という便利なキーバインドが用意されている。
+これは現在行と同じリスト項目を次の行に挿入してくれる。
+%%
+%% 款：表を入力する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{表を入力する}
+テキストで表を入力することは多くないかもしれないが、メールなどで簡単な表を用いて説明したい場合などがある。
+そのような場合は org-mode の表入力機能を用いる。
+\texttt{|A|B|C|} と入力して TAB を押すと次のように展開される。
+\vspc{-1.00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+| A | B | C |
+| _ |   |   |
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\texttt{\_} の位置がカーソル位置である。
+org-mode では \texttt{|} で開始された行は自動的に表として扱われ、表編集機能になる。
+この中で TAB は次のフィールドへ移動するためのキーとなっている。
+勿論 \texttt{<backspace>} で前のフィールドへ移動することができる。
+RET は行を追加する。
+
+次は、\texttt{|-} と入力して TAB を押してみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+| A | B | C |
+|- ← ここで TAB を押す。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+すると、水平線が挿入される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+| A | B | C |
+|---+---+---|
+|   |   |   |
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+org-mode には、この他にも HTML や\TeX{}などに出力する機能など、多くの機能が備わっている。
+興味のあるものはドキュメント\footnote{https://github.com/org-mode-doc-ja/org-ja/tree/master/work}を参照すること。
+%%
+%% 節：特殊な範囲の編集
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{特殊な範囲の編集}
+テキスト編集の際に複数行に渡ってカラム単位の編集を加えたい場合がある。
+しかし、通常の範囲選択は行単位で行われるため、一部のカラムのみを選択することはできない。
+だが、Emacs には表計算ソフトのようにカラムのみを選択し編集するための機能が備わっている。
+それが矩形編集機能である。
+%%
+%% 項：矩形編集
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{矩形編集：cua-mode}
+矩形（\emph{rectangle}）編集は Emacs に限らず大抵のエディタに備わっている機能だが、知らない者はどのエディタを使っていてもこの機能を知らない。
+しかし、知っている者にとってはなくてはならない機能の 1 つである。\\
+
+勿論 Emacs にも標準で矩形編集機能が備わっているが、少々キーバインドが特殊で覚えるのに苦労する。
+そこで、矩形編集機能を更に強化してキーバインドも簡略化した cua-mode を利用してみる。
+これで誰でも矩形編集を自由自在に扱うことができるようになるだろう。
+%%
+%% 款：利用可能にする
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{利用可能にする}
+cua-mode は本来 Emacs 上で CUA（\emph{Common User Access}）キーバインド（\texttt{C-z} でアンドゥ、\texttt{C-c} でコピーなど）を利用するためのマイナーモードであるが、実際にはこれらのキーバインドは Emacs のキーバインドに慣れ親しんだ者には邪魔であることが多い。
+しかし、cua-mode には使い勝手の良い矩形編集モードが備わっている。
+そこで、cua-mode を利用しつつ CUA キーバインドをオフにする設定を施す。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+;; cua-mode の設定
+(cua-mode t) ; cua-mode を有効化する。
+(setq cua-enable-cua-keys nil) ; CUA キーバインドを無効化する。
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 款：各行頭に文字を追加する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{各行頭に文字を追加する}
+cua-mode が有効化された状態で用いるキーバインドは \texttt{C-RET (cua-set-rectangle-mark)} である。
+例えば、次のようなテキストがあったとする。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+List1
+List2
+List3
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+この行頭に \texttt{-} を追加したい場合、\texttt{List1} の行頭にカーソルを置いた状態で \texttt{C-RET} をタイプする。
+するとピンク色のカーソルが表示され、矩形編集モードとなる。
+この状態で \texttt{List3} の行頭までカーソルを移動する。
+そして \texttt{-} を入力すると 3 行全ての行頭に \texttt{-} が挿入される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+- List1
+- List2
+- List3
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+\texttt{C-g} をタイプして矩形編集モードを終了する。
+因みに、Emacs 標準の矩形編集機能を用いて同じことを実現する場合は、\texttt{List1} の行頭でマークして \texttt{List3} の行頭へカーソル移動し、\texttt{C-x r t (string-rectangle)} とタイプしてからミニバッファに \texttt{-} を入力して RET する。
+%%
+%% 款：各行頭の文字列を削除する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{各行頭の文字列を削除する}
+続いて \texttt{List} の文字を削除する。
+これも矩形編集機能の出番である。
+\texttt{List1} の \texttt{L} にカーソルを置いて、再び \texttt{C-RET} をタイプする。
+そして、\texttt{List3} の \texttt{t} にカーソル移動する。
+ピンク色のエリアに \texttt{List} の文字が囲まれていることを確認して \texttt{C-w} をタイプする。
+すると、\texttt{List} の文字が全て切り取られる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+- 1
+- 2
+- 3
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+尚、これを標準の矩形編集機能で実現するには \texttt{List1} の \texttt{L} の位置でマークして \texttt{List3} の \texttt{3} の位置までカーソル移動し、\texttt{C-x r d (delete-rectangle)} をタイプする。
+%%
+%% 款：連番を入力する
+%%------------------------------------------------------------------------------------------------%%
+\subsubsection{連番を入力する}
+ここまで挿入と切り取りの 2 つの矩形編集を紹介したが、次に cua-mode ならではの機能を紹介する。
+ここでは \texttt{M-o} と \texttt{M-n} を覚えておく。
+\texttt{M-o (cua-open-rectangle)} は選択範囲の右に向かって半角スペースを 1 つ追加するコマンドである。
+また、\texttt{M-n (cua-sequence-rectangle)} は連番入力を行うためのコマンドである。
+これらを組み合わせて、次の行頭に \texttt{1.\hspc{2.00pt}2.} のようなナンバリングを付加してみる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+ListA
+ListB
+ListC
+ListD
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+まず、\texttt{ListA} の行頭でマークして、次に \texttt{ListD} の行頭にカーソル移動して \texttt{C-RET} をタイプする。
+cua-mode の矩形編集機能は、先に通常のマークをしてから \texttt{C-RET} を実行してもマーク範囲を編集することができるようになっている。\\
+
+それでは \texttt{M-o} をタイプする。
+すると行頭にスペースに 1 文字追加される。
+そして \texttt{M-n} をタイプすると、ミニバッファに「Start value: (0)」という文字が表示され、入力を求められる。
+これは連番入力の初期値である。
+デフォルトは 0 になっているが、今回は 1 からなので 1 を入力して RET する。
+次は「Increment: (1)」と表示され入力を求められる。
+これは 1 行毎に加算される値である。
+例えば 3 と入力すれば 1 行毎に 3 が加算されるが、今回は 1 でよいので何も入力せず RET を押す。
+最後に「Format: (\%d)」と表示され入力を求められる。
+ここで挿入される文字列フォーマットを決めることが可能である。
+\%d は数値を出力するので、今回のように「\texttt{1.}」と出力したければ \texttt{\%d.\hspc{-0.5zw}} と入力して RET を押す。
+すると、全ての行が順番にナンバリングされる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+1. ListA
+2. ListB
+3. ListC
+4. ListD
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+最初に \texttt{M-o} によってスペースを 1 文字追加したのは、\texttt{M-n} が挿入ではなく、現在選択中の部分を置換するからである。

@@ -1,0 +1,584 @@
+%%
+%% 章：高度な数式
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{高度な数式}
+英国数学会（American Mathematical Society）が開発した amsmath パッケージと AMSFonts を用いた高度な数式の書き方を説明する。
+%%
+%% 節：amsmath と AMSFonts
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{amsmath と AMSFonts}
+Leslie Lamport が\LaTeX{}を開発しているとき、米国数学回（American Mathemetical Society）は Michael Spivak による $\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\TeX{}という数学論文記述に特化したマクロパッケージの開発を後押ししていた。
+$\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\TeX{}の数式記述能力は素晴らしいものだったが、世の中ではより使いやすい\LaTeX{}が主流になってきて、\LaTeX{}の枠内で $\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\TeX{}の数式記述能力を使いたいという要望が高まった。
+そこで、\LaTeX\ 3 プロジェクトチームの Frank Mittelbach と Rainer Sh\"{o}pf が中心となって、$\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\LaTeX{}が開発された。\\
+
+$\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\LaTeX{}のバージョン 1.1 までは amstex.sty というファイルが核となっていたが、
+これはまだ $\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\TeX{}時代のしがらみをとどめており、\LaTeX{}の流儀と一致しない部分が存在した。
+しかし、$\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\LaTeX\ 1.2 で内容が一新され、\LaTeXe{}の枠内で使用することができるようになった。
+また、後述の AMSFonts パッケージとの役割分担も見直され、フォント関係の命令は AMSFonts に移された。
+1999 年 12 月の $\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\LaTeX\ 2.0 からは ``$\mathcal{A\hspc{-3.00pt}\raisebox{-3.00pt}{$\mathcal{M}$}\hspc{-1.00pt}S}$-\LaTeX\ = amsmath パッケージ＋米国数学会用クラスファイル群'' という性質が確立された。\\
+
+高度な数式を扱う\LaTeX{}文書では、amsmath と AMSFonts が標準的に用いられる。
+AMSFonts を使うためのパッケージは amssymb なので、プリアンブルには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{amsmath,amssymb}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と記述しておく。\\
+
+AMSFonts の含まれるいろいろな数学記号の表を挙げておく。
+数学記号では、まず 2 項演算子に次のようなものが用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力                      & 出力                 & 入力                       & 出力                   & 入力                      & 出力                \\ \toprule
+  \verb`\boxdot           ` & $\boxdot$            & \verb`\Cap               ` & $\Cap$                 & \verb`\circleddash      ` & $\circleddash$      \\
+  \verb`\boxplus`           & $\boxplus$           & \verb`\curlywedge`         & $\curlywedge$          & \verb`\divideontimes`     & $\divideontimes$    \\
+  \verb`\boxtimes`          & $\boxtimes$          & \verb`\curlyvee`           & $\curlyvee$            & \verb`\lessdot`           & $\lessdot$          \\
+  \verb`\centerdot`         & $\centerdot$         & \verb`\leftthreetimes`     & $\leftthreetimes$      & \verb`\gtrdot`            & $\gtrdot$           \\
+  \verb`\boxminus`          & $\boxminus$          & \verb`\rightthreetimes`    & $\rightthreetimes$     & \verb`\ltimes`            & $\ltimes$           \\
+  \verb`\veebar`            & $\veebar$            & \verb`\dotplus`            & $\dotplus$             & \verb`\rtimes`            & $\rtimes$           \\
+  \verb`\barwedge`          & $\barwedge$          & \verb`\intercal`           & $\intercal$            & \verb`\smallsetminus`     & $\smallsetminus$    \\
+  \verb`\doublebarwedge`    & $\doublebarwedge$    & \verb`\circledcirc`        & $\circledcirc$         &                           &                     \\
+  \verb`\Cup`               & $\Cup$               & \verb`\circledast`         & $\circledast$          &                           &                     \\
+\end{longtable}\vspc{-1.25zw}
+次に関係演算子を挙げる。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力                      & 出力                 & 入力                        & 出力                   & 入力                     & 出力                \\ \toprule
+  \verb`\circlearrowright`  & $\circlearrowright$  & \verb`\upharpoonleft`       & $\upharpoonleft$       & \verb`\gtrapprox       ` & $\gtrapprox$        \\
+  \verb`\circlearrowleft`   & $\circlearrowleft$   & \verb`\downharpoonleft`     & $\downharpoonleft$     & \verb`\multimap`         & $\multimap$         \\
+  \verb`\rightleftharpoons` & $\rightleftharpoons$ & \verb`\rightarrowtail`      & $\rightarrowtail$      & \verb`\therefore`        & $\therefore$        \\
+  \verb`\leftrightharpoons` & $\leftrightharpoons$ & \verb`\leftarrowtail`       & $\leftarrowtail$       & \verb`\because`          & $\because$          \\
+  \verb`\Vdash`             & $\Vdash$             & \verb`\leftrightarrows`     & $\leftrightarrows$     & \verb`\doteqdot`         & $\doteqdot$         \\
+  \verb`\Vvdash`            & $\Vvdash$            & \verb`\rightleftarrows`     & $\rightleftarrows$     & \verb`\triangleq`        & $\triangleq$        \\
+  \verb`\vDash`             & $\vDash$             & \verb`\Lsh`                 & $\Lsh$                 & \verb`\precsim`          & $\precsim$          \\
+  \verb`\twoheadrightarrow` & $\twoheadrightarrow$ & \verb`\Rsh`                 & $\Rsh$                 & \verb`\lesssim`          & $\lesssim$          \\
+  \verb`\twoheadleftarrow`  & $\twoheadleftarrow$  & \verb`\rightsquigarrow`     & $\rightsquigarrow$     & \verb`\lessapprox`       & $\lessapprox$       \\
+  \verb`\leftleftarrows`    & $\leftleftarrows$    & \verb`\leftrightsquigarrow` & $\leftrightsquigarrow$ & \verb`\eqslantless`      & $\eqslantless$      \\
+  \verb`\rightrightarrows`  & $\rightrightarrows$  & \verb`\looparrowleft`       & $\looparrowleft$       & \verb`\eqslantgtr`       & $\eqslantgtr$       \\
+  \verb`\upuparrows`        & $\upuparrows$        & \verb`\looparrowright`      & $\looparrowright$      & \verb`\curlyeqprec`      & $\curlyeqprec$      \\
+  \verb`\downdownarrows`    & $\downdownarrows$    & \verb`\circeq`              & $\circeq$              & \verb`\curlyeqsucc`      & $\curlyeqsucc$      \\
+  \verb`\upharpoonright`    & $\upharpoonright$    & \verb`\succsim`             & $\succsim$             &                          &                     \\
+  \verb`\downharpoonright`  & $\downharpoonright$  & \verb`\gtrsim`              & $\gtrsim$              &                          &                     \\
+\end{longtable}\vspc{-1.25zw}
+以下の関係演算子も用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力                      & 出力                 & 入力                        & 出力                   & 入力                     & 出力                \\ \toprule
+  \verb`\preccurlyeq`       & $\preccurlyeq$       & \verb`\trianglerighteq`     & $\trianglerighteq$     & \verb`\smallsmile     `  & $\smallsmile$       \\
+  \verb`\leqq`              & $\leqq$              & \verb`\trianglelefteq`      & $\trianglelefteq$      & \verb`\smallfrown`       & $\smallfrown$       \\
+  \verb`\leqslant`          & $\leqslant$          & \verb`\between`             & $\between$             & \verb`\Subset`           & $\Subset$           \\
+  \verb`\lessgtr`           & $\lessgtr$           & \verb`\blacktriangleright ` & $\blacktriangleright$  & \verb`\Supset`           & $\Supset$           \\
+  \verb`\risingdotseq`      & $\risingdotseq$      & \verb`\blacktriangleleft`   & $\blacktriangleleft$   & \verb`\subseteqq`        & $\subseteqq$        \\
+  \verb`\fallingdotseq`     & $\fallingdotseq$     & \verb`\vartriangle`         & $\vartriangle$         & \verb`\supseteqq`        & $\supseteqq$        \\
+  \verb`\succcurlyeq`       & $\succcurlyeq$       & \verb`\eqcirc`              & $\eqcirc$              & \verb`\bumpeq`           & $\bumpeq$           \\
+  \verb`\geqq`              & $\geqq$              & \verb`\lesseqgtr`           & $\lesseqgtr$           & \verb`\Bumpeq`           & $\Bumpeq$           \\
+  \verb`\geqslant`          & $\geqslant$          & \verb`\gtreqless`           & $\gtreqless$           & \verb`\lll`              & $\lll$              \\
+  \verb`\gtrless`           & $\gtrless$           & \verb`\lesseqqgtr`          & $\lesseqqgtr$          & \verb`\ggg`              & $\ggg$              \\
+  \verb`\sqsubset`          & $\sqsubset$          & \verb`\gtreqqless`          & $\gtreqqless$          & \verb`\pitchfork`        & $\pitchfork$        \\
+  \verb`\sqsupset`          & $\sqsupset$          & \verb`\Rrightarrow`         & $\Rrightarrow$         & \verb`\backsim`          & $\backsim$          \\
+  \verb`\vartriangleright`  & $\vartriangleright$  & \verb`\Lleftarrow`          & $\Lleftarrow$          & \verb`\backsimeq`        & $\backsimeq$        \\
+  \verb`\vartriangleleft`   & $\vartriangleleft$   & \verb`\varpropto`           & $\varpropto$           &                          &                     \\
+\end{longtable}\vspc{-1.25zw}
+更に、以下の関係演算子も用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力                      & 出力                 & 入力                        & 出力                   & 入力                     & 出力                \\ \toprule
+  \verb`\lvertneqq        ` & $\lvertneqq$         & \verb`\precnapprox        ` & $\precnapprox$         & \verb`\nvDash`           & $\nvDash$           \\
+  \verb`\gvertneqq`         & $\gvertneqq$         & \verb`\succnapprox`         & $\succnapprox$         & \verb`\nVDash`           & $\nVDash$           \\
+  \verb`\nleq`              & $\nleq$              & \verb`\lnapprox`            & $\lnapprox$            & \verb`\ntriagnlerighteq` & $\ntrianglerighteq$ \\
+  \verb`\ngeq`              & $\ngeq$              & \verb`\gnapprox`            & $\gnapprox$            & \verb`\ntrianglelefteq`  & $\ntrianglelefteq$  \\
+  \verb`\nless`             & $\nless$             & \verb`\nsim`                & $\nsim$                & \verb`\ntriangleright`   & $\ntriangleright$   \\
+  \verb`\ngtr`              & $\ngtr$              & \verb`\ncong`               & $\ncong$               & \verb`\ntriangleleft`    & $\ntriangleleft$    \\
+  \verb`\nprec`             & $\nprec$             & \verb`\varsubsetneq`        & $\varsubsetneq$        & \verb`\nleftarrow`       & $\nleftarrow$       \\
+  \verb`\nsucc`             & $\nsucc$             & \verb`\varsupsetneq`        & $\varsupsetneq$        & \verb`\nrightarrow`      & $\nrightarrow$      \\
+  \verb`\lneqq`             & $\lneqq$             & \verb`\nsubseteqq`          & $\nsubseteqq$          & \verb`\nLeftarrow`       & $\nLeftarrow$       \\
+  \verb`\gneqq`             & $\gneqq$             & \verb`\nsupseteqq`          & $\nsupseteqq$          & \verb`\nRightarrow`      & $\nRightarrow$      \\
+  \verb`\nleqslant`         & $\nleqslant$         & \verb`\subsetneqq`          & $\subsetneqq$          & \verb`\nleftrightarrow`  & $\nleftrightarrow$  \\
+  \verb`\ngeqslant`         & $\ngeqslant$         & \verb`\supsetneqq`          & $\supsetneqq$          & \verb`\nLeftrightarrow`  & $\nLeftrightarrow$  \\
+  \verb`\lneq`              & $\lneq$              & \verb`\varsubsetneqq`       & $\varsubsetneqq$       & \verb`\eqsim`            & $\eqsim$            \\
+  \verb`\gneq`              & $\gneq$              & \verb`\varsupsetneqq`       & $\varsupsetneqq$       & \verb`\shortmid`         & $\shortmid$         \\
+  \verb`\npreceq`           & $\npreceq$           & \verb`\subsetneq`           & $\subsetneq$           & \verb`\shortparallel`    & $\shortparallel$    \\
+  \verb`\nsucceq`           & $\nsucceq$           & \verb`\supsetneq`           & $\supsetneq$           & \verb`\thicksim`         & $\thicksim$         \\
+  \verb`\precnsim`          & $\precnsim$          & \verb`\nsubseteq`           & $\nsubseteq$           & \verb`\thickapprox`      & $\thickapprox$      \\
+  \verb`\succnsim`          & $\succnsim$          & \verb`\nsupseteq`           & $\nsupseteq$           & \verb`\approxeq`         & $\approxeq$         \\
+  \verb`\lnsim`             & $\lnsim$             & \verb`\nparallel`           & $\nparallel$           & \verb`\succapprox`       & $\succapprox$       \\
+  \verb`\gnsim`             & $\gnsim$             & \verb`\nmid`                & $\nmid$                & \verb`\precapprox`       & $\precapprox$       \\
+  \verb`\nleqq`             & $\nleqq$             & \verb`\nshortmid`           & $\nshortmid$           & \verb`\curvearrowleft`   & $\curvearrowleft$   \\
+  \verb`\ngeqq`             & $\ngeqq$             & \verb`\nshortparallel`      & $\nshortparallel$      & \verb`\curvearrowright`  & $\curvearrowright$  \\
+  \verb`\precneqq`          & $\precneqq$          & \verb`\nvdash`              & $\nvdash$              & \verb`\backepsilon`      & $\backepsilon$      \\
+  \verb`\succneqq`          & $\succneqq$          & \verb`\nVdash`              & $\nVdash$              &                          &                     \\
+\end{longtable}\vspc{-1.25zw}
+以下は、その他の記号である。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力                      & 出力                 & 入力                        & 出力                   & 入力                     & 出力                \\ \toprule
+  \verb`\square           ` & $\square$            & \verb`\measuredangle      ` & $\measuredangle$       & \verb`\mho             ` & $\mho$              \\
+  \verb`\blacksquare`       & $\blacksquare$       & \verb`\spherivalangle`      & $\sphericalangle$      & \verb`\eth`              & $\eth$              \\
+  \verb`\lozenge`           & $\lozenge$           & \verb`\circledS`            & $\circledS$            & \verb`\beth`             & $\beth$             \\
+  \verb`\blacklozenge`      & $\blacklozenge$      & \verb`\complement`          & $\complement$          & \verb`\gimel`            & $\gimel$            \\
+  \verb`\backprime`         & $\backprime$         & \verb`\diagup`              & $\diagup$              & \verb`\daleth`           & $\daleth$           \\
+  \verb`\bigstar`           & $\bigstar$           & \verb`\diagdown`            & $\diagdown$            & \verb`\digamma`          & $\digamma$          \\
+  \verb`\blacktriangledown` & $\blacktriangledown$ & \verb`\varnothing`          & $\varnothing$          & \verb`\varkappa`         & $\varkappa$         \\
+  \verb`\blacktriangle`     & $\blacktriangle$     & \verb`\nexists`             & $\nexists$             & \verb`\Bbbk`             & $\Bbbk$             \\
+  \verb`\triangledown`      & $\triangledown$      & \verb`\Finv`                & $\Finv$                & \verb`\hslash`           & $\hslash$           \\
+  \verb`\angle`             & $\angle$             & \verb`\Game`                & $\Game$                & \verb`\hbar`             & $\hbar$             \\
+\end{longtable}\vspc{-1.25zw}
+以下は、ギリシア語の斜体である。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力                      & 出力                 & 入力                        & 出力                   & 入力                     & 出力                \\ \toprule
+  \verb`\varGamma         ` & $\varGamma$          & \verb`\varXi              ` & $\varXi$               & \verb`\varPhi          ` & $\varPhi$           \\
+  \verb`\varDelta`          & $\varDelta$          & \verb`\varPi`               & $\varPi$               & \verb`\varPsi`           & $\varPsi$           \\
+  \verb`\varTheta`          & $\varTheta$          & \verb`\varSigma`            & $\varSigma$            & \verb`\varOmega`         & $\varOmega$         \\
+  \verb`\varLambda`         & $\varLambda$         & \verb`\varUpsilon`          & $\varUpsilon$          &                          &                     \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：いろいろな記号
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{いろいろな記号}
+%%
+%% 項：ドイツ語（Fraktur）
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{ドイツ語（Fraktur）}
+$\mathfrak{ABC}$ は \verb`$\mathfrak{ABC}$` のようにして出力する。
+%%
+%% 項：黒板太文字
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{黒板太文字}
+$\mathbb{ABC}$ は \verb`$\mathbb{ABC}$` のようにして出力する。
+%%
+%% 項：文脈に応じてサイズが変わるテキスト
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{文脈に応じてサイズが変わるテキスト}
+\verb`\text` は数式中にテキストをはさむために用いる。
+\verb`\mbox` とは異なり、文脈に応じてフォントのサイズが変わる。
+
+\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$A_{\text{max}} = \text{some constant}$` & → & $A_{\text{max}} = \text{some constant}$
+\end{tabular}
+%%
+%% 項：賢い点々
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{賢い点々}
+数式の中で点々（$\ldots$ の類）は、通常 \verb`\dots` と書くだけで後続の記号から種類を判断してくれることになっている。
+
+\begin{tabular}{lcl}
+  \hspc{+1.00zw}\verb`$a_{1}, a_{2}, \dots, a_{n}$`    & → & $a_{1}, a_{2}, \dots, a_{n}$     \\
+  \hspc{+1.00zw}\verb`$a_{1} + a_{2} + \dots + a_{n}$` & → & $a_{1} + a_{2} + \cdots + a_{n}$ \\
+  \hspc{+1.00zw}\verb`$a_{1} a_{2} \dots a_{n}$`       & → & $a_{1} a_{2} \dots a_{n}$        \\
+  \hspc{+1.00zw}\verb`$\int \dots \int$`               & → & $\int \dots \int$                \\
+\end{tabular}
+
+最後の例は後述の \verb`\idotsint` を利用した方がいいだろう。
+後続の記号がない場合や、うまくいかない場合は、次のような命令で区別する\footnote{これらは標準の\LaTeX{}で用意されている \verb`\ldots`、\verb`\cdots` 命令に代わるもので、前後の空白が微妙に調節されている。}。
+
+\begin{tabular}{lcll}
+  \hspc{+1.00zw}\verb`$a_{1}, \dotsc$`  & → & $a_{1}, \dotsc$  &（\textcolor{blue}{\underline{c}ommas}）                    \\
+  \hspc{+1.00zw}\verb`$a_{1} + \dotsb$` & → & $a_{1} + \dotsb$ &（\textcolor{blue}{\underline{b}inary operation/relations}）\\
+  \hspc{+1.00zw}\verb`$a_{1} \dotsm$`   & → & $a_{1} \dotsm$   &（\textcolor{blue}{\underline{m}ultiplications}）           \\
+  \hspc{+1.00zw}\verb`$\int \dotsi$`    & → & $\int \dotsi$    &（\textcolor{blue}{\underline{i}ntegrals}）                 \\
+\end{tabular}\vspc{+0.50zw}
+%%
+%% 項：長さが自由に伸びる矢印
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{長さが自由に伸びる矢印}
+両側に矢印が付いたのも以外は普通の\LaTeX{}でも利用することができる。
+
+\vspc{+0.50zw}\begin{tabular}{lcc}
+  \hspc{+1.00zw}\verb`$\overrightarrow{A}$`      & → & $\overrightarrow{A}$      \\
+  \hspc{+1.00zw}\verb`$\overleftarrow{A}$`       & → & $\overleftarrow{A}$       \\
+  \hspc{+1.00zw}\verb`$\overleftrightarrow{A}$`  & → & $\overleftrightarrow{A}$  \\
+  \hspc{+1.00zw}\verb`$\underrightarrow{A}$`     & → & $\underrightarrow{A}$     \\
+  \hspc{+1.00zw}\verb`$\underleftarrow{A}$`      & → & $\underleftarrow{A}$      \\
+  \hspc{+1.00zw}\verb`$\underleftrightarrow{A}$` & → & $\underleftrightarrow{A}$ \\
+\end{tabular}\vspc{+0.50zw}
+
+矢印と文字の間を離したいときは \verb`$\overleftrightarrow{\mathstrut x}$` のように \verb`\mathstrut` を用いる。
+%%
+%% 項：いくらでも伸びる矢印
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{いくらでも伸びる矢印}
+\verb`\xrightarrow`、\verb`\xleftarrow` は文字の付いた自由に伸びる矢印である。
+\verb`$\xrightarrow{xyz}$` のようにすると $\xrightarrow{xyz}$、\verb`$\xrightarrow[abc]{{xyz}$` とすると $\xrightarrow[abc]{xyz}$ のようになる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}c|l@{}}
+  入力 & \verb`$\text{foo.tex} \xrightarrow{\text{platex}}`                                                                      \\
+  \    & \verb`                \text{foo.dvi} \xrightarrow{\text{dvipdfmx}} \text{foo.pdf}$`                                     \\
+  出力 & $\displaystyle{\text{foo.tex} \xrightarrow{\text{platex}} \text{foo.dvi} \xrightarrow{\text{dvipdfmx}} \text{foo.pdf}}$ \\
+\end{longtable}\vspc{-0.50zw}
+%%
+%% 項：数学用アクセント
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{数学用アクセント}
+\verb`$\Hat{\Hat{A}}$` のようにネスト（入れ子）にしても、$\Hat{\Hat{A}}$ のように正しい位置に出力される。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+  入力             & 出力        & 入力             & 出力        & 入力             & 出力        & 入力             & 出力        \\ \toprule
+  \verb`\Hat{A}`   & $\Hat{A}$   & \verb`\Check{A}` & $\Check{A}$ & \verb`\Tilde{A}` & $\Tilde{A}$ & \verb`\Acute{A}` & $\Acute{A}$ \\
+  \verb`\Grave{A}` & $\Grave{A}$ & \verb`\Dot{A}`   & $\Dot{A}$   & \verb`\Ddot{A}`  & $\Ddot{A}$  & \verb`\Breve{A}` & $\Breve{A}$ \\
+  \verb`\Bar{A}`   & $\Bar{A}$   & \verb`\Vec{A}`   & $\Vec{A}$   &                  &             &                  &             \\
+\end{longtable}\vspc{-0.50zw}
+%%
+%% 項：上につく点
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{上につく点}
+次の最初の 2 つは amsmath パッケージを使わなくても利用可能である。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+  入力              & 出力      & 入力             & 出力       & 入力             & 出力        & 入力              & 出力         \\ \toprule
+  \verb`\dot{x}   ` & $\dot{x}$ & \verb`\ddot{x}  `& $\ddot{x}$ & \verb`\dddto{x}` & $\dddot{A}$ & \verb`\ddddot{x}` & $\ddddot{x}$ \\
+\end{longtable}\vspc{-0.50zw}
+%%
+%% 項：多重積分記号
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{多重積分記号}
+\verb`\int\int` とすると間が空きすぎてしまうため、以下の命令が用意されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclclc@{}}
+  入力              & 出力      & 入力            & 出力      & 入力              & 出力        & 入力              & 出力        \\ \toprule
+  \verb`\iint     ` & $\iint$   & \verb`\iiint  ` & $\iiint$  & \verb`\iiiint  `  & $\iiiint$   & \verb`\idotsint ` & $\idotsint$ \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：数式中の空白
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{数式中の空白}
+数式中の空白は \verb`\mspace` という命令を用いて \verb`\mspace{5mu}` のようにして出力する。
+$\mathrm{mu}$ という単位（math units）は em（`m' の幅）の 1/18 である。
+負の値を指定することも可能である。
+%%
+%% 項：\smash
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{$\backslash$smash}
+\verb`\smash{...}` は高さ、深さをゼロにつぶす命令だが、amsmath パッケージで更に \verb`\smash[t]{...}` や \verb`\smash[b]{...}` でそれぞれ高さ、深さだけをゼロにすることができる。
+次の例では、$y$ のルートだけ下に伸びすぎるのを防ぐために使っている。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}lcl@{}}
+  \hspc{+1.00zw}\verb`$\sqrt{x} + \sqrt{y}$`            & → & $\sqrt{x} + \sqrt{y}$            \\
+  \hspc{+1.00zw}\verb`$\sqrt{x} + \sqrt{\smash[b]{y}}$` & → & $\sqrt{x} + \sqrt{\smash[b]{y}}$ \\
+\end{longtable}\vspc{-0.50zw}
+高さ・深さを揃えるための数式用の支柱 \verb`\mathstrut` については前述したが、これを \verb`\smash[b]` と組み合わせると便利である。
+
+\newcommand{\ssqrt}[1]{\sqrt{\smash[b]{\mathstrut #1}}}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}lcl@{}}
+  \hspc{+1.00zw}\verb`\newcommand{\ssqrt}[1]{\sqrt{\smash[b]{\mathstrut #1}}}` &    &                         \\
+  \hspc{+1.00zw}\verb`$\ssqrt{g} + \ssqrt{h}$`                                 & → & $\ssqrt{g} + \ssqrt{h}$ \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：演算子
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{演算子}
+\LaTeX{}標準の $\log$ 型関数に加えて、次の演算子が追加されている。
+\vspc{-0.50zw}\begin{longtable}{@{}lclclc@{}}
+  入力            & 出力       & 入力               & 出力          & 入力              & 出力         \\ \toprule
+  \verb`\injlim`  & $\injlim$  & \verb`\varinjlim`  & $\varinjlim$  & \verb`\varliminf` & $\varliminf$ \\
+  \verb`\projlim` & $\projlim$ & \verb`\varprojlim` & $\varprojlim$ & \verb`\varlimsup` & $\varlimsup$ \\
+\end{longtable}\vspc{-0.50zw}
+この種の命令（マクロ）を更に追加することもできる。
+例えば、\verb`$\cosec x$` と書いて $\cosec x$ と出力したければ、プリアンブルに次のように記述しておく。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\DeclareMathOperator{\cosec}{cosec}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+また、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\DeclareMathOperator*{\argmax}{\mathrm{arg\,max}}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように $*$ を付ければ、
+\vspc{-0.50zw}\begin{longtable}[l]{@{}lcl@{}}
+  \hspc{+1.00zw}\verb`$\displaystyle{\argmax_{\theta}}$` & → & $\displaystyle{\argmax_{\theta}}$
+\end{longtable}\vspc{-1.50zw}
+のように別行立て数式中で真下・真上に下限・上限が付くようになる。\\
+
+マクロが定義できない場合は、\verb`operatorname` もしくは \verb`operatorname*` を用いる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}lcl@{}}
+  \hspc{+1.00zw}\verb`\operatorname{cosec} x`                     & → & $\operatorname{cosec} x$                                    \\
+  \hspc{+1.00zw}\verb`\operatorname*{\mathrm{arg\,min}}_{x} f(x)` & → & $\displaystyle{\operatorname*{\mathrm{arg\,min}}_{x} f(x)}$ \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：行列
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{行列}
+amsmath パッケージによる行列には、次のものが用意されている。
+\vspc{-0.50zw}\begin{longtable}[c]{@{}lcc@{}}
+  入力                                                &    & 出力                                           \\ \toprule
+  \verb`\begin{matrix}  a & b \\ c & d \end{matrix}`  & → & $\begin{matrix}  a & b \\ c & d \end{matrix}$  \\[+15.0pt]
+  \verb`\begin{pmatrix} a & b \\ c & d \end{pmatrix}` & → & $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$ \\[+15.0pt]
+  \verb`\begin{bmatrix} a & b \\ c & d \end{bmatrix}` & → & $\begin{bmatrix} a & b \\ c & d \end{bmatrix}$ \\[+15.0pt]
+  \verb`\begin{Bmatrix} a & b \\ c & d \end{Bmatrix}` & → & $\begin{Bmatrix} a & b \\ c & d \end{Bmatrix}$ \\[+15.0pt]
+  \verb`\begin{vmatrix} a & b \\ c & d \end{vmatrix}` & → & $\begin{vmatrix} a & b \\ c & d \end{vmatrix}$ \\[+15.0pt]
+  \verb`\begin{Vmatrix} a & b \\ c & d \end{Vmatrix}` & → & $\begin{Vmatrix} a & b \\ c & d \end{Vmatrix}$ \\[+15.0pt]
+\end{longtable}\vspc{-0.50zw}
+行列の列の区切りは \verb`&`、行の区切りは \verb`\\` である。
+次の例で \verb`\hdotsfor{`\texttt{\textcolor{blue}{列数}}\verb`}` は複数列にわたる点々である。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`                   \\
+  \    & \verb`  A = \begin{pmatrix}`              \\
+  \    & \verb`        a_{11} & \dots & a_{1n} \\` \\
+  \    & \verb`        \hdotsfor{3}            \\` \\
+  \    & \verb`        a_{m1} & \dots & a_{mn} \\` \\
+  \    & \verb`      \end{pmatrix}`                \\
+  \    & \verb`\end{equation}`                     \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle{A = \begin{pmatrix} a_{11} & \dots & a_{1n} \\ \hdotsfor{3} \\ a_{m1} & \dots & a_{mn} \\ \end{pmatrix}}$ \\
+\end{longtable}\vspc{-0.50zw}
+小さめの行列は smallmatrix 環境を用いて、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+$\bigl( \begin{smallmatrix} a & b \\ c & d \end{smallmatrix} \bigr)$
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように書くと $\bigl( \begin{smallmatrix} a & b \\ c & d \end{smallmatrix} \bigr)$ のようになる。\\
+
+場合分けは case 環境を用いる。
+これも行列の仲間である。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`                                                  \\
+  \    & \verb`  \lvert x \rvert = \begin{cases}`                                 \\
+  \    & \verb`                      \hphantom{-}x & \text{$x \ge 0$ のとき} \\`  \\
+  \    & \verb`                                - x & \text{それ以外のとき}    \\` \\
+  \    & \verb`                    \end{cases}`                                   \\
+  \    & \verb`\end{equation}`                                                    \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle{\lvert x \rvert = \begin{cases} \hphantom{-}x & \text{$x \ge 0$ のとき} \\ - x & \text{それ以外のとき} \\ \end{cases}}$ \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：分数
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{分数}
+%%
+%% 項：連分数
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{連分数}
+次の例のような連分数（conitnued fraction）は \verb`\cfrac` を用いるとバランスよく出力することができる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`                                                 \\
+  \    & \verb`  b_{0} + \cfrac{c_{1}}{b_{1} +`                                  \\
+  \    & \verb`          \cfrac{c_{2}}{b_{2} +`                                  \\
+  \    & \verb`          \cfrac{c_{3}}{b_{3} + \cfrac{c_{4}}{b_{4} + \cdots}}}}` \\
+  \    & \verb`\end{equation}`                                                   \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle{b_{0} + \cfrac{c_{1}}{b_{1} + \cfrac{c_{2}}{b_{2} + \cfrac{c_{3}}{b_{3} + \cfrac{c_{4}}{b_{4} + \cdots}}}}}$
+\end{longtable}\vspc{-0.50zw}
+ちなみに、連分数は次のような書き方もすることがある。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`                             \\
+  \    & \verb`  b_{0} + \frac{c_{1}}{b_{1} + {}} \,`        \\
+  \    & \verb`          \frac{c_{2}}{b_{2} + {}} \,`        \\
+  \    & \verb`          \frac{c_{3}}{b_{3} + {}} \,`        \\
+  \    & \verb`          \frac{c_{4}}{b_{4} + {}} \, \dotsb` \\
+  \    & \verb`\end{equation}`                               \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle{b_{0} + \frac{c_{1}}{b_{1} + {}} \,\frac{c_{2}}{b_{2} + {}} \,\frac{c_{3}}{b_{3} + {}} \,\frac{c_{4}}{b_{4} + {}} \, \dotsb}$
+\end{longtable}\vspc{-0.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`                                                \\
+  \    & \verb`  b_{0} + \frac{c_{1}}{b_{1}} {\genfrac{}{}{0pt}{}{}{+}}`        \\
+  \    & \verb`          \frac{c_{2}}{b_{2}} {\genfrac{}{}{0pt}{}{}{+}}`        \\
+  \    & \verb`          \frac{c_{3}}{b_{3}} {\genfrac{}{}{0pt}{}{}{+}}`        \\
+  \    & \verb`          \frac{c_{4}}{b_{4}} {\genfrac{}{}{0pt}{}{}{+ \dotsb}}` \\
+  \    & \verb`\end{equation}`                                                  \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle{b_{0} + \frac{c_{1}}{b_{1}} {\genfrac{}{}{0pt}{}{}{+}}\frac{c_{2}}{b_{2}} {\genfrac{}{}{0pt}{}{}{+}}\frac{c_{3}}{b_{3}} {\genfrac{}{}{0pt}{}{}{+}}\frac{c_{4}}{b_{4}} {\genfrac{}{}{0pt}{}{}{+ \dotsb}}}$
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 項：2 項係数
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{2 項係数}
+2 項係数は \verb`\binom{a}{b}` と書けば、本文中では $\binom{a}{b}$ のようなテキストスタイル、別行立て数式中では $\displaystyle \binom{a}{b}$ のようなディスプレイスタイルで出力される。
+必ずテキストスタイルで出力する \verb`\tbinom`、必ずディスプレイスタイルで\vspc{+2.00pt}出力する \verb`\tbinom` も用意されている。
+%%
+%% 項：一般の分数
+%%----------------------------------------------------------------------------------------------------------%%
+\subsection{一般の分数}
+分数や 2 項係数を含む一般の分数を出力する命令は、
+\begin{quote}
+\verb`\genfrac{`\texttt{\textcolor{blue}{左括弧}}\verb`}{`\texttt{\textcolor{blue}{右括弧}}\verb`}{`\texttt{\textcolor{blue}{棒の太さ}}\verb`}{`\texttt{\textcolor{blue}{スタイル}}\verb`}{`\texttt{\textcolor{blue}{分子}}\verb`}{`\texttt{\textcolor{blue}{分母}}\verb`}`
+\end{quote}
+である。
+「棒の太さ」は何も記入しなければ通常の分数の棒になるが、棒を出力したくない場合には \texttt{0pt} と書き込む。
+「スタイル」は通常は何も記入しないが、0 ～ 3 までの数字を書き込むと次のような特定にスタイルで出力することを意味する。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item[0] $\cdots$ \verb`\displaystyle     `（別行立て数式のスタイル）
+\item[1] $\cdots$ \verb`\textstyle        `（本文中の数式のスタイル）
+\item[2] $\cdots$ \verb`\scriptstyle      `（添字のスタイル）
+\item[3] $\cdots$ \verb`\scriptscriptstyle`（添字の添字のスタイル）
+\end{itemize}\vspc{-0.50zw}
+例えば、
+\vspc{-0.50zw}\begin{longtable}[l]{@{}lcc@{}}
+  \hspc{+1.00zw}\verb`$\genfrac{}{}{}{}{a}{b}$`           & → & $\genfrac{}{}{}{}{a}{b}$           \\
+  \hspc{+1.00zw}\verb`$\genfrac{\{}{\}}{0pt}{}{i}{j\,k}$` & → & $\genfrac{\{}{\}}{0pt}{}{i}{j\,k}$ \\
+\end{longtable}\vspc{-0.50zw}
+のようになる。
+括弧が片側にしかない場合は逆側はピリオド（\verb`.`）を指定する。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}lcc@{}}
+  \hspc{+1.00zw}\verb`$\genfrac{.}{\}}{0pt}{}{a}{b}$`      & → & $\genfrac{.}{\}}{0pt}{}{a}{b}$    \\
+\end{longtable}\vspc{-1.50zw}
+%%
+%% 節：別行立ての数式
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{別行立ての数式}
+数式番号の付いた別行立ての数式を出力するには equation 環境を用いる（これは標準の\LaTeX{}と同じである）。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}` \\
+  \    & \verb`  E = mc^{2}`     \\
+  \    & \verb`\end{equation}`   \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle E=mc^{2} \hspc{+412pt} (\text{6})$ \\
+\end{longtable}\vspc{-0.90zw}
+数式番号が不要な場合は equation$*$ 環境を用いる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation*}` \\
+  \    & \verb`  E = mc^{2}`      \\
+  \    & \verb`\end{equation*}`   \\
+\end{longtable}\vspc{-0.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle E=mc^{2}$ \\
+\end{longtable}\vspc{-0.90zw}
+標準的でない数式番号は \verb`\tag` で付ける。
+例えば、 ($*$) という番号を付けるには \verb`\tag{$*$}` とする\footnote{\verb`$*$` は本来は数式モードの掛け算の記号なので、正しい使い方ではないかもしれない。これが気になる場合は textcomp パッケージの \verb`\textasteriskcentered` を用いる。}。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`       \\
+  \    & \verb`  E = mc^{2} \tag{$*$}` \\
+  \    & \verb`\end{equation}`         \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\displaystyle E=mc^{2} \hspc{+412pt} (\text{$*$})$ \\
+\end{longtable}\vspc{-0.90zw}
+\verb`\tab{...}` の中身は本文用のフォントで組まれる。
+数式番号に括弧を付けたくない場合は \verb`\tag*{...}` とする。\\
+
+複数の数式を並べるには \verb`gather` 環境を用いる。
+数式の区切り（改行）は \verb`\\` である。
+最後の行には \verb`\\` は付けない。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{gather}`                                     \\
+  \    & \verb`  (a + b)^{2} = a^{2} + 2ab + b^{2}        \\`      \\
+  \    & \verb`  (a - b)^{2} = a^{2} - 2ab + b^{2} \notag \\`      \\
+  \    & \verb`  (a + b)^{3} = a^{3} + 3a^{{2}b + 3ab^{2} + b^{3}` \\
+  \    & \verb`\end{gather}`                                       \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $(a + b)^{2} = a^{2} + 2ab + b^{2} \hspc{+344pt} (\text{7})$               \\
+  \    & $(a - b)^{2} = a^{2} - 2ab + b^{2}$                                        \\
+  \    & $(a + b)^{3} = a^{3} + 3a^{2}b + 3ab^{2} + b^{3} \hspc{+309pt} (\text{8})$ \\
+\end{longtable}\vspc{-0.90zw}
+各行に数式番号が付加されるが、番号を付けたくない行は、最後（\verb`\\` の直前）に \verb`\notag` と書いておく（他の数式環境でも同様である）。\\
+
+gather の代わりに gather$*$ とすると、全ての行に数式番号が付かなくなる。環境名に \verb`*` を付けると番号が付かなくなるのは、他の数式環境でも同様である。\\
+
+改行の命令 \verb`\\` を例えば \verb`\\[-3pt]` に変えると、改行の幅が通常より 3 ポイント小さくなる。
+和文（行送り 15 ～ 17 ポイント）と欧文（行送り 12 ～ 13 ポイント）の一般的な行送りの違いを考えれば、和文の中の数式は改行を \verb`\\[-3pt]` 程度にする方が適切かもしれない（他の数式環境でも同様）。\\
+
+align 環境は \verb`&` で位置を揃えることができる。
+各行に番号が付く。番号が不要な行には \verb`\notag` を用いる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{align}`                                          \\
+  \    & \verb`  \sinh^{-1} x &= \log(x + \sqrt{x^{2} +1}) \notag \\`  \\
+  \    & \verb`               &= x - x^{3}\!/6 + 3x^{5}\!/40 + \dotsb` \\
+  \    & \verb`\end{align}`                                            \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\sinh^{-1} x      = \log(x + \sqrt{x^{2} +1})$               \\
+  \    & $\hphantom{\sinh^{-1} x} = x - x^{3}\!/6 + 3x^{5}\!/40 + \dotsb \hspc{+300pt} \text{(9)}$ \\
+\end{longtable}\vspc{-0.90zw}
+どの行にも番号が不要なら align$*$ を用いる。\\ \enlargethispage{+0.50zw}
+
+位置を揃えた複数行の数式全体の中央に番号を振るには、split 環境もしくは aligned 環境で位置を揃え、全体を他の数式環境の中に入れて番号を振る。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{equation}`                                         \\
+  \    & \verb`  \begin{split}`                                          \\
+  \    & \verb`    \sinh^{-1} x &= \log(x + \sqrt{x^{2} +1}) \notag \\`  \\
+  \    & \verb`                 &= x - x^{3}\!/6 + 3x^{5}\!/40 + \dotsb` \\
+  \    & \verb`  \end{split}`                                            \\
+  \    & \verb`\end{equation}`                                           \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\sinh^{-1} x      = \log(x + \sqrt{x^{2} +1})$                 \\
+  \    & $\hphantom{\sinh^{-1} x} = x - x^{3}\!/6 + 3x^{5}\!/40 + \dotsb \hspc{+302pt} \raisebox{+7.00pt}[0.00pt][0.00pt]{\text{(10)}}$ \\
+\end{longtable}\vspc{-0.990zw}
+上の例で数式番号を出力したのは equation 環境の方である。
+split 自身は数式番号を出力しない（よって split$*$ は存在しない）。\\
+
+aligned も split とほぼ同じ用途に用いることができるが、こちらはより柔軟性に富み、枠 \verb`\fbox` に入れたり、オプション \verb`[t]` や \verb`[b]` を付けて揃え位置を上下に動かしたりできるので、箇条書きの番号と揃えるときも便利である。\\
+
+align 環境の類は各行に複数の \verb`&` があっても構わない。
+各行の偶数番目の \verb`&` は式を区切るために用いられる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{align*}`                                     \\
+  \    & \verb`  \sin A &= y/r & \cos A &= x/r & \tan A &= y/x \\` \\
+  \    & \verb`  \cot A &= x/y & \sec A &= r/x & \csc A &= r/y`    \\
+  \    & \verb`\end{align*}`                                       \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\sin A = y/r \hspc{+30pt} \cos A = x/r \hspc{+30pt} \tan A = y/x$ \\
+  \    & $\cot A = x/y \hspc{+30pt} \sec A = r/x \hspc{+30pt} \csc A = r/y$ \\
+\end{longtable}\vspc{-0.50zw}
+数式どうしの間隔を自分で制御するには alignat\{\textcolor{blue}{数式の個数}\} を用いる。
+「数式の個数」とは各列の数式の個数（偶数番目の \verb`&` の個数＋1）の最大値である。
+これは次のような場合に便利である。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{alignat}{2}`                                            \\
+  \    & \verb`  (a+b)^{2} &= a^{2}+2ab+b^{2} & \qquad & \text{展開する} \\ ` \\
+  \    & \verb`            &= a(a+2a)+b^{2}   &        & \text{$a$ でくくる}` \\
+  \    & \verb`\end{alignat}`                                                 \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $(a+b)^{2}      = a^{2}+2ab+b^{2} \qquad \text{展開する} \hspc{+285pt} \text{(11)}$                 \\
+  \    & $\hphantom{(a+b)^{2}} = a(a+2a)+b^{2} \hspc{+19pt} \text{$a$ でくくる} \hspc{+275.5pt} \text{(12)}$ \\
+\end{longtable}\vspc{-0.50zw}
+数式の途中に文章を割り込ませるには \verb`\intertext` を用いる。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{align}`                             \\
+  \    & \verb`  s_{1} &= a_{1}, \\`                      \\
+  \    & \verb`  s_{2} &= a_{1} + a_{2}, \\`              \\
+  \    & \verb`\intertext{一般に、}`                      \\
+  \    & \verb`  s_{n} &= a_{1} + a_{2} + \cdots + a_{n}` \\
+  \    & \verb`\end{align}`                               \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $\hspc{+1.00zw}s_{1} = a_{1},\hspc{+400pt} \text{(13)}$                          \\
+  \    & $\hspc{+1.00zw}s_{2} = a_{1} + a_{2},\hspc{+380pt} \text{(14)}$                  \\
+  \    & 一般に、                                                                         \\
+  \    & $\hspc{+1.00zw}s_{n} = a_{1} + a_{2} + \cdots + a_{n} \hspc{+340pt} \text{(15)}$ \\
+\end{longtable}\vspc{-0.50zw}
+揃え位置のない複数行にわたる 1 つの数式は multline で記述する。
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  入力 & \verb`\begin{multline}`                                        \\
+  \    & \verb`  a + b + c + d + e + f + g + h + i + j + k \\`          \\
+  \    & \verb`    + l + m + n + o + p + q + r + s + t + u + v \\`      \\
+  \    & \verb`    + v + x + y + z + \alpha + \beta + \gammma + \delta` \\
+  \    & \verb`\end{multline}`                                          \\
+\end{longtable}\vspc{-1.50zw}
+\vspc{-0.50zw}\begin{longtable}[l]{@{}l|l@{}}
+  出力 & $a + b + c + d + e + f + g + h + i + j + k$                                                                              \\
+  \    & $\hphantom{a + b + c +}+ l + m + n + o + p + q + r + s + t + u + v$                                                      \\
+  \    & $\hphantom{a + b + c + d + e + f + g + h +}+ v + x + y + z + \alpha + \beta + \gamma + \delta \hspc{+188pt} \text{(16)}$ \\
+\end{longtable}\vspc{-0.50zw}
+最初の行は左に寄り、最後の行は右に寄る。
+それ以外の行は、標準では左右中央に並ぶ（fleqn オプションを付ければ左から一定距離に並ぶ）が、強制的に右に寄せたい行は \verb`\shoveright{...}`、左に寄せたい行は \verb`\shoveleft{...}` で囲む（囲む範囲は改行 \verb`\\` の直前まで）。\\
+
+左右に寄る場合、\verb`\multlinegap` だけ余白が入る。
+これは標準で 10\,pt だが、\verb`\setlength{\multlinegap}{20pt}` のようにして変更することができる。\\
+
+数式中の \verb`\\` では改ページされない。
+改ページを許すには、\verb`\\` の直前に \verb`\displaybreak[0]` と書いておく。
+この \verb`[0]` を \verb`[1]`、\verb`[2]`、\verb`[3]` と変更すると改ページのしやすさが次第に増し \verb`\displaybreak[4]` では必ず改ページする。
+単に \verb`\displaybreak` と書けば \verb`\displaybreak[4]` と同じ意味になる。\\
+
+全ての \verb`\\` について同じ改ページのしやすさを設定するには、プリアンブルに \verb`\allowdisplaybreak[1]` などと記述しておく。
+オプションのパラメータの値は 0 から 4 までで、0 では改ページせず、4 に近づくほど改ページしやすくなる。
+この場合、改ページしたくない改行は \verb`\\*` で表す。\\
+
+\LaTeX{}では、例えば \verb`\label{Einstein}` というラベルを貼った数式を参照する際、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+式~(\ref{Einstein}) では…
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+のように書くが、amsmath パッケージでは、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+式~\eqref{Einstein} では…
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+という命令も用意されている。
+\verb`\eqref` の方が括弧やイタリック補正が組み込まれており便利である。

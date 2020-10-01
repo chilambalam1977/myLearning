@@ -1,0 +1,224 @@
+%%
+%% 章：図・表の配置
+%%------------------------------------------------------------------------------------------------------------------------------%%
+\chapter{図・表の配置}
+\LaTeX{}には自動で図・表を配置する figure 環境、table 環境が用意されている。
+この機能を強化した float パッケージを使うことにより、より柔軟な図・表の配置ができると共に、図・表に似た「プログラムリスト」などの新しい環境を簡単に作ることができる。
+%%
+%% 節：図の自動配置
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{図の自動配置}
+図を自動配置するには figure 環境を用いる。例えば、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+図\ref{fig:2ji}は関数 $y = x^{2}$ のグラフである。
+\begin{figure}
+  \centering
+  \includegraphics[width=5cm]{2ji.pdf}
+  \caption{関数 $y = x^{2}$ のグラフ}
+  \label{fig:2ji}
+\end{figure}%
+このグラフは下に凸である。
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書くと、\LaTeX{}は \verb'\begin{figure}' $\ldots$ \verb'\end{figure}'\texttt{\%} の部分をとりあえず無視して、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+図\textbf{??}は関数 $y = x^{2}$ のグラフである。
+このグラフは下に凸である。
+\end{mdframed}\vspc{-0.70zw}
+と出力する（図の番号が \textbf{??} になっている）。
+そして、そのページの上か下の余ったところに図を出力し、図のすぐ下に、
+\vspc{-1,00zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{center} 図1\hspc{+01zw}関数 $y=x^{2}$ のグラフ \end{center}
+\end{mdframed}\vspc{-0.70zw}
+のように見出しを出力する。
+もし、そのページに収まらないようなら、次のページ以降に回される。\\
+
+\verb`\label{...}` と \verb`\ref{...}` の中身は、単なる\ruby{符丁}{ラベル}なので、何でも構わないが、両方に同じ文字列を書いておく必要がある。\\
+
+「図\textbf{??}は……」のように、本文中で図の番号が \textbf{??} になってしまうが、これは\LaTeX{}をもう一度実行すると、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+図 1 は関数 $y = x^{2}$ のグラフである。
+このグラフは下に凸である。
+\end{mdframed}\vspc{-0.70zw}
+のように正しい番号に置き換わる。
+\verb`\label`、\verb`ref` 及び\LaTeX{}を 2 回実行することに意味については第 10 章を参照のこと。\\
+
+\verb`\begin{figure}[htbp]` のように \verb`\begin{figure}` の直後に \verb`[ ]` で囲んだ文字を追記することで、図の出力の可能な位置を指定することができる。
+これらの文字の意味は次の通りである。
+\vspc{-0.50zw}\begin{itemize}\setlength{\leftskip}{-1.00zw}%\setlength{\labelsep}{+1.00zw}
+\item \texttt{t} \hspc{+1.00zw} \textcolor{blue}{ページ上端（top）に図を出力する。}
+\item \texttt{b} \hspc{+1.00zw} \textcolor{blue}{ページ下端（bottom）に図を出力する。}
+\item \texttt{p} \hspc{+1.00zw} \textcolor{blue}{単独ページ（page）に図を出力する。}
+\item \texttt{h} \hspc{+1.00zw} \textcolor{blue}{できればその位置（here）に図を出力する。}
+\item \texttt{H} \hspc{+1.00zw} \textcolor{blue}{必ずその位置（Here）に図を出力する（要 float パッケージ）。}
+\end{itemize}\vspc{-0.50zw}
+何も指定しなければ \texttt{[tbp]}、すなわちページ上端、ページ下端、単独ページに出力できることになる。
+\texttt{htbp} を並べる順序には意味はない。
+\texttt{[b!]} のように \texttt{!} を付けると、より強い指定となる。
+\texttt{H} は float パッケージを利用していないと使うことができない。
+また、\texttt{H} を指定すると、他のオプションは指定することができなくなる。\\
+
+\verb`\caption{...}` は図の説明を出力する命令だが、これを用いて図目次を自動的に作成することもできる。
+図目次を作成するには、図目次を出力したい場所に \verb`\listoffigures` 命令を記述する。\\
+
+図目次を作成する場合には、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+  \verb`\caption[`\texttt{\textcolor{blue}{短い説明}}\verb`]{`\texttt{\textcolor{blue}{長い説明}}\verb`}`
+\end{mdframed}\vspc{-0.70zw}
+のように 2 通りの説明を付けることができる。
+長い説明は図の下に、短い説明は図目次に使われる。
+短い説明がない場合は、長い説明が図目次にも使われる。
+目次については第 10 章の第 2 節も参照のこと。
+%%
+%% 節：表の自動配置
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{表の自動配置}
+表の自動配置には table 環境を用いる。
+figure 環境と同様に自動的に適当な位置に配置され、「表1」「表2」$\dotsc$ といった番号が付く。\\
+
+table 環境の使い方は figure 環境の場合と全く同じである。
+但し、表の場合はキャプションを上に書くというルールがあるので、次のように \verb`\caption` は上に配置する。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+魔法陣
+\begin{table}
+  \caption[3次の魔法陣]{3次の魔法陣の例。縦・横・斜めの和がいずれも 15 である。}
+  \label{mahou}
+  \begin{center}
+    \setlength{\tabcolsep}{3pt}\footnotesize
+    \begin{tabular}{|c|c|c|} \hline
+      2 & 9 & 4 \\ \hline
+      7 & 5 & 3 \\ \hline
+      6 & 1 & 8 \\ \hline
+    \end{tabular}
+  \end{center}
+\end{table}%
+では、縦・横・斜めの和が等しい。
+\end{verbatim}
+\end{mdframed}\vspc{-1.70zw}
+%%
+%% 節：左右に並べる配置
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{左右に並べる配置}
+独立な図を左右に並べて配置するには、次のように minipage 環境を用いるのが簡単である。
+ここで \verb`\columnwidth` は版面の幅（段組の場合は段の幅）である。
+版面の幅の 0.4 倍の小さなページを作って左右に並べる。
+minipage の中では \verb`\columnwidth` が minipage の幅になる。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{figure}
+  \centering
+  \begin{minipage}{0.4\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{l.pdf}
+    \caption{左の図}\label{fig:左}
+  \end{minipage}
+  \begin{minipage}{0.4\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{r.pdf}
+    \caption{右の図}\label{fig:右}
+  \end{minipage}
+\end{figure}
+\end{verbatim}
+\end{mdframed}\vspc{-0.10zw}
+次のように出力される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\columnwidth}
+    \centering
+    \framebox[\columnwidth]{図}
+    \caption{左の図}\label{fig:左}
+  \end{minipage}
+  \begin{minipage}{0.4\columnwidth}
+    \centering
+    \framebox[\columnwidth]{図}
+    \caption{右の図}\label{fig:右}
+  \end{minipage}
+\end{figure}\vspc{-15pt}
+\end{mdframed}\vspc{-0.70zw}
+関連した複数の図を並べるには subcaption パッケージを用いるのが便利である。
+プリアンブルには、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\usepackage{subcaption}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+と書いておき、
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.4\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{l.pdf}
+    \caption{左の図}\label{fig:l}
+  \end{subfigure}
+  \begin{subfigure}{0.4\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{r.pdf}
+    \caption{右の図}\label{fig:r}
+  \end{subfigure}
+  \caption{左右の図}
+  \label{fig:rl}
+\end{figure}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすれば、次のように出力される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!100,linewidth=0.50pt,backgroundcolor=gray!00]
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\columnwidth}
+    \centering
+    \framebox[\columnwidth]{図}
+    \caption{左の図}\label{fig:l}
+  \end{minipage}
+  \begin{minipage}{0.4\columnwidth}
+    \centering
+    \framebox[\columnwidth]{図}
+    \caption{右の図}\label{fig:r}
+  \end{minipage}
+  \caption{左右の図}\label{fig:lr}
+\end{figure}\vspc{-15pt}
+\end{mdframed}\vspc{-0.70zw}
+この場合、\verb`\ref{fig:l}`、\verb`\ref{fig:r}`、\verb`\ref{fig:rl}` で出力されるものはそれぞれ \ref{fig:l}、\ref{fig:r}、\ref{fig:lr} のようになる。\\
+
+見ての通り、デフォルトでは図が隣接してしまうので、これがまずい場合は \verb`\subfigure` 間に例えば \verb`\hspc{+5mm}` のように適当な水平方向のスペースを入れる。
+%%
+%% 節：図・表が思い通りの位置に出力されない場合
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{図・表が思い通りの位置に出力されない場合}
+昔の jarticle などと比べて、今日の jsarticle などは図・表が入りやすい設定になっている。
+図・表がうまく配置できない場合、\LaTeX{}は「Too many unprocessed floats」（未処理の図や表が多すぎる）というエラーを出すことがある。
+この場合は、figure や table に \texttt{H} オプションを付けて出力する位置を明示的に指定する。
+%%
+%% 節：回り込み
+%%--------------------------------------------------------------------------------------------------------------------%%
+\section{回り込み}
+図や表のまわりに文章を回り込ませるためのパッケージはいくつか存在するが、ここでは wrapfig パッケージについて説明する。\\
+
+\verb`\begin{wrapfigure}[`\texttt{\textcolor{blue}{行数}}\verb`]{`\texttt{\textcolor{blue}{l または r}}\verb`}{`\texttt{\textcolor{blue}{幅}}\verb`}` で図を配置する（表の場合には wrapfigure の代わりに wraptable 環境が用意されている）。
+\texttt{l} で左、\texttt{r} で右に図が配置される。
+\vspc{+0.50zw}\begin{mdframed}[roundcorner=0.50zw,leftmargin=3.00zw,rightmargin=3.00zw,skipabove=0.40zw,skipbelow=0.40zw,innertopmargin=4.00pt,innerbottommargin=4.00pt,innerleftmargin=5.00pt,innerrightmargin=5.00pt,linecolor=gray!020,linewidth=0.50pt,backgroundcolor=gray!20]
+\begin{verbatim}
+\begin{wrapfigure}{r}{8zw}
+  \vspc*{-\intextsep}
+  \includegraphics[width=8zw]{tiger.pdf}
+\end{wrapfigure}
+\end{verbatim}
+\end{mdframed}\vspc{-0.70zw}
+とすると$\cdots$ \\
+
+このように右に虎の絵が出て、文章が回り込む。
+行数は指定しなくても自動で計算される。
+文章と図の水平距離は \verb`\columnsep`（段組の場合の段間の空き）と同じになる。
+jsarticle、jsbook では段間の空きは全角の整数倍になっているので、図の幅も全角の整数倍にしておく方が、本文の余計な伸び縮みが起きないのでよいだろう。
+\begin{wrapfigure}{r}{8zw}
+  \vspace*{-\intextsep}
+  \includegraphics[width=8zw]{./Fig/Fig09_01.PNG}
+\end{wrapfigure}
+また、垂直方向には \verb`\intextsep`（図と本文の垂直方向の空き、標準では 12\,pt $\pm$ 2\,pt）だけ空きが入るので、段落の切れ目に置いた場合、先程の例のように \verb`\intextsep` だけ戻るとほぼ段落の上端と一致する。\\
+
+回り込みの位置でちょうどページが分割される場合や、箇条書きなどの環境と重なるとうまく処理されないので注意が必要である。
+また、float パッケージと併用する場合は、float の後に wrapfig を読み込む必要がある。
